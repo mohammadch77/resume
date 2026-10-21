@@ -1,0 +1,36 @@
+/* Grin Web colour tokens. Light on :root, dark on [data-theme="dark"]. Names map 1:1 to Tailwind v4 --color-* utilities (bg-paper, text-ink, bg-lapis…). */
+:root{
+color-scheme:light;
+/* grounds */
+--color-paper:#f2f3f5;--color-raised:#ffffff;--color-sunken:#e4e7ec;
+/* text (allowed on paper / raised / sunken) */
+--color-ink:#151922;--color-ink-muted:#434a59;--color-ink-subtle:#566072;
+/* lines */
+--color-line:#d3d7df;--color-line-strong:#7c8494;
+/* Lapis — لاجورد */
+--color-lapis:#2338d6;--color-lapis-deep:#16258f;--color-lapis-tint:#e2e6fb;--color-lapis-text:#2338d6;--color-on-lapis:#ffffff;
+/* Saffron — زعفران */
+--color-saffron:#f2b01e;--color-on-saffron:#151922;--color-saffron-text:#7a5200;--color-saffron-tint:#fcf0cf;
+/* Firouzeh — فیروزه (decorative only) */
+--color-firouzeh:#12a594;
+/* status */
+--color-success:#0b6b5c;--color-success-tint:#ddf3ee;--color-danger:#b42318;--color-danger-tint:#fbe4e1;
+/* overlay + focus */
+--color-focus-ring:#16258f;--color-scrim:rgba(21,25,34,0.56);
+/* semantic aliases */
+--surface-page:var(--color-paper);--surface-card:var(--color-raised);--surface-well:var(--color-sunken);--surface-inverse:var(--color-ink);
+--text-body-color:var(--color-ink);--text-muted-color:var(--color-ink-muted);--text-subtle-color:var(--color-ink-subtle);--text-link-color:var(--color-lapis-text);--text-inverse-color:var(--color-paper);
+--border-decorative:var(--color-line);--border-control:var(--color-line-strong);
+--accent:var(--color-lapis);--accent-hover:var(--color-lapis-deep);--on-accent:var(--color-on-lapis);
+}
+[data-theme="dark"]{
+color-scheme:dark;
+--color-paper:#0f1320;--color-raised:#171c2c;--color-sunken:#0a0d16;
+--color-ink:#edf0f6;--color-ink-muted:#b1b8c8;--color-ink-subtle:#9aa3b6;
+--color-line:#2a3144;--color-line-strong:#6f7890;
+--color-lapis:#8c9bff;--color-lapis-deep:#b5c0ff;--color-lapis-tint:#1d2550;--color-lapis-text:#9daaff;--color-on-lapis:#0a0f33;
+--color-saffron:#f2b01e;--color-on-saffron:#151922;--color-saffron-text:#f5c453;--color-saffron-tint:#3a2e0b;
+--color-firouzeh:#2cc4ae;
+--color-success:#4fd1b8;--color-success-tint:#10312d;--color-danger:#ff8a7e;--color-danger-tint:#3a1815;
+--color-focus-ring:#b5c0ff;--color-scrim:rgba(5,7,12,0.7);
+}

@@ -1,0 +1,34 @@
+/* Size/line-height pairs follow the Tailwind v4 convention: --text-<name> + --text-<name>--line-height. */
+:root{
+--font-display:"Estedad","Vazirmatn UI FD",Tahoma,system-ui,sans-serif;
+--font-sans:"Vazirmatn UI FD",Tahoma,system-ui,sans-serif;
+--font-weight-regular:400;--font-weight-semibold:600;--font-weight-display:800;
+--text-display-xl:72px;--text-display-xl--line-height:86px;
+--text-display-lg:56px;--text-display-lg--line-height:68px;
+--text-display-md:44px;--text-display-md--line-height:56px;
+--text-heading-1:36px;--text-heading-1--line-height:54px;
+--text-heading-2:28px;--text-heading-2--line-height:44px;
+--text-heading-3:22px;--text-heading-3--line-height:38px;
+--text-stat:64px;--text-stat--line-height:76px;
+--text-body-lg:19px;--text-body-lg--line-height:37px;
+--text-body:17px;--text-body--line-height:33px;
+--text-body-sm:15px;--text-body-sm--line-height:29px;
+--text-label:14px;--text-label--line-height:22px;
+--text-caption:13px;--text-caption--line-height:25px;
+--text-button:16px;--text-button--line-height:24px;
+--measure-prose:64ch;
+}
+.gw-t-display-xl{font:800 var(--text-display-xl)/var(--text-display-xl--line-height) var(--font-display)}
+.gw-t-display-lg{font:800 var(--text-display-lg)/var(--text-display-lg--line-height) var(--font-display)}
+.gw-t-display-md{font:800 var(--text-display-md)/var(--text-display-md--line-height) var(--font-display)}
+.gw-t-heading-1{font:800 var(--text-heading-1)/var(--text-heading-1--line-height) var(--font-display)}
+.gw-t-heading-2{font:800 var(--text-heading-2)/var(--text-heading-2--line-height) var(--font-display)}
+.gw-t-heading-3{font:800 var(--text-heading-3)/var(--text-heading-3--line-height) var(--font-display)}
+.gw-t-stat{font:800 var(--text-stat)/var(--text-stat--line-height) var(--font-display)}
+.gw-t-body-lg{font:400 var(--text-body-lg)/var(--text-body-lg--line-height) var(--font-sans)}
+.gw-t-body{font:400 var(--text-body)/var(--text-body--line-height) var(--font-sans)}
+.gw-t-body-sm{font:400 var(--text-body-sm)/var(--text-body-sm--line-height) var(--font-sans)}
+.gw-t-label{font:600 var(--text-label)/var(--text-label--line-height) var(--font-sans)}
+.gw-t-caption{font:400 var(--text-caption)/var(--text-caption--line-height) var(--font-sans)}
+.gw-t-button{font:600 var(--text-button)/var(--text-button--line-height) var(--font-sans)}
+.gw-prose{max-inline-size:var(--measure-prose);text-wrap:pretty}

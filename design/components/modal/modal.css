@@ -1,0 +1,18 @@
+.gw-scrim{position:fixed;inset:0;z-index:var(--z-modal);display:grid;place-items:center;padding:var(--space-5);background:var(--color-scrim);animation:gw-fade var(--duration-base) var(--ease-out)}
+.gw-scrim--contained{position:absolute}
+.gw-modal{position:relative;display:flex;flex-direction:column;inline-size:100%;max-inline-size:960px;max-block-size:calc(100dvh - 48px);overflow:auto;background:var(--color-raised);color:var(--color-ink);border:1px solid var(--color-line);border-radius:var(--radius-md);box-shadow:var(--shadow-overlay);animation:gw-rise var(--duration-base) var(--ease-out)}
+.gw-scrim--contained .gw-modal{max-block-size:100%}
+.gw-modal__head{display:flex;align-items:flex-start;gap:var(--space-4);padding:var(--space-6) var(--space-6) var(--space-5)}
+.gw-modal__titles{display:flex;flex-direction:column;gap:var(--space-3);flex:1;min-inline-size:0}
+.gw-modal__title{margin:0;font:800 var(--text-heading-1)/var(--text-heading-1--line-height) var(--font-display);text-wrap:balance}
+.gw-modal__close{flex:none;margin-block-start:-4px;margin-inline-end:-12px}
+.gw-modal__cover{padding-inline:var(--space-6)}
+.gw-modal__cover .gw-cover{aspect-ratio:16/7}
+.gw-modal__cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-6);padding:var(--space-6)}
+.gw-modal__col{display:flex;flex-direction:column;gap:var(--space-2);padding-block-start:var(--space-3);border-block-start:1px solid var(--color-line)}
+.gw-modal__col h3{margin:0;font:800 var(--text-heading-3)/var(--text-heading-3--line-height) var(--font-display)}
+.gw-modal__col p{margin:0;font:400 var(--text-body-sm)/var(--text-body-sm--line-height) var(--font-sans);color:var(--color-ink-muted);text-wrap:pretty}
+.gw-modal__actions{display:flex;flex-wrap:wrap;gap:var(--space-3);padding:var(--space-5) var(--space-6);border-block-start:1px solid var(--color-line)}
+@media (max-width:760px){.gw-modal__cols{grid-template-columns:minmax(0,1fr);gap:var(--space-5)}.gw-modal__head,.gw-modal__cols{padding:var(--space-5)}.gw-modal__cover{padding-inline:var(--space-5)}.gw-modal__title{font-size:var(--text-heading-2);line-height:var(--text-heading-2--line-height)}.gw-scrim{padding:var(--space-3)}}
+@keyframes gw-fade{from{opacity:0}to{opacity:1}}
+@keyframes gw-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}

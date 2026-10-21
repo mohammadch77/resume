@@ -1,0 +1,4 @@
+.gw-metric{display:flex;flex-direction:column;gap:var(--space-1);margin:0;padding-block-start:var(--space-4);border-block-start:1px solid var(--color-line-strong);min-inline-size:0}
+.gw-metric__value{margin:0;font:800 var(--text-stat)/var(--text-stat--line-height) var(--font-display);color:var(--color-ink);font-variant-numeric:tabular-nums}
+.gw-metric__label{margin:0;font:400 var(--text-body)/var(--text-body--line-height) var(--font-sans);color:var(--color-ink)}
+.gw-metric__source{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);font:400 var(--text-caption)/var(--text-caption--line-height) var(--font-sans);color:var(--color-ink-subtle)}
