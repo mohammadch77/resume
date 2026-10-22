@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, megabytesFa } from "@/lib/media/config";
 import { MEDIA_ERRORS, type MediaErrorCode } from "@/lib/media/messages";
 
 type Item = { name: string; progress: number; state: "uploading" | "done" | "duplicate" | "error"; message?: string };
@@ -81,11 +82,11 @@ export function MediaUploader() {
         بارگذاری فایل
       </h2>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="images">تصویر (JPEG، PNG، WebP، AVIF — تا ۱۵ مگابایت)</Label>
+        <Label htmlFor="images">{`تصویر (JPEG، PNG، WebP، AVIF — تا ${megabytesFa(IMAGE_MAX_BYTES)} مگابایت)`}</Label>
         <Input id="images" ref={imageInput} type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif" onChange={(e) => onImages(e.target.files)} />
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="video">ویدیو (MP4 یا WebM — تا ۱۰۰ مگابایت)</Label>
+        <Label htmlFor="video">{`ویدیو (MP4 یا WebM — تا ${megabytesFa(VIDEO_MAX_BYTES)} مگابایت). فقط در گالری پروژه به کار می‌رود، نه به‌عنوان کاور یا در بالای صفحه.`}</Label>
         <Input id="video" ref={videoInput} type="file" accept="video/mp4,video/webm" />
         <Label htmlFor="poster">تصویر پوستر ویدیو (الزامی)</Label>
         <Input id="poster" ref={posterInput} type="file" accept="image/jpeg,image/png,image/webp,image/avif" />

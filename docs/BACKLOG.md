@@ -2,7 +2,7 @@
 
 - Verify React Bits LICENSE text in the upstream repo before shipping (docs/LIBS.md).
 - Phase 8: one-shot migration job (`npm run db:migrate` as `migrator`) before the app starts; compose currently needs it run manually.
-- Friendly Persian messages for DB errors GW001-GW005, 23001 (RESTRICT) in the admin UI (Phase 4).
+- Friendly Persian messages for DB errors GW001-GW006, 23001 (RESTRICT) in the admin UI (Phase 4).
 - Strict nonce-based CSP replaces the header placeholder in next.config.ts (Phase 2).
 - Subset the WOFF2 fonts (Persian + Latin + digits) if Lighthouse flags font weight (Phase 5/6).
 - Phase 5b: the landing contact-form server action is a PUBLIC action. It must get the same Origin check (`isAllowedOrigin`, lib/auth/request.ts) and a per-IP-hash rate limit (`RateLimiter`, lib/auth/rate-limit.ts) as the login action, plus honeypot, min-fill-time and Zod. Add its file to the public-action allowlist in tests/unit/architecture.test.ts deliberately.
@@ -12,7 +12,8 @@
 - Landing CSP uses `script-src 'self' 'unsafe-inline'` (experimental SRI adds no integrity attributes under Turbopack and could not cover Next's inline bootstrap scripts; measured in tests/e2e/csp.spec.ts). Hardening option: build-time sha256 hashes of inline scripts, or per-request nonce only if the budget allows dynamic rendering. Style attributes also need `style-src 'unsafe-inline'`.
 - After Phase 5b: replace `'unsafe-inline'` in the landing `script-src` with build-time sha256 hashes of Next's inline scripts (post-build step that reads the prerendered HTML and writes the CSP header). Cost: one extra build step and a rebuild on every deploy. Re-run tests/e2e/csp.spec.ts to prove nothing is blocked.
 - Phase 8: Nginx must serve `/uploads/` straight from the volume (immutable cache, `X-Content-Type-Options: nosniff`, no script execution). `app/uploads/[...path]/route.ts` is the dev / bare-`next start` fallback with the same contract.
-- Media: videos are stored as-is, with no probing or transcoding (no ffprobe in the image), so width/height of a video are NULL. Decide in Phase 5b whether the landing needs video at all.
+- Video policy (decided, migration 0004): video only in a project's gallery / case-study modal, never in the hero and never as a card cover (DB triggers refuse a video as cover, logo or poster, SQLSTATE GW006). Poster mandatory (CHECK + ingest), `preload="none"`, no autoplay, rendered only via `components/site/gallery-video.tsx`. Cap 25 MB, defined once in `lib/media/config.ts` and mirrored by the `media_bytes_limit` CHECK (test fails if they differ). Videos are still stored as-is (no probing/transcoding), so their width/height are NULL; the poster's size reserves the space.
+- Phase 4 pickers: cover and logo pickers list images only; the gallery picker may list images and videos. Phase 5b: the case-study modal renders gallery videos with `GalleryVideo`; add a test that the hero and ProjectCard never render a `<video>`.
 - Media: the upload handler buffers the whole multipart body in memory (admin-only, at most ~115 MB). Switch to streaming if concurrent large uploads ever matter.
 - Media: no pagination or search in the library (latest 60); no sweep for orphan files (files without a row after a crash). Phase 7 failure-mode pass: disk full during upload must return a clean error and leave no half-written set (writes are already rolled back on failure; verify with a full disk).
 - Media: sample sizes in the Phase 3 report come from a synthetic image; re-measure with a real photo when one is available (`npx tsx scripts/media-sample.ts`).

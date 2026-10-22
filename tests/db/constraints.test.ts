@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { VIDEO_MAX_BYTES } from "@/lib/media/config";
 import {
   CHECK_VIOLATION,
   FK_VIOLATION,
@@ -127,7 +128,7 @@ describe("media_assets", () => {
 
   it("happy path (image and video)", async () => {
     await insert({ color: "#A1b2C3" });
-    await insert({ kind: "video", mime: "video/mp4", bytes: 5000, width: null, height: null });
+    await insert({ kind: "video", mime: "video/mp4", bytes: 5000, width: null, height: null, poster: await mkMedia(db.su, userId) });
   });
   it.each([["image/svg+xml"], ["application/x-msdownload"], ["text/html"], ["image/gif"]])("rejects mime %s", async (mime) => {
     expect((await rejected(insert({ mime }))).code).toBe(CHECK_VIOLATION);
@@ -138,7 +139,7 @@ describe("media_assets", () => {
   it("rejects zero bytes and oversize files", async () => {
     expect((await rejected(insert({ bytes: 0 }))).code).toBe(CHECK_VIOLATION);
     expect((await rejected(insert({ bytes: 15728641 }))).code).toBe(CHECK_VIOLATION);
-    expect((await rejected(insert({ kind: "video", mime: "video/webm", bytes: 104857601, width: null, height: null }))).code).toBe(CHECK_VIOLATION);
+    expect((await rejected(insert({ kind: "video", mime: "video/webm", bytes: VIDEO_MAX_BYTES + 1, width: null, height: null, poster: await mkMedia(db.su, userId) }))).code).toBe(CHECK_VIOLATION);
   });
   it("rejects an image without dimensions, and non-positive dimensions", async () => {
     expect((await rejected(insert({ width: null, height: null }))).code).toBe(CHECK_VIOLATION);

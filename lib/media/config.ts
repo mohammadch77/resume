@@ -1,6 +1,13 @@
-/** Must match the CHECK constraints in drizzle/migrations/0001_schema.sql (media_bytes_limit, media_mime_allowlist). */
+/**
+ * The ONLY place these limits are written in TypeScript. The database repeats them in the `media_bytes_limit`
+ * CHECK (drizzle/migrations/0004_video_policy.sql); tests/db/video-policy.test.ts fails if the two disagree.
+ * Messages and upload forms are built from these constants.
+ */
 export const IMAGE_MAX_BYTES = 15 * 1024 * 1024;
-export const VIDEO_MAX_BYTES = 100 * 1024 * 1024;
+export const VIDEO_MAX_BYTES = 25 * 1024 * 1024;
+
+/** Whole megabytes, in Persian digits, for user-facing text. */
+export const megabytesFa = (bytes: number): string => Math.round(bytes / (1024 * 1024)).toLocaleString("fa-IR");
 
 /** Largest accepted request body: a video plus its poster plus multipart overhead. */
 export const UPLOAD_MAX_REQUEST_BYTES = VIDEO_MAX_BYTES + IMAGE_MAX_BYTES + 1024 * 1024;

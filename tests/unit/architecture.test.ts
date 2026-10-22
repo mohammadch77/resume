@@ -43,6 +43,17 @@ describe("server actions", () => {
   });
 });
 
+describe("media limits are written once", () => {
+  it("no source file except lib/media/config.ts spells out the upload size limits", () => {
+    const literal = /(104857600|26214400|15728640)|(15|25|100)\s*\*\s*1024\s*\*\s*1024/;
+    const offenders = files
+      .filter((f) => !f.replaceAll("\\", "/").endsWith("lib/media/config.ts"))
+      .filter((f) => literal.test(readFileSync(f, "utf8")))
+      .map((f) => path.relative(ROOT, f).replaceAll("\\", "/"));
+    expect(offenders).toEqual([]);
+  });
+});
+
 describe("admin route handlers", () => {
   const handlers = files.filter((f) => /app[\\/]\(admin\)[\\/].*route\.ts$/.test(f));
   it("finds the upload handler", () => {

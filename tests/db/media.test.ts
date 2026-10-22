@@ -216,7 +216,7 @@ describe("video ingest", () => {
     expect(poster.kind).toBe("image");
   });
 
-  it("accepts webm, refuses non-video bytes and videos over 100 MB", async () => {
+  it("accepts webm, refuses non-video bytes and videos over the video limit", async () => {
     const poster = await makePhoto(160, 90, { seed: 72 });
     expect((await ingestVideo(ctx, fakeWebm(), poster)).asset.mime).toBe("video/webm");
     expect(await errorCode(ingestVideo(ctx, await makePhoto(50, 50), poster))).toBe("unsupported_type");

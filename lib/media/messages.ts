@@ -1,8 +1,10 @@
+import { IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, megabytesFa } from "./config";
+
 /** Persian messages for every media error code the API or actions can return. */
 export const MEDIA_ERRORS = {
   empty: "فایل خالی است.",
   unsupported_type: "نوع فایل پشتیبانی نمی‌شود. فقط JPEG، PNG، WebP، AVIF، MP4 و WebM مجاز است.",
-  too_large: "حجم فایل بیش از حد مجاز است (تصویر تا ۱۵ مگابایت، ویدیو تا ۱۰۰ مگابایت).",
+  too_large: `حجم فایل بیش از حد مجاز است (تصویر تا ${megabytesFa(IMAGE_MAX_BYTES)} مگابایت، ویدیو تا ${megabytesFa(VIDEO_MAX_BYTES)} مگابایت).`,
   corrupt_image: "فایل تصویر خراب است یا خوانده نمی‌شود.",
   video_needs_poster: "برای ویدیو باید یک تصویر پوستر هم انتخاب کنید.",
   bad_request: "درخواست نامعتبر است.",
