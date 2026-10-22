@@ -10,8 +10,8 @@ type Props = {
   options: PickerOption[];
   value: string;
   onChange: (id: string) => void;
-  /** Text of the "nothing selected" choice, e.g. "بدون لوگو". */
-  noneLabel: string;
+  /** Text of the "nothing selected" choice, e.g. "بدون لوگو". Omit for an "add" picker that has no empty state. */
+  noneLabel?: string;
   error?: string;
 };
 
@@ -24,10 +24,12 @@ export function MediaPicker({ name, label, options, value, onChange, noneLabel, 
     <fieldset className="flex flex-col gap-2" aria-describedby={error ? `${name}-error` : undefined}>
       <legend className="mb-1 text-sm font-medium">{label}</legend>
       <div className="grid max-h-72 grid-cols-3 gap-2 overflow-y-auto rounded-lg border p-2 sm:grid-cols-4" role="presentation">
-        <label className={cn("flex aspect-4/3 cursor-pointer items-center justify-center rounded-md border p-2 text-center text-xs", value === "" && "ring-2 ring-ring")}>
-          <input type="radio" name={name} className="sr-only" checked={value === ""} onChange={() => onChange("")} />
-          {noneLabel}
-        </label>
+        {noneLabel !== undefined ? (
+          <label className={cn("flex aspect-4/3 cursor-pointer items-center justify-center rounded-md border p-2 text-center text-xs", value === "" && "ring-2 ring-ring")}>
+            <input type="radio" name={name} className="sr-only" checked={value === ""} onChange={() => onChange("")} />
+            {noneLabel}
+          </label>
+        ) : null}
         {options.map((o) => (
           <label key={o.id} className={cn("relative block aspect-4/3 cursor-pointer overflow-hidden rounded-md border focus-within:outline-2 focus-within:outline-offset-2", value === o.id && "ring-2 ring-ring")}>
             <input type="radio" name={name} className="sr-only" checked={value === o.id} onChange={() => onChange(o.id)} aria-label={o.alt || "تصویر بدون متن جایگزین"} />

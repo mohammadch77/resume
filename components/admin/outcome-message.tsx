@@ -7,7 +7,7 @@ export function OutcomeMessage({ outcome, okText }: { outcome: Outcome<unknown> 
   if (outcome.kind === "blocked") {
     return (
       <div role="alert" className="rounded-md border border-destructive p-3 text-sm">
-        <p className="font-semibold text-destructive">انتشار انجام نشد. موارد زیر را کامل کنید:</p>
+        <p className="font-semibold text-destructive">انجام نشد. شرط‌های انتشار برقرار نیست؛ موارد زیر را کامل کنید:</p>
         <ul className="mt-2 list-disc ps-5">
           {outcome.reasons.map((r) => (
             <li key={r}>{r}</li>
