@@ -7,6 +7,8 @@ const schema = z.object({
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters"),
   SITE_URL: z.url(),
   UPLOADS_DIR: z.string().min(1).default("./uploads"),
+  TRUST_PROXY: z.enum(["true", "false"]).default("false"),
+  LOGIN_RATE_LIMIT_PER_MIN: z.coerce.number().int().positive().default(20),
   OWNER_EMAIL: z.email().optional(),
   OWNER_PASSWORD: z.string().min(12).optional(),
   TELEGRAM_BOT_TOKEN: z.string().min(1).optional(),

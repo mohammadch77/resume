@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { buildLandingCsp } from "./lib/security/csp";
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -14,9 +15,14 @@ const nextConfig: NextConfig = {
   },
   // Images are pre-generated at upload time (sharp); no on-the-fly optimizer.
   images: { unoptimized: true },
-  // Placeholder: strict nonce-based CSP is added in Phase 2.
+  // Landing is static/ISR, so no nonce: static CSP below. /admin gets a per-request nonce CSP from proxy.ts.
+  // (experimental.sri was tried: it adds no integrity attributes under Turbopack, so it is not enabled.)
   async headers() {
     return [
+      {
+        source: "/((?!admin).*)",
+        headers: [{ key: "Content-Security-Policy", value: buildLandingCsp(process.env.NODE_ENV === "development") }],
+      },
       {
         source: "/:path*",
         headers: [
