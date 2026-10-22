@@ -1,4 +1,5 @@
 import { hash } from "@node-rs/argon2";
+import { rmSync } from "node:fs";
 import pg from "pg";
 import { E2E_PASSWORD } from "../tests/e2e/constants";
 import { migrate } from "./migrate";
@@ -9,6 +10,7 @@ const DB = "gw_e2e";
 const hostPart = BASE.replace(/^postgres:\/\/[^@]*@/, "");
 
 async function main() {
+  rmSync(".e2e-uploads", { recursive: true, force: true });
   const admin = new pg.Client({ connectionString: `${BASE}/postgres` });
   await admin.connect();
   await admin.query(`DO $$ BEGIN

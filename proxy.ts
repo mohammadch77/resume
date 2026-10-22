@@ -60,6 +60,8 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  // /admin/api/media is excluded on purpose: the proxy buffers only 10 MB of a request body, uploads are up to
+  // 115 MB. That route handler runs the same Origin + session + role checks itself (authenticateAdminRequest).
+  matcher: ["/admin", "/admin/((?!api/media$).*)"],
 };
 

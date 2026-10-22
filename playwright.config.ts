@@ -21,6 +21,7 @@ export default defineConfig({
       SESSION_SECRET: "e2e-session-secret-0123456789abcdef0123",
       SITE_URL: `http://localhost:${PORT}`,
       LOGIN_RATE_LIMIT_PER_MIN: "1000",
+      UPLOADS_DIR: ".e2e-uploads",
     },
   },
 });

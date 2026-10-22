@@ -43,6 +43,19 @@ describe("server actions", () => {
   });
 });
 
+describe("admin route handlers", () => {
+  const handlers = files.filter((f) => /app[\\/]\(admin\)[\\/].*route\.ts$/.test(f));
+  it("finds the upload handler", () => {
+    expect(handlers.length).toBeGreaterThanOrEqual(1);
+  });
+  for (const handler of handlers) {
+    const rel = path.relative(ROOT, handler).replaceAll("\\", "/");
+    it(`${rel} authenticates itself (it may be outside the proxy matcher)`, () => {
+      expect(readFileSync(handler, "utf8")).toMatch(/authenticateAdminRequest\(/);
+    });
+  }
+});
+
 describe("admin pages", () => {
   const pages = files.filter((f) => /app[\\/]\(admin\)[\\/]admin[\\/].*page\.tsx$/.test(f));
   for (const page of pages) {
