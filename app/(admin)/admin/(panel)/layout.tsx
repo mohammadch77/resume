@@ -7,6 +7,7 @@ const COMMON: NavItem[] = [
   { href: "/admin/projects", label: "پروژه‌ها" },
   { href: "/admin/clients", label: "مشتریان" },
   { href: "/admin/services", label: "خدمات" },
+  { href: "/admin/categories", label: "دسته‌بندی‌ها" },
   { href: "/admin/testimonials", label: "نظرات مشتریان" },
   { href: "/admin/media", label: "رسانه" },
   { href: "/admin/leads", label: "درخواست‌ها" },

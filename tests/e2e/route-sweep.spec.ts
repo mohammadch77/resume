@@ -24,7 +24,7 @@ const routes = adminRoutes();
 test("the sweep finds every admin page", () => {
   expect(routes).toEqual(
     expect.arrayContaining([
-      "/admin", "/admin/login", "/admin/projects", "/admin/clients", "/admin/services", "/admin/testimonials",
+      "/admin", "/admin/login", "/admin/projects", "/admin/clients", "/admin/services", "/admin/categories", "/admin/testimonials",
       "/admin/media", "/admin/leads", "/admin/settings", "/admin/users", "/admin/audit",
     ]),
   );
