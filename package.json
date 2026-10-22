@@ -9,9 +9,11 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "test:db": "vitest run --config vitest.db.config.ts",
+    "test:db": "docker compose -f deploy/docker-compose.test.yml up -d --wait && vitest run --config vitest.db.config.ts",
     "test:e2e": "playwright test",
-    "lhci": "lhci autorun"
+    "lhci": "lhci autorun",
+    "db:migrate": "tsx --env-file-if-exists=.env scripts/migrate.ts",
+    "db:seed": "tsx --env-file-if-exists=.env scripts/seed.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
