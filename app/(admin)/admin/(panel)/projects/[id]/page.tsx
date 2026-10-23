@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProjectForm } from "@/components/admin/project-form";
-import { ProjectRowActions } from "@/components/admin/project-row-actions";
+import { ContentRowActions } from "@/components/admin/content-row-actions";
 import { Badge } from "@/components/ui/badge";
 import { loadProjectFormChoices } from "@/lib/admin/project-choices";
 import { getProject } from "@/lib/admin/projects";
+import { deleteProjectAction, setProjectStatusAction } from "../actions";
 import { requireRole } from "@/lib/auth/require-role";
 import { getDb } from "@/lib/db/client";
 import { uuidSchema } from "@/lib/validation/common";
@@ -28,7 +29,16 @@ export default async function EditProjectPage({ params }: PageProps<"/admin/proj
           ویرایش «{project.values.title}»
           <Badge variant={project.status === "published" ? "default" : "secondary"}>{STATUS_LABEL[project.status]}</Badge>
         </h1>
-        <ProjectRowActions id={project.id} title={project.values.title} version={project.version} status={project.status} afterDelete="/admin/projects" />
+        <ContentRowActions
+          id={project.id}
+          title={project.values.title}
+          version={project.version}
+          status={project.status}
+          noun="پروژه"
+          setStatus={setProjectStatusAction}
+          remove={deleteProjectAction}
+          afterDelete="/admin/projects"
+        />
       </div>
       {/* key = version: after a save or a conflict reload the form remounts with the stored values */}
       <ProjectForm key={project.version} id={project.id} version={project.version} initial={project.values} {...choices} />

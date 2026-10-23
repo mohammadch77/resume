@@ -83,6 +83,7 @@ export function describeDbError(err: unknown): DbProblem | null {
       return hit ? { kind: "failed", field: hit[1], message: hit[2] } : { kind: "failed", message: "این مقدار تکراری است." };
     }
     case "23514":
+      if (e.constraint === "testimonials_publish_needs_consent") return { kind: "blocked", reasons: [PUBLISH_GATE_REASONS.consent] };
       if (e.constraint === "projects_publish_columns") {
         return { kind: "failed", message: "پروژه‌ی منتشرشده باید کاور و خلاصه‌ی دست‌کم ۲۰ حرفی داشته باشد. اگر می‌خواهید آن‌ها را عوض کنید، ابتدا انتشار را لغو کنید." };
       }

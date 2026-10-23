@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ProjectRowActions } from "@/components/admin/project-row-actions";
+import { ContentRowActions } from "@/components/admin/content-row-actions";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { listProjects } from "@/lib/admin/projects";
+import { deleteProjectAction, moveProjectAction, setProjectStatusAction } from "./actions";
 import { requireRole } from "@/lib/auth/require-role";
 import { getDb } from "@/lib/db/client";
 
@@ -39,7 +40,16 @@ export default async function ProjectsPage() {
                 </p>
               </div>
               <Badge variant={p.status === "published" ? "default" : "secondary"}>{STATUS_LABEL[p.status]}</Badge>
-              <ProjectRowActions id={p.id} title={p.title} version={p.version} status={p.status} move={{ first: i === 0, last: i === rows.length - 1 }} />
+              <ContentRowActions
+                id={p.id}
+                title={p.title}
+                version={p.version}
+                status={p.status}
+                noun="پروژه"
+                setStatus={setProjectStatusAction}
+                remove={deleteProjectAction}
+                move={{ first: i === 0, last: i === rows.length - 1, action: moveProjectAction }}
+              />
             </li>
           ))}
         </ul>

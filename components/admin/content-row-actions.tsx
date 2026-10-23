@@ -2,26 +2,34 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { deleteProjectAction, moveProjectAction, setProjectStatusAction } from "@/app/(admin)/admin/(panel)/projects/actions";
 import { ConflictDialog } from "@/components/admin/conflict-dialog";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { OutcomeMessage } from "@/components/admin/outcome-message";
 import { Button } from "@/components/ui/button";
 import type { Outcome } from "@/lib/admin/outcome";
-import type { ProjectStatus } from "@/lib/admin/projects";
+import type { ActionResult } from "@/lib/auth/admin-action-core";
+
+export type ContentStatus = "draft" | "published" | "archived";
+
+/** A server action wrapped in adminAction, as the client sees it. */
+type Call<I> = (input: I) => Promise<ActionResult<Outcome<unknown>>>;
 
 type Props = {
   id: string;
   title: string;
   version: number;
-  status: ProjectStatus;
-  /** Reorder arrows are only shown in the list. `first` / `last` disable the end arrows. */
-  move?: { first: boolean; last: boolean };
+  status: ContentStatus;
+  /** What the delete dialog calls the item, e.g. "پروژه". */
+  noun: string;
+  setStatus: Call<{ id: string; version: number; status: ContentStatus }>;
+  remove: Call<{ id: string; version: number }>;
+  /** Reorder arrows (list pages only). */
+  move?: { first: boolean; last: boolean; action: Call<{ id: string; direction: "up" | "down" }> };
   /** Where to go after a delete (the edit page leaves; the list stays). */
   afterDelete?: string;
 };
 
-const STATUS_BUTTONS: Record<ProjectStatus, Array<{ to: ProjectStatus; label: string }>> = {
+const STATUS_BUTTONS: Record<ContentStatus, Array<{ to: ContentStatus; label: string }>> = {
   draft: [{ to: "published", label: "انتشار" }],
   published: [
     { to: "draft", label: "لغو انتشار" },
@@ -30,17 +38,15 @@ const STATUS_BUTTONS: Record<ProjectStatus, Array<{ to: ProjectStatus; label: st
   archived: [{ to: "draft", label: "بازگرداندن به پیش‌نویس" }],
 };
 
-type ActionResult = { ok: true; data: Outcome<unknown> } | { ok: false; message: string };
-
-/** Publish / unpublish / archive, reorder and delete for one project. Publish failures list exactly what is missing. */
-export function ProjectRowActions({ id, title, version, status, move, afterDelete }: Props) {
+/** Publish / unpublish / archive, reorder and delete for one content item. Publish failures list exactly what is missing. */
+export function ContentRowActions({ id, title, version, status, noun, setStatus, remove, move, afterDelete }: Props) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [outcome, setOutcome] = useState<Outcome<unknown> | null>(null);
   const [conflict, setConflict] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const run = (call: () => Promise<ActionResult>, after?: () => void) =>
+  const run = (call: () => Promise<ActionResult<Outcome<unknown>>>, after?: () => void) =>
     start(async () => {
       const r = await call();
       const next: Outcome<unknown> = r.ok ? r.data : { kind: "failed", message: r.message };
@@ -54,16 +60,16 @@ export function ProjectRowActions({ id, title, version, status, move, afterDelet
       <div className="flex flex-wrap justify-end gap-2">
         {move ? (
           <>
-            <Button type="button" size="sm" variant="outline" disabled={pending || move.first} aria-label={`بالاتر بردن ${title}`} onClick={() => run(() => moveProjectAction({ id, direction: "up" }))}>
+            <Button type="button" size="sm" variant="outline" disabled={pending || move.first} aria-label={`بالاتر بردن ${title}`} onClick={() => run(() => move.action({ id, direction: "up" }))}>
               ↑
             </Button>
-            <Button type="button" size="sm" variant="outline" disabled={pending || move.last} aria-label={`پایین‌تر بردن ${title}`} onClick={() => run(() => moveProjectAction({ id, direction: "down" }))}>
+            <Button type="button" size="sm" variant="outline" disabled={pending || move.last} aria-label={`پایین‌تر بردن ${title}`} onClick={() => run(() => move.action({ id, direction: "down" }))}>
               ↓
             </Button>
           </>
         ) : null}
         {STATUS_BUTTONS[status].map((b) => (
-          <Button key={b.to} type="button" size="sm" variant="outline" disabled={pending} onClick={() => run(() => setProjectStatusAction({ id, version, status: b.to }), () => router.refresh())}>
+          <Button key={b.to} type="button" size="sm" variant="outline" disabled={pending} onClick={() => run(() => setStatus({ id, version, status: b.to }), () => router.refresh())}>
             {b.label}
           </Button>
         ))}
@@ -75,13 +81,13 @@ export function ProjectRowActions({ id, title, version, status, move, afterDelet
       <ConfirmDialog
         open={confirmDelete}
         title={`حذف «${title}»؟`}
-        description="این پروژه از فهرست و از سایت برداشته می‌شود."
+        description={`این ${noun} از فهرست و از سایت برداشته می‌شود.`}
         confirmLabel="حذف"
         destructive
         pending={pending}
         onCancel={() => setConfirmDelete(false)}
         onConfirm={() =>
-          run(() => deleteProjectAction({ id, version }), () => {
+          run(() => remove({ id, version }), () => {
             setConfirmDelete(false);
             if (afterDelete) router.push(afterDelete);
           })

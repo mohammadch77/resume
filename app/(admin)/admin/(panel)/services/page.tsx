@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ServiceRowActions } from "@/components/admin/service-row-actions";
+import { ContentRowActions } from "@/components/admin/content-row-actions";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { listServices } from "@/lib/admin/services";
+import { deleteServiceAction, moveServiceAction, setServiceStatusAction } from "./actions";
 import { requireRole } from "@/lib/auth/require-role";
 import { getDb } from "@/lib/db/client";
 
@@ -38,7 +39,16 @@ export default async function ServicesPage() {
                 </p>
               </div>
               <Badge variant={s.status === "published" ? "default" : "secondary"}>{STATUS_LABEL[s.status]}</Badge>
-              <ServiceRowActions id={s.id} title={s.title} version={s.version} status={s.status} first={i === 0} last={i === rows.length - 1} />
+              <ContentRowActions
+                id={s.id}
+                title={s.title}
+                version={s.version}
+                status={s.status}
+                noun="خدمت"
+                setStatus={setServiceStatusAction}
+                remove={deleteServiceAction}
+                move={{ first: i === 0, last: i === rows.length - 1, action: moveServiceAction }}
+              />
             </li>
           ))}
         </ul>
