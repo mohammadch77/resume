@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { saveSettingsAction } from "@/app/(admin)/admin/(panel)/settings/actions";
@@ -18,7 +17,6 @@ import { SOCIAL_KEYS, SOCIAL_NETWORKS, settingsFormSchema, type SettingsFormValu
 type Props = { version?: number; initial: SettingsFormValues };
 
 export function SettingsForm({ version, initial }: Props) {
-  const router = useRouter();
   const [pending, start] = useTransition();
   const [outcome, setOutcome] = useState<Outcome<unknown> | null>(null);
   const [saved, setSaved] = useState(false);
@@ -110,7 +108,7 @@ export function SettingsForm({ version, initial }: Props) {
       <div>
         <Button type="submit" disabled={pending}>ذخیره‌ی تنظیمات</Button>
       </div>
-      <ConflictDialog open={conflict} onClose={() => setConflict(false)} onReload={() => router.refresh()} />
+      <ConflictDialog open={conflict} onClose={() => setConflict(false)} onReload={() => window.location.reload()} />
     </form>
   );
 }

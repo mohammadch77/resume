@@ -35,9 +35,10 @@ export default async function SettingsPage() {
           متن صفحه‌ی اصلی هنوز «نمونه» است. پیش از راه‌اندازی آن را با متن واقعی جایگزین کنید.
         </p>
       ) : null}
-      {/* key = version: after a conflict, "load the new version" refreshes the page and the form remounts with the stored
-          values. The editor's own save does not refresh (the form keeps the new version itself), so its message stays. */}
-      <SettingsForm key={current?.version ?? 0} version={current?.version} initial={current?.values ?? BLANK} />
+      {/* No key: an action that expires a cache tag makes Next re-render this page, and a key tied to the version would
+          remount the form and drop its "saved" message. The form keeps the version of its own saves; after a conflict
+          it reloads the whole page to get the other editor's values. */}
+      <SettingsForm version={current?.version} initial={current?.values ?? BLANK} />
     </div>
   );
 }
