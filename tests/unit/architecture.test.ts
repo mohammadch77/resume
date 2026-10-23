@@ -117,3 +117,23 @@ describe("public landing rules", () => {
     expect(siteFiles.filter((f) => /<img[\s>]/.test(read(f))).map(rel)).toEqual(["components/site/responsive-picture.tsx"]);
   });
 });
+
+describe("the landing's browser bundle stays small", () => {
+  const rel = (f: string) => path.relative(ROOT, f).replaceAll("\\", "/");
+  const clientFiles = files.filter((f) => /^(components\/site\/|components\/ds\/)/.test(rel(f)) && /^\s*["']use client["']/m.test(readFileSync(f, "utf8").slice(0, 200)));
+  // These pull a validation library, the ORM or server-only content code into the browser (zod alone was ~30 KB gzip, measured).
+  const FORBIDDEN = /from "(zod|drizzle-orm[^"]*|pg|@\/lib\/db\/[^"]*|@\/lib\/validation\/[^"]*|@\/lib\/leads\/submit|@\/lib\/leads\/notify|@\/lib\/content\/[^"]*|@\/lib\/env|@\/lib\/auth\/[^"]*|@\/lib\/admin\/[^"]*)"/;
+
+  it("finds the client components of the public site", () => {
+    expect(clientFiles.map(rel)).toEqual(expect.arrayContaining(["components/site/work-explorer.tsx", "components/site/contact-form.tsx", "components/ds/modal.tsx"]));
+  });
+
+  it("no client component imports zod, the database layer, validation schemas or server content code", () => {
+    const offenders = clientFiles.map((f) => [rel(f), FORBIDDEN.exec(readFileSync(f, "utf8"))?.[1]] as const).filter(([, hit]) => hit);
+    expect(offenders).toEqual([]);
+  });
+
+  it("the contact form's state module has no imports at all", () => {
+    expect(readFileSync(path.join(ROOT, "lib/leads/state.ts"), "utf8")).not.toMatch(/^\s*import\s/m);
+  });
+});

@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   reactCompiler: true,
   poweredByHeader: false,
+
   turbopack: {
     rules: {
       "*.css": {

@@ -3,6 +3,7 @@ import { isAllowedOrigin } from "@/lib/auth/request";
 import { normalizeDigits } from "@/lib/date/jalali-input";
 import type { Db } from "@/lib/db/client";
 import { leads } from "@/lib/db/schema";
+import type { ContactField, ContactState } from "./state";
 
 /** Shortest time a person needs to read and fill three fields; faster than this is a script. */
 export const MIN_FILL_MS = 3_000;
@@ -10,16 +11,7 @@ export const MIN_FILL_MS = 3_000;
 export const MAX_FILL_AGE_MS = 6 * 60 * 60 * 1000;
 export const CONTACT_LIMITS = { perIp: { max: 5, windowMs: 10 * 60_000 }, global: { max: 120, windowMs: 10 * 60_000 } } as const;
 
-export type ContactField = "name" | "phone" | "message";
-export type ContactState = {
-  status: "idle" | "sent" | "error";
-  /** A message for the whole form (rate limit, server problem). */
-  message?: string;
-  fieldErrors?: Partial<Record<ContactField, string>>;
-  /** What the visitor typed, so a failed submit does not empty the form. */
-  values?: Record<ContactField, string>;
-};
-export const IDLE: ContactState = { status: "idle" };
+export { IDLE, type ContactField, type ContactState } from "./state";
 
 /** 09121234567, ۰۹۱۲۱۲۳۴۵۶۷, +98 912 123 4567, 0098-912-..., 9121234567 -> 09121234567; anything else -> input unchanged. */
 export function normalizePhone(raw: string): string {

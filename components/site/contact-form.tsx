@@ -4,7 +4,7 @@ import { useActionState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { Button, Field, Icon } from "@/components/ds";
 import { submitContactAction } from "@/app/(site)/contact/actions";
-import { IDLE, type ContactState } from "@/lib/leads/submit";
+import { IDLE, type ContactState } from "@/lib/leads/state";
 
 function Submit({ label }: { label: string }) {
   const { pending } = useFormStatus();
