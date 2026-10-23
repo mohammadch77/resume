@@ -39,7 +39,7 @@ export function MediaPicker({ name, label, options, value, onChange, noneLabel, 
             ) : (
               <span className="flex size-full items-center justify-center text-xs">{o.kind === "video" ? "ویدیو" : "—"}</span>
             )}
-            {o.alt ? null : <span className="absolute inset-x-0 bottom-0 bg-background/90 px-1 text-[10px] text-destructive">بدون alt</span>}
+            {o.alt ? null : <span className="absolute inset-x-0 bottom-0 bg-background/90 px-1 text-caption text-destructive">بدون alt</span>}
           </label>
         ))}
       </div>

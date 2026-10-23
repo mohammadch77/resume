@@ -1,23 +1,6 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { preload } from "react-dom";
 import "./globals.css";
-
-const sans = localFont({
-  src: [
-    { path: "../public/fonts/Vazirmatn-UI-FD-Regular.woff2", weight: "400", style: "normal" },
-    { path: "../public/fonts/Vazirmatn-UI-FD-SemiBold.woff2", weight: "600", style: "normal" },
-  ],
-  variable: "--font-sans",
-  display: "swap",
-  preload: true,
-});
-
-const display = localFont({
-  src: [{ path: "../public/fonts/Estedad-ExtraBold.woff2", weight: "800", style: "normal" }],
-  variable: "--font-display",
-  display: "swap",
-  preload: true,
-});
 
 export const metadata: Metadata = {
   title: "Grin Web",
@@ -25,8 +8,12 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  // The @font-face rules live in tokens.css (generated from the design system). Only the two faces every page needs
+  // are preloaded: Vazirmatn UI FD Regular (body) and Estedad ExtraBold (display). SemiBold loads on demand.
+  preload("/fonts/Vazirmatn-UI-FD-Regular.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
+  preload("/fonts/Estedad-ExtraBold.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
   return (
-    <html lang="fa" dir="rtl" className={`${sans.variable} ${display.variable} h-full antialiased`}>
+    <html lang="fa" dir="rtl" className="h-full antialiased">
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

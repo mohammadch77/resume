@@ -1,14 +1,16 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "../design/tokens/colors.css";
+@import "./tokens.css";
+@import "./theme.css";
+@import "../design/components/bundle.css" layer(components);
 
-@custom-variant dark (&:is(.dark *));
+/* The design system switches themes with [data-theme="dark"] (on <html> or any wrapper); Tailwind's dark: follows it. */
+@custom-variant dark (&:is([data-theme="dark"] *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -29,7 +31,9 @@
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
+  /* shadcn's "accent" (menu hover) is lapis-tint. It must not be the --accent variable: the design system already
+     defines --accent as the lapis brand colour (tokens.css) and the two would collide. */
+  --color-accent: var(--color-lapis-tint);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -40,8 +44,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  /* --radius-sm / --radius-md / --radius-pill come from the design tokens (theme.css) */
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
@@ -50,7 +53,7 @@
 }
 
 :root {
-  /* shadcn semantic variables -> Grin Web design tokens (design/tokens/colors.css). No raw colours here. */
+  /* shadcn semantic variables -> Grin Web design tokens (tokens.css). No raw colours here. */
   --background: var(--color-paper);
   --foreground: var(--color-ink);
   --card: var(--color-raised);
@@ -63,7 +66,6 @@
   --secondary-foreground: var(--color-ink);
   --muted: var(--color-sunken);
   --muted-foreground: var(--color-ink-muted);
-  --accent: var(--color-lapis-tint);
   --accent-foreground: var(--color-ink);
   --destructive: var(--color-danger);
   --border: var(--color-line);

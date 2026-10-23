@@ -44,7 +44,9 @@ test.describe("media library", () => {
     const photo = await makePhoto(1600, 1000, { seed: Date.now() % 100000 });
     await page.locator("#images").setInputFiles({ name: "نمونه.jpg", mimeType: "image/jpeg", buffer: photo });
     const card = page.getByTestId("media-card").first();
-    await expect(card).toBeVisible();
+    // sharp re-encodes a photo into AVIF, WebP and JPEG at several widths before the card can appear; on a loaded
+    // 8 GB machine that alone can pass the default 5 s (it failed twice in full runs).
+    await expect(card).toBeVisible({ timeout: 30_000 });
     await expect(card.getByText("متن جایگزین ندارد؛ برای انتشار لازم است")).toBeVisible();
     await expect(card.getByText("استفاده نشده")).toBeVisible();
 
@@ -80,7 +82,9 @@ test.describe("media library", () => {
     const photo = await makePhoto(800, 500, { seed: (Date.now() + 7) % 100000 });
     await page.locator("#images").setInputFiles({ name: "used.jpg", mimeType: "image/jpeg", buffer: photo });
     const card = page.getByTestId("media-card").first();
-    await expect(card).toBeVisible();
+    // sharp re-encodes a photo into AVIF, WebP and JPEG at several widths before the card can appear; on a loaded
+    // 8 GB machine that alone can pass the default 5 s (it failed twice in full runs).
+    await expect(card).toBeVisible({ timeout: 30_000 });
 
     const { withDb } = await import("./helpers");
     await withDb(async (db) => {
