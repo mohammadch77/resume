@@ -3,7 +3,8 @@ import type { Db } from "@/lib/db/client";
 import { clients, industries, projectMedia, projectMetrics, projects, projectServices, projectTech, testimonials } from "@/lib/db/schema";
 import type { Tx } from "@/lib/db/with-actor";
 import { blankToNull } from "@/lib/validation/common";
-import { formatJalaliInput, parseJalaliInput, type ProjectFormValues } from "@/lib/validation/project";
+import { formatJalaliInput, parseJalaliInput } from "@/lib/date/jalali-input";
+import type { ProjectFormValues } from "@/lib/validation/project";
 import { ConflictError, expectOne } from "./outcome";
 import { refuseSampleContent } from "./sample-content";
 

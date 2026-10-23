@@ -5,7 +5,7 @@ import { createProject, deleteProject, getProject, listProjects, moveProject, se
 import type { Db } from "@/lib/db/client";
 import * as schema from "@/lib/db/schema";
 import { withActor } from "@/lib/db/with-actor";
-import { formatJalaliInput, parseJalaliInput, type ProjectFormValues } from "@/lib/validation/project";
+import type { ProjectFormValues } from "@/lib/validation/project";
 import { connect, mkIndustry, mkMedia, mkService, mkUser, uid } from "./helpers";
 
 const pools = connect();
@@ -28,18 +28,6 @@ async function fixture() {
   const run = <T>(fn: Parameters<typeof withActor<T>>[3]) => withActor(db, userId, null, fn);
   return { values, run, cover, second, service, userId, industryId };
 }
-
-describe("project form helpers", () => {
-  it("parses Shamsi input with Persian digits and rejects impossible dates", () => {
-    expect(parseJalaliInput("1404/01/01")).toBe("2025-03-21");
-    expect(parseJalaliInput("۱۴۰۴/۰۱/۰۱")).toBe("2025-03-21");
-    expect(parseJalaliInput("1404/12/30")).toBeNull(); // 1404 is not a leap year
-    expect(parseJalaliInput("1403/12/30")).toBe("2025-03-20");
-    expect(parseJalaliInput("hello")).toBeNull();
-    expect(formatJalaliInput("2025-03-21")).toBe("1404/01/01");
-    expect(formatJalaliInput(null)).toBe("");
-  });
-});
 
 describe("projects admin", () => {
   it("round-trips every field, including relations, gallery order, metrics and the Shamsi date", async () => {

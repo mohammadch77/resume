@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { normalizeDigits, optionalHttpsUrl, optionalText, requiredText } from "./common";
+import { normalizeDigits } from "@/lib/date/jalali-input";
+import { optionalHttpsUrl, optionalText, requiredText } from "./common";
 
 /** The only social networks the database accepts (CHECK `gw_socials_valid`), with their Persian names. */
 export const SOCIAL_NETWORKS = {
