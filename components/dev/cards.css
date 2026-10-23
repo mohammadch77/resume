@@ -1,0 +1,52 @@
+/*
+ * The page chrome of the design export's *.card.html files, rebuilt from tokens, so each of our components can be
+ * screenshotted in the same setting and compared with the original (tests/e2e/design-system.spec.ts).
+ * 20px (the export's field/dark gaps) is written as space-4 + space-1.
+ */
+.ds-card {
+  box-sizing: border-box;
+  min-block-size: 100vh;
+  padding: var(--space-5);
+  background: var(--color-paper);
+}
+.ds-card--sunken {
+  background: var(--color-sunken);
+}
+.ds-card--bare {
+  padding: 0;
+}
+.ds-card .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+.ds-card .stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.ds-card .dark {
+  padding: var(--space-4) calc(var(--space-4) + var(--space-1));
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+.ds-card .grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--space-4) + var(--space-1)) var(--space-5);
+}
+.ds-card .two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+}
+.ds-card .three {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+.ds-card .gw-nav {
+  position: relative;
+  inset: auto;
+}

@@ -22,6 +22,8 @@ export default defineConfig({
       SITE_URL: `http://localhost:${PORT}`,
       LOGIN_RATE_LIMIT_PER_MIN: "1000",
       UPLOADS_DIR: ".e2e-uploads",
+      // /dev/design-system and its comparison cards exist only with this flag (never set in a deployment)
+      ENABLE_DEV_PAGES: "true",
     },
   },
 });
