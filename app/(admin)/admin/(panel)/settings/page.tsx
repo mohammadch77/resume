@@ -35,7 +35,8 @@ export default async function SettingsPage() {
           متن صفحه‌ی اصلی هنوز «نمونه» است. پیش از راه‌اندازی آن را با متن واقعی جایگزین کنید.
         </p>
       ) : null}
-      {/* key = version: after a save or a conflict reload the form remounts with the stored values */}
+      {/* key = version: after a conflict, "load the new version" refreshes the page and the form remounts with the stored
+          values. The editor's own save does not refresh (the form keeps the new version itself), so its message stays. */}
       <SettingsForm key={current?.version ?? 0} version={current?.version} initial={current?.values ?? BLANK} />
     </div>
   );

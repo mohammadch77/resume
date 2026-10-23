@@ -64,7 +64,7 @@ test.describe("admin modules (UI)", () => {
     await expect(row.getByText("رضایت مشتری برای انتشار تأیید نشده است.")).toBeVisible();
 
     await row.getByRole("link", { name: `گوینده ${t}` }).click();
-    await page.getByLabel(/رضایت مشتری برای انتشار این نظر/).check();
+    await page.getByRole("checkbox", { name: /رضایت مشتری برای انتشار این نظر/ }).check();
     await page.getByRole("button", { name: "ذخیره‌ی تغییرات" }).click();
     await expect(page).toHaveURL(/\/admin\/testimonials$/);
     await page.getByTestId("testimonial-row").filter({ hasText: `گوینده ${t}` }).getByRole("button", { name: "انتشار", exact: true }).click();

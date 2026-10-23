@@ -23,7 +23,7 @@ export default async function EditUserPage({ params }: PageProps<"/admin/users/[
         <h1 className="text-2xl font-semibold">{user.displayName}</h1>
         <p dir="ltr" className="text-start text-sm text-muted-foreground">{user.email}</p>
       </div>
-      <EditUserForm key={`${user.displayName}-${user.role}`} id={user.id} initial={{ displayName: user.displayName, role: user.role }} selfEdit={user.id === me.id} />
+      <EditUserForm id={user.id} initial={{ displayName: user.displayName, role: user.role }} selfEdit={user.id === me.id} />
       <UserSecurity id={user.id} locked={user.locked} isSelf={user.id === me.id} />
     </div>
   );

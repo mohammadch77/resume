@@ -23,8 +23,9 @@ export function SettingsForm({ version, initial }: Props) {
   const [outcome, setOutcome] = useState<Outcome<unknown> | null>(null);
   const [saved, setSaved] = useState(false);
   const [conflict, setConflict] = useState(false);
+  const [liveVersion, setLiveVersion] = useState(version);
   const form = useForm<SettingsFormValues>({ resolver: zodResolver(settingsFormSchema), defaultValues: initial });
-  const { register, handleSubmit, control, setError, formState } = form;
+  const { register, handleSubmit, control, setError, reset, formState } = form;
   const { errors, isDirty } = formState;
   const [heroTitle, heroSubtitle, cta, seoTitle, seoDescription] = useWatch({
     control,
@@ -35,7 +36,7 @@ export function SettingsForm({ version, initial }: Props) {
   const submit = handleSubmit((values) =>
     start(async () => {
       setSaved(false);
-      const r = await saveSettingsAction({ ...values, version });
+      const r = await saveSettingsAction({ ...values, version: liveVersion });
       if (!r.ok) {
         for (const [field, messages] of Object.entries(r.fieldErrors ?? {})) setError(field as keyof SettingsFormValues, { message: messages[0] });
         setOutcome({ kind: "failed", message: r.message });
@@ -45,7 +46,8 @@ export function SettingsForm({ version, initial }: Props) {
       setOutcome(r.data);
       if (r.data.kind === "ok") {
         setSaved(true);
-        router.refresh(); // new version; the page remounts the form with the stored values
+        setLiveVersion(r.data.value.version); // the next save must carry the version this one produced
+        reset(values); // clean again
       }
     }),
   );

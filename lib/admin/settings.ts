@@ -46,20 +46,21 @@ const columns = (v: SettingsFormValues) => ({
 });
 
 /**
- * Saves the singleton. `version` undefined means "the row does not exist yet" and creates it; if someone created it
+ * Saves the singleton and returns the new version. `version` undefined means "the row does not exist yet" and creates it; if someone created it
  * in the meantime (or the version is stale) the caller gets a ConflictError instead of an overwrite.
  */
-export async function saveSettings(tx: Tx, version: number | undefined, values: SettingsFormValues): Promise<void> {
+export async function saveSettings(tx: Tx, version: number | undefined, values: SettingsFormValues): Promise<number> {
   if (version === undefined) {
     const created = await tx.insert(siteSettings).values({ id: 1, ...columns(values) }).onConflictDoNothing().returning({ id: siteSettings.id });
     if (created.length !== 1) throw new ConflictError();
-    return;
+    return 1;
   }
-  expectOne(
+  const row = expectOne(
     await tx
       .update(siteSettings)
       .set({ ...columns(values), version: sql`${siteSettings.version} + 1` })
       .where(and(eq(siteSettings.id, 1), eq(siteSettings.version, version)))
-      .returning({ id: siteSettings.id }),
+      .returning({ version: siteSettings.version }),
   );
+  return row.version;
 }

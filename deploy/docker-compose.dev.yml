@@ -1,0 +1,26 @@
+# Local development database only (the app itself runs on your machine with `npm run dev`).
+# Same least-privilege roles as production: deploy/postgres/init creates `migrator` (DDL) and `app_rw` (DML only).
+# The passwords below are throwaway values for this loopback-only container; never reuse them anywhere else.
+name: grinweb-dev
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: grinweb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dev-postgres-only
+      APP_RW_PASSWORD: dev-app-rw
+      MIGRATOR_PASSWORD: dev-migrator
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - pgdata-dev:/var/lib/postgresql
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d grinweb"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pgdata-dev:

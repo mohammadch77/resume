@@ -49,8 +49,8 @@ export default async function LeadPage({ params }: PageProps<"/admin/leads/[id]"
         <h2 id="ld-message" className="mb-2 text-lg font-semibold">پیام</h2>
         <p className="whitespace-pre-wrap rounded-lg border p-4 text-sm">{lead.message}</p>
       </section>
-      {/* key = updatedAt: after a save the form remounts with what is stored */}
-      <LeadForm key={lead.updatedAt.getTime()} id={lead.id} initial={{ status: lead.status, internalNotes: lead.internalNotes ?? "" }} />
+      {/* no key: the form resets itself after a save, so its "saved" message is not lost to a remount */}
+      <LeadForm id={lead.id} initial={{ status: lead.status, internalNotes: lead.internalNotes ?? "" }} />
     </div>
   );
 }
