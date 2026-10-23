@@ -12,6 +12,11 @@ const hostPart = BASE.replace(/^postgres:\/\/[^@]*@/, "");
 
 async function main() {
   rmSync(".e2e-uploads", { recursive: true, force: true });
+  // Next keeps unstable_cache entries on disk, across builds and restarts. This script rewrites the content with plain
+  // SQL (which cannot expire a tag), so a cache from the previous run would serve media paths that no longer exist.
+  // The rendered ISR pages live on disk too (.next/server/route-cache) and `next build` does not remove them.
+  rmSync(".next/cache/fetch-cache", { recursive: true, force: true });
+  rmSync(".next/server/route-cache", { recursive: true, force: true });
   const admin = new pg.Client({ connectionString: `${BASE}/postgres` });
   await admin.connect();
   await admin.query(`DO $$ BEGIN

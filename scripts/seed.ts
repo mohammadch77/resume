@@ -79,7 +79,7 @@ async function main() {
     // This script writes with plain SQL, outside any Server Action, so it cannot expire Next's content cache
     // (updateTag only works inside a Server Action). A running app keeps serving the old pages, including cached 404s,
     // until the tags expire or `revalidate` (3600 s) passes. Restart the app after seeding to start with an empty cache.
-    console.log("NOTE: restart the app now; a running server keeps its cached public pages until its cache is cleared.");
+    console.log("NOTE: restarting is NOT enough. Next keeps its data cache on disk: delete .next/cache/fetch-cache and .next/server/route-cache (or recreate the container) and restart, or the old pages keep being served.");
   } finally {
     await pool.end();
   }

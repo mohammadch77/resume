@@ -39,7 +39,7 @@ async function main() {
     }
     // Plain SQL outside a Server Action cannot expire Next's content cache (updateTag only works inside one).
     // The owner account is not public content, but the same rule applies to every script that writes directly.
-    console.log("NOTE: if the app is already running, restart it so no stale cached pages are served.");
+    console.log("NOTE: if the app has run before, delete .next/cache/fetch-cache and .next/server/route-cache (or recreate the container) and restart it; Next keeps its data cache and its rendered pages on disk, so a restart alone serves stale pages.");
   } finally {
     await pool.end();
   }

@@ -29,7 +29,7 @@ describe("seed:owner", () => {
   it("creates the owner from the environment, never prints the password, reminds about the cache", async () => {
     const out = await seedOwner();
     expect(out.stdout + out.stderr).not.toContain("a-long-test-password-1");
-    expect(out.stdout).toContain("restart it");
+    expect(out.stdout).toContain(".next/cache/fetch-cache");
     const owner = await db.su.query(`SELECT role, password_hash, is_active FROM users WHERE email = 'seed-owner@example.com'`);
     expect(owner.rows[0]).toMatchObject({ role: "owner", is_active: true });
     expect(owner.rows[0].password_hash).toMatch(/^\$argon2id\$/);
@@ -54,7 +54,7 @@ describe("sample seed (db:seed)", () => {
   it("creates settings, industries, services and draft projects, all labelled «نمونه», and no user", async () => {
     const usersBefore = (await db.su.query(`SELECT count(*)::int AS n FROM users`)).rows[0].n;
     const out = await seed();
-    expect(out.stdout).toContain("restart the app");
+    expect(out.stdout).toContain(".next/cache/fetch-cache");
     expect((await db.su.query(`SELECT count(*)::int AS n FROM users`)).rows[0].n).toBe(usersBefore);
 
     expect((await db.su.query(`SELECT count(*)::int AS n FROM site_settings`)).rows[0].n).toBe(1);

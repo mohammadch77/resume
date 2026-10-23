@@ -81,10 +81,9 @@ test.describe("media library", () => {
     await page.goto("/admin/media");
     const photo = await makePhoto(800, 500, { seed: (Date.now() + 7) % 100000 });
     await page.locator("#images").setInputFiles({ name: "used.jpg", mimeType: "image/jpeg", buffer: photo });
-    const card = page.getByTestId("media-card").first();
-    // sharp re-encodes a photo into AVIF, WebP and JPEG at several widths before the card can appear; on a loaded
-    // 8 GB machine that alone can pass the default 5 s (it failed twice in full runs).
-    await expect(card).toBeVisible({ timeout: 30_000 });
+    // The library may already hold other images (the landing fixture), so "a card is visible" proves nothing here:
+    // wait for THIS file's confirmation. sharp re-encodes it into AVIF, WebP and JPEG first, which can pass 5 s on a loaded machine.
+    await expect(page.getByRole("listitem").filter({ hasText: "used.jpg" }).getByText("بارگذاری شد.")).toBeVisible({ timeout: 30_000 });
 
     const { withDb } = await import("./helpers");
     await withDb(async (db) => {
@@ -99,7 +98,8 @@ test.describe("media library", () => {
     });
     await page.reload();
     const used = page.getByTestId("media-card").first();
-    await expect(used.getByText("در ۱ جا استفاده شده")).toBeVisible();
+    // the list now renders every fixture image (AVIF/WebP pictures), so a reload on a loaded machine can pass 5 s
+    await expect(used.getByText("در ۱ جا استفاده شده")).toBeVisible({ timeout: 20_000 });
     page.once("dialog", (d) => d.accept());
     await used.getByRole("button", { name: "حذف" }).click();
     await expect(used.getByRole("alert")).toHaveText(MEDIA_ERRORS.in_use);

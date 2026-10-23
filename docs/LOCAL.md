@@ -41,7 +41,7 @@ Needs Node 24 (the version the Dockerfile uses) and Docker (only for the databas
 ## Notes
 
 - Sample content is never part of a migration. It cannot be published until its «نمونه» text is replaced.
-- After `seed:owner`, `db:seed` or any direct SQL, restart `npm run dev`: those scripts cannot expire Next's content
+- After `seed:owner`, `db:seed` or any direct SQL, delete `.next/cache/fetch-cache` and `.next/server/route-cache` and restart `npm run dev` (a restart alone is not enough: the cache is on disk): those scripts cannot expire Next's content
   cache, so a running server may keep serving old public pages (see `docs/BACKLOG.md`).
 - Reset everything: `docker compose -f deploy/docker-compose.dev.yml down -v` (deletes the dev database).
 - Tests use a separate throwaway database (`npm run test:db`, `npm run test:e2e`); they never touch this one.

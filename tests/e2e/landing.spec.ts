@@ -42,6 +42,23 @@ test.describe("landing content", () => {
     await expect(page.locator("#top img[fetchpriority='high']")).toHaveCount(1); // the one hero image that may be the LCP
   });
 
+  test("every image on the page actually loads (a stale content cache once served 404 cover paths)", async ({ page }) => {
+    const failed: string[] = [];
+    page.on("response", (r) => r.url().includes("/uploads/") && r.status() >= 400 && failed.push(`${r.status()} ${r.url()}`));
+    await page.goto("/");
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += 500) {
+        window.scrollTo(0, y);
+        await new Promise((r) => setTimeout(r, 40));
+      }
+    });
+    await page.waitForLoadState("networkidle");
+    const broken = await page.$$eval("img", (imgs) => imgs.filter((i) => i.complete && i.naturalWidth === 0).map((i) => i.currentSrc || i.src));
+    expect(failed).toEqual([]);
+    expect(broken).toEqual([]);
+    expect(await page.locator("main img").count()).toBeGreaterThanOrEqual(8); // 2 hero + 4 cards + 2 client logos
+  });
+
   test("the hero and the cards never render a <video>; a video exists only inside the case-study gallery, behind a poster", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("video")).toHaveCount(0);

@@ -7,7 +7,8 @@ import { RateLimiter } from "@/lib/auth/rate-limit";
 import { requestMeta, siteOrigin } from "@/lib/auth/request";
 import { getDb } from "@/lib/db/client";
 import { notifyLead } from "@/lib/leads/notify";
-import { type ContactState, submitContact } from "@/lib/leads/submit";
+import type { ContactState } from "@/lib/leads/state";
+import { submitContact } from "@/lib/leads/submit";
 
 // One limiter per rule (in memory, per instance). Nginx limit_req is the first layer in production (Phase 8).
 const limiters = new Map<string, RateLimiter>();
