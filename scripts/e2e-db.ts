@@ -2,6 +2,7 @@ import { hash } from "@node-rs/argon2";
 import { rmSync } from "node:fs";
 import pg from "pg";
 import { E2E_PASSWORD } from "../tests/e2e/constants";
+import { seedLandingFixture } from "./landing-fixture";
 import { migrate } from "./migrate";
 
 /** Recreates the `gw_e2e` database with the owner and editor accounts the Playwright tests sign in with. */
@@ -43,6 +44,7 @@ async function main() {
      VALUES (1, 'Grin Web', 'عنوان', 'زیرعنوان', 'درخواست مشاوره رایگان')`,
   );
   await db.end();
+  await seedLandingFixture(migratorUrl, ".e2e-uploads");
   console.log("e2e database ready");
 }
 
