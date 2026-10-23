@@ -35,11 +35,11 @@ describe("server actions", () => {
     });
   }
 
-  it("public actions are limited to the login form (add new ones here deliberately)", () => {
+  it("public actions are limited to the login form and the contact form (add new ones here deliberately)", () => {
     const publicFiles = actionFiles
       .filter((f) => readFileSync(f, "utf8").includes("// public-action"))
       .map((f) => path.relative(ROOT, f).replaceAll("\\", "/"));
-    expect(publicFiles).toEqual(["app/(admin)/admin/login/actions.ts"]);
+    expect(publicFiles.sort()).toEqual(["app/(admin)/admin/login/actions.ts", "app/(site)/contact/actions.ts"]);
   });
 });
 
@@ -79,5 +79,41 @@ describe("admin pages", () => {
   it("the panel layout requires a role", () => {
     const layout = readFileSync(path.join(ROOT, "app/(admin)/admin/(panel)/layout.tsx"), "utf8");
     expect(layout).toMatch(/requireRole\(/);
+  });
+});
+
+describe("public landing rules", () => {
+  const rel = (f: string) => path.relative(ROOT, f).replaceAll("\\", "/");
+  const siteFiles = files.filter((f) => /^(components\/site\/|app\/\(site\)\/)/.test(rel(f)));
+  const read = (f: string) => readFileSync(f, "utf8");
+
+  it("finds the site files", () => {
+    expect(siteFiles.length).toBeGreaterThan(10);
+  });
+
+  it("a <video> is rendered only by gallery-video.tsx, and only the case study imports it (never the hero, cards or sections)", () => {
+    const withVideoTag = siteFiles.filter((f) => /^\s*<video[\s>]/m.test(read(f))).map(rel);
+    expect(withVideoTag).toEqual(["components/site/gallery-video.tsx"]);
+    const importers = siteFiles.filter((f) => /gallery-video/.test(read(f)) && !rel(f).endsWith("gallery-video.tsx")).map(rel);
+    expect(importers).toEqual(["components/site/case-study.tsx"]);
+    // and nothing in the design system renders one either
+    expect(files.filter((f) => rel(f).startsWith("components/ds/") && /^\s*<video[\s>]/m.test(read(f)))).toEqual([]);
+  });
+
+  it("public code never imports admin code", () => {
+    const offenders = siteFiles.filter((f) => /from "@\/(components\/admin|lib\/admin|app\/\(admin\))/.test(read(f))).map(rel);
+    expect(offenders).toEqual([]);
+  });
+
+  it("the «۱ از ۴» strip progress is site composition (components/site), not a design-system component", () => {
+    expect(siteFiles.map(rel)).toContain("components/site/strip-progress.tsx");
+    expect(files.filter((f) => rel(f).startsWith("components/ds/") && /StripProgress|lk-progress/.test(read(f)))).toEqual([]);
+  });
+
+  it("covers go through ResponsivePicture; CoverArt appears in the site only as the design system's own fallback", () => {
+    const usesCoverArt = siteFiles.filter((f) => /<CoverArt/.test(read(f))).map(rel);
+    // hero art and the /work page fall back to CoverArt when a project has no image; nothing else may
+    expect(usesCoverArt.sort()).toEqual(["app/(site)/work/[slug]/page.tsx", "components/site/hero.tsx"]);
+    expect(siteFiles.filter((f) => /<img[\s>]/.test(read(f))).map(rel)).toEqual(["components/site/responsive-picture.tsx"]);
   });
 });
