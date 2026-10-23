@@ -1,14 +1,6 @@
 import { z } from "zod";
 import { isoDateToJalali, isValidJalali, jalaliToIsoDate } from "@/lib/date/jalali";
-import { optionalHttpsUrl, optionalText, optionalUuid, requiredText, slugSchema } from "./common";
-
-const PERSIAN_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
-const ARABIC_DIGITS = "٠١٢٣٤٥٦٧٨٩";
-
-/** Persian / Arabic-Indic digits to ASCII, so a date typed on a Persian keyboard parses. */
-export function normalizeDigits(value: string): string {
-  return value.replace(/[۰-۹٠-٩]/g, (d) => String(Math.max(PERSIAN_DIGITS.indexOf(d), ARABIC_DIGITS.indexOf(d))));
-}
+import { normalizeDigits, optionalHttpsUrl, optionalText, optionalUuid, requiredText, slugSchema } from "./common";
 
 /** "1404/05/12" (Persian digits and `-` accepted) to the ISO Gregorian date Postgres stores, or null when invalid. */
 export function parseJalaliInput(value: string): string | null {

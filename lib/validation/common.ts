@@ -34,3 +34,11 @@ export const blankToNull = (v: string): string | null => (v.trim() === "" ? null
 
 /** Icons offered for services (Lucide names, 1.5px stroke). Keep in sync with the icon map used on the landing (Phase 5). */
 export const SERVICE_ICONS = ["globe", "shopping-cart", "code", "life-buoy", "smartphone", "database", "shield-check", "layout-dashboard", "workflow", "search", "gauge", "palette"] as const;
+
+const PERSIAN_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
+const ARABIC_DIGITS = "٠١٢٣٤٥٦٧٨٩";
+
+/** Persian / Arabic-Indic digits to ASCII, so a date typed on a Persian keyboard parses. */
+export function normalizeDigits(value: string): string {
+  return value.replace(/[۰-۹٠-٩]/g, (d) => String(Math.max(PERSIAN_DIGITS.indexOf(d), ARABIC_DIGITS.indexOf(d))));
+}
