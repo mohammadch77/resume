@@ -1,21 +1,28 @@
-import { asc, isNull } from "drizzle-orm";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { UserActiveToggle } from "@/components/admin/user-active-toggle";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { listUsers } from "@/lib/admin/users";
 import { requireRole } from "@/lib/auth/require-role";
 import { getDb } from "@/lib/db/client";
-import { users } from "@/lib/db/schema";
 import { formatDateTime } from "@/lib/format";
+import { USER_ROLE_LABEL } from "@/lib/validation/user";
 
 export const metadata: Metadata = { title: "کاربران" };
 
 export default async function UsersPage() {
   const me = await requireRole("owner");
-  const rows = await getDb().select().from(users).where(isNull(users.deletedAt)).orderBy(asc(users.createdAt));
+  const rows = await listUsers(getDb());
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold">کاربران</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-semibold">کاربران</h1>
+        <Link href="/admin/users/new" className={buttonVariants()}>
+          کاربر جدید
+        </Link>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -28,14 +35,19 @@ export default async function UsersPage() {
         </TableHeader>
         <TableBody>
           {rows.map((u) => (
-            <TableRow key={u.id}>
-              <TableCell>{u.displayName}</TableCell>
+            <TableRow key={u.id} data-testid="user-row">
+              <TableCell>
+                <Link href={`/admin/users/${u.id}`} className="hover:underline">
+                  {u.displayName}
+                </Link>
+              </TableCell>
               <TableCell dir="ltr">{u.email}</TableCell>
-              <TableCell>{u.role === "owner" ? "مالک" : "ویراستار"}</TableCell>
+              <TableCell>{USER_ROLE_LABEL[u.role]}</TableCell>
               <TableCell>{u.lastLoginAt ? formatDateTime(u.lastLoginAt) : "—"}</TableCell>
               <TableCell>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Badge variant={u.isActive ? "secondary" : "outline"}>{u.isActive ? "فعال" : "غیرفعال"}</Badge>
+                  {u.locked ? <Badge variant="outline">قفل‌شده</Badge> : null}
                   {u.id !== me.id ? <UserActiveToggle userId={u.id} active={u.isActive} /> : null}
                 </div>
               </TableCell>
