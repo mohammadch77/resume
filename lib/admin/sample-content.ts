@@ -1,10 +1,8 @@
+import { isSampleText } from "@/lib/content/sample";
 import { PUBLISH_GATE_REASONS } from "@/lib/db/errors";
 import { BlockedError } from "./outcome";
 
-/** The label scripts/seed.ts puts at the start of every sample title and summary. */
-export const SAMPLE_LABEL = "نمونه";
-
-export const isSampleText = (text: string): boolean => text.trim().startsWith(SAMPLE_LABEL);
+export { isSampleText, SAMPLE_LABEL } from "@/lib/content/sample";
 
 /**
  * Sample content must be replaced before it goes public (CLAUDE.md section 6). Sample rows have no cover or service,

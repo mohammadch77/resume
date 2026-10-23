@@ -21,16 +21,19 @@ export type ProjectCardProps = {
   headingLevel?: 2 | 3 | 4;
   className?: string;
   style?: React.CSSProperties;
+  /**
+   * Extension of the export (additive): the cover as a node, e.g. the site's <ResponsivePicture>. When set it replaces
+   * CoverArt, which stays the fallback for a project without an image.
+   */
+  cover?: React.ReactNode;
 };
 
 /** Portfolio card: 4:3 square cover framed by four crop-mark ticks, tags, title, summary, quiet CTA that opens the case-study modal. */
-export function ProjectCard({ title, summary, tags = [], art = 1, image, alt, sample = true, ctaLabel = "مشاهده‌ی جزئیات پروژه", onOpen, href, headingLevel = 3, className = "", style }: ProjectCardProps) {
+export function ProjectCard({ title, summary, tags = [], art = 1, image, alt, sample = true, ctaLabel = "مشاهده‌ی جزئیات پروژه", onOpen, href, headingLevel = 3, className = "", style, cover }: ProjectCardProps) {
   const Heading = `h${headingLevel}` as const;
   return (
     <article className={["gw-project", className].filter(Boolean).join(" ")} style={style}>
-      <CropFrame>
-        <CoverArt art={art} image={image} alt={alt} sample={sample} />
-      </CropFrame>
+      <CropFrame>{cover ? <div className="gw-cover">{cover}</div> : <CoverArt art={art} image={image} alt={alt} sample={sample} />}</CropFrame>
       <div className="gw-project__body">
         {tags.length > 0 && (
           <div className="gw-chip-row">

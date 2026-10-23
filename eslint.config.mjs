@@ -10,14 +10,25 @@ import nextTs from "eslint-config-next/typescript";
  * (their <Button> is a different component with different props), so these syntax rules do not apply there.
  */
 const adherence = JSON.parse(readFileSync(new URL("./design/_adherence.oxlintrc.json", import.meta.url), "utf8")).rules;
-const asError = (rule) => ["error", ...rule.slice(1)];
+/**
+ * Our ports add two optional slots to the export's components (documented in components/ds): `cover` (ProjectCard and
+ * Modal: the cover as a node, so the site can pass <ResponsivePicture>) and `extra` (Modal: results, gallery, live link).
+ * The export's prop whitelist for those two components is widened by exactly those names, nothing else.
+ */
+const WIDENED = { ProjectCard: ["cover"], Modal: ["cover", "extra"] };
+const withSlots = (entries) =>
+  entries.map((entry) => {
+    const name = /name\.name='(\w+)'\] > JSXAttribute > JSXIdentifier/.exec(entry.selector ?? "")?.[1];
+    const extra = name && WIDENED[name];
+    return extra ? { ...entry, selector: entry.selector.replace("|key|ref|", `|key|ref|${extra.join("|")}|`), message: entry.message.replace(/\.$/, `, ${extra.join(", ")}.`) } : entry;
+  });
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
     files: ["app/(site)/**/*.{ts,tsx}", "app/dev/**/*.{ts,tsx}", "components/site/**/*.{ts,tsx}", "components/dev/**/*.{ts,tsx}"],
-    rules: { "no-restricted-syntax": asError(adherence["no-restricted-syntax"]) },
+    rules: { "no-restricted-syntax": ["error", ...withSlots(adherence["no-restricted-syntax"].slice(1))] },
   },
   {
     // The export says "import from index.js, not component internals"; ours is the barrel `@/components/ds`.

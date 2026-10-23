@@ -29,6 +29,10 @@ export type ModalProps = {
   /** Position the scrim inside the nearest positioned parent instead of the viewport (for previews/artboards). */
   contained?: boolean;
   className?: string;
+  /** Extension of the export (additive): the cover as a node (the site's <ResponsivePicture>); CoverArt stays the fallback. */
+  cover?: React.ReactNode;
+  /** Extension of the export (additive): extra case-study content (results, gallery, live link) between the columns and the actions. */
+  extra?: React.ReactNode;
 };
 
 const FOCUSABLE = 'a[href],button:not([disabled]),input,textarea,select,[tabindex]:not([tabindex="-1"])';
@@ -38,7 +42,7 @@ const FOCUSABLE = 'a[href],button:not([disabled]),input,textarea,select,[tabinde
  * secondary actions. Traps focus, closes on Escape and on a scrim click, locks page scroll while open and gives focus
  * back to what opened it.
  */
-export function Modal({ open = true, onClose, title, tags = [], art = 1, image, alt, sample = false, challenge, solution, outcome, labels, primaryLabel = "درخواست مشاوره رایگان", primaryHref, onPrimary, secondaryLabel = "بستن", onSecondary, contained = false, className = "" }: ModalProps) {
+export function Modal({ open = true, onClose, title, tags = [], art = 1, image, alt, sample = false, challenge, solution, outcome, labels, primaryLabel = "درخواست مشاوره رایگان", primaryHref, onPrimary, secondaryLabel = "بستن", onSecondary, contained = false, className = "", cover, extra }: ModalProps) {
   const ref = useRef<HTMLDivElement>(null);
   const L = { challenge: "چالش", solution: "راه‌حل", outcome: "نتیجه", ...labels };
   const titleId = `${useId().replace(/:/g, "")}-t`;
@@ -101,9 +105,7 @@ export function Modal({ open = true, onClose, title, tags = [], art = 1, image, 
           <Button variant="quiet" className="gw-modal__close" iconOnly="x" label="بستن" onClick={onClose} />
         </header>
         <div className="gw-modal__cover">
-          <CropFrame>
-            <CoverArt art={art} image={image} alt={alt} sample={sample} />
-          </CropFrame>
+          <CropFrame>{cover ? <div className="gw-cover">{cover}</div> : <CoverArt art={art} image={image} alt={alt} sample={sample} />}</CropFrame>
         </div>
         <div className="gw-modal__cols">
           <section className="gw-modal__col">
@@ -119,6 +121,7 @@ export function Modal({ open = true, onClose, title, tags = [], art = 1, image, 
             <p>{outcome}</p>
           </section>
         </div>
+        {extra}
         <footer className="gw-modal__actions">
           <Button href={primaryHref} onClick={onPrimary}>
             {primaryLabel}
