@@ -135,4 +135,12 @@ describe("projects admin", () => {
     expect(await f.run((tx) => deleteProject(tx, b, vb))).toEqual({ ok: true });
     expect(await getProject(db, b)).toBeNull();
   });
+
+  it("refuses to publish sample content even when cover and service are set", async () => {
+    const f = await fixture();
+    const id = await f.run((tx) => createProject(tx, f.values({ title: "نمونه · پروژه‌ی ۱" })));
+    const outcome = await f.run((tx) => guard(tx, (sp) => setProjectStatus(sp, id, 1, "published")));
+    expect(outcome).toEqual({ kind: "blocked", reasons: ["این محتوای «نمونه» است؛ ابتدا آن را با محتوای واقعی جایگزین کنید."] });
+    expect((await getProject(db, id))!.status).toBe("draft");
+  });
 });

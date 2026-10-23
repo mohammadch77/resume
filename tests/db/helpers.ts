@@ -43,7 +43,7 @@ export const FK_VIOLATION = "23503";
 export const RESTRICT_VIOLATION = "23001";
 export const NOT_NULL_VIOLATION = "23502";
 export const INSUFFICIENT_PRIVILEGE = "42501";
-export const E = { version: "GW001", transition: "GW002", gate: "GW003", appendOnly: "GW004", retention: "GW005" } as const;
+export const E = { version: "GW001", transition: "GW002", gate: "GW003", appendOnly: "GW004", retention: "GW005", lastOwner: "GW007", inUse: "GW008" } as const;
 
 // ---- fixtures (inserted with the superuser pool; triggers still fire) ----
 export async function mkUser(db: pg.Pool, role: "owner" | "editor" = "editor"): Promise<string> {

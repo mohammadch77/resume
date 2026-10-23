@@ -24,6 +24,13 @@ export class ConflictError extends Error {
   }
 }
 
+/** Thrown by a handler when the app itself (not a trigger) refuses to publish; `reasons` are Persian sentences. */
+export class BlockedError extends Error {
+  constructor(readonly reasons: string[]) {
+    super("blocked");
+  }
+}
+
 /** Expect exactly one row from an optimistic-lock UPDATE ... RETURNING, else raise the conflict. */
 export function expectOne<R>(rows: R[]): R {
   if (rows.length !== 1) throw new ConflictError();
@@ -40,6 +47,7 @@ export async function guard<T>(tx: Tx, fn: (sp: Tx) => Promise<T>): Promise<Outc
     return ok(await tx.transaction((sp) => fn(sp as unknown as Tx)));
   } catch (err) {
     if (err instanceof ConflictError) return { kind: "conflict" };
+    if (err instanceof BlockedError) return { kind: "blocked", reasons: err.reasons };
     const problem = describeDbError(err);
     if (problem) return problem;
     throw err;

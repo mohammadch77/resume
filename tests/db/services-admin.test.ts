@@ -81,4 +81,11 @@ describe("services admin", () => {
     expect(await run((tx) => deleteService(tx, id, 3))).toEqual({ ok: true });
     expect(await getService(db, id)).toBeNull();
   });
+
+  it("refuses to publish sample content (title or summary starting with «نمونه»)", async () => {
+    const id = await run((tx) => createService(tx, input({ title: "نمونه · سایت شرکتی" })));
+    const outcome = await run((tx) => guard(tx, (sp) => setServiceStatus(sp, id, 1, "published")));
+    expect(outcome).toEqual({ kind: "blocked", reasons: ["این محتوای «نمونه» است؛ ابتدا آن را با محتوای واقعی جایگزین کنید."] });
+    expect((await getService(db, id))?.status).toBe("draft");
+  });
 });

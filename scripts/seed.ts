@@ -1,4 +1,3 @@
-import { hash } from "@node-rs/argon2";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, isNull, and } from "drizzle-orm";
 import pg from "pg";
@@ -7,10 +6,13 @@ import * as s from "../lib/db/schema";
 
 const SAMPLE = "نمونه";
 
+/**
+ * Sample content for local development and demos (`npm run db:seed`). It is NOT part of any migration, because
+ * migrations also run in production. Everything here is a draft and carries the label «نمونه»; the first owner is
+ * created by `npm run seed:owner`, not here.
+ */
 const envSchema = z.object({
   MIGRATOR_DATABASE_URL: z.string().min(1),
-  OWNER_EMAIL: z.email(),
-  OWNER_PASSWORD: z.string().min(12),
   NODE_ENV: z.string().optional(),
 });
 
@@ -25,19 +27,6 @@ async function main() {
 
   try {
     await db.transaction(async (tx) => {
-      const existingOwner = await tx
-        .select({ id: s.users.id })
-        .from(s.users)
-        .where(and(eq(s.users.email, env.OWNER_EMAIL), isNull(s.users.deletedAt)));
-      if (existingOwner.length === 0) {
-        await tx.insert(s.users).values({
-          email: env.OWNER_EMAIL,
-          passwordHash: await hash(env.OWNER_PASSWORD),
-          displayName: "مدیر سایت",
-          role: "owner",
-        });
-      }
-
       await tx
         .insert(s.siteSettings)
         .values({
@@ -86,7 +75,7 @@ async function main() {
         }
       }
     });
-    console.log("Seed complete (all demo content is draft).");
+    console.log("Sample seed complete (all content is a draft labelled «نمونه»).");
     // This script writes with plain SQL, outside any Server Action, so it cannot expire Next's content cache
     // (updateTag only works inside a Server Action). A running app keeps serving the old pages, including cached 404s,
     // until the tags expire or `revalidate` (3600 s) passes. Restart the app after seeding to start with an empty cache.

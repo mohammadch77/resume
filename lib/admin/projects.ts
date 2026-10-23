@@ -5,6 +5,7 @@ import type { Tx } from "@/lib/db/with-actor";
 import { blankToNull } from "@/lib/validation/common";
 import { formatJalaliInput, parseJalaliInput, type ProjectFormValues } from "@/lib/validation/project";
 import { ConflictError, expectOne } from "./outcome";
+import { refuseSampleContent } from "./sample-content";
 
 export type ProjectStatus = "draft" | "published" | "archived";
 
@@ -137,6 +138,10 @@ export async function updateProject(tx: Tx, id: string, version: number, v: Proj
 
 /** Publishing stamps `published_at` the first time; the database refuses when the publish gate is not met (GW003). */
 export async function setProjectStatus(tx: Tx, id: string, version: number, status: ProjectStatus): Promise<void> {
+  if (status === "published") {
+    const [row] = await tx.select({ title: projects.title, summary: projects.summary }).from(projects).where(eq(projects.id, id));
+    if (row) refuseSampleContent(row.title, row.summary);
+  }
   expectOne(
     await tx
       .update(projects)

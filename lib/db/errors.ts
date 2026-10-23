@@ -1,7 +1,7 @@
 /**
  * Turns database errors into something an editor can act on. Constraint names and SQLSTATEs are documented in
  * drizzle/migrations (GW001 version conflict, GW002 illegal transition, GW003 publish gate, GW004 append-only,
- * GW005 retention, GW006 wrong media kind, 23001 RESTRICT, 23505 unique).
+ * GW005 retention, GW006 wrong media kind, GW007 last owner, GW008 soft delete in use, 23001 RESTRICT, 23505 unique).
  */
 export type PgErr = { code?: string; constraint?: string; message: string };
 
@@ -71,6 +71,10 @@ export function describeDbError(err: unknown): DbProblem | null {
       return { kind: "failed", message: "گزارش تغییرات قابل ویرایش یا حذف نیست." };
     case "GW005":
       return { kind: "failed", message: "این درخواست هنوز در دوره‌ی نگهداری است و حذف نمی‌شود." };
+    case "GW007":
+      return { kind: "failed", message: "دست‌کم یک مالک فعال باید باقی بماند. ابتدا مالک دیگری بسازید." };
+    case "GW008":
+      return { kind: "failed", message: "این مورد هنوز جای دیگری استفاده شده است. ابتدا آن را از همه‌ی جاها بردارید." };
     case "23001":
     case "23503":
       return { kind: "failed", message: "این مورد جای دیگری استفاده شده است. ابتدا آن را از همه‌ی جاها بردارید." };

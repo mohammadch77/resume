@@ -3,6 +3,7 @@ import type { Db } from "@/lib/db/client";
 import { projects, projectServices, services } from "@/lib/db/schema";
 import type { Tx } from "@/lib/db/with-actor";
 import { ConflictError, expectOne } from "./outcome";
+import { refuseSampleContent } from "./sample-content";
 
 export type ServiceStatus = "draft" | "published" | "archived";
 export type ServiceInput = { title: string; slug: string; summary: string; iconKey: string };
@@ -74,6 +75,10 @@ export async function updateService(tx: Tx, id: string, version: number, input: 
 
 /** The status trigger rejects illegal transitions (GW002). */
 export async function setServiceStatus(tx: Tx, id: string, version: number, status: ServiceStatus): Promise<void> {
+  if (status === "published") {
+    const [row] = await tx.select({ title: services.title, summary: services.summary }).from(services).where(eq(services.id, id));
+    if (row) refuseSampleContent(row.title, row.summary);
+  }
   expectOne(
     await tx
       .update(services)
