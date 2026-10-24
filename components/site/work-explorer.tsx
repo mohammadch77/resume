@@ -63,7 +63,7 @@ export function WorkExplorer({ cards, filters, ctaLabel }: Props) {
   };
 
   return (
-    <>
+    <div className="lk-pin">
       <div className="lk-wrap lk-strip-head">
         <h2 className="lk-h2">نمونه‌کارهای منتخب</h2>
         {filters.length > 1 && (
@@ -113,6 +113,6 @@ export function WorkExplorer({ cards, filters, ctaLabel }: Props) {
           extra={openCard.extra}
         />
       )}
-    </>
+    </div>
   );
 }

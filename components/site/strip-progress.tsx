@@ -7,6 +7,8 @@ import { formatNumber } from "@/lib/format";
 function currentIndex(strip: HTMLElement | null, count: number): number {
   const first = strip?.firstElementChild as HTMLElement | null;
   if (!strip || !first || count <= 1) return 0;
+  // At the very end the last card is the current one, even when the cards fit and none of them can reach the start edge.
+  if (Math.abs(strip.scrollLeft) >= strip.scrollWidth - strip.clientWidth - 2 && strip.scrollWidth > strip.clientWidth) return count - 1;
   const gap = Number.parseFloat(getComputedStyle(strip).columnGap) || 0;
   const step = first.getBoundingClientRect().width + gap;
   return Math.min(count - 1, Math.max(0, Math.round(Math.abs(strip.scrollLeft) / step)));

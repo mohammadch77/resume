@@ -18,6 +18,7 @@
     "test:e2e": "docker compose -f deploy/docker-compose.test.yml up -d --wait && tsx scripts/e2e-db.ts && playwright test",
     "lhci": "tsx scripts/lhci.ts",
     "motion:ab": "node scripts/motion-ab.ts",
+    "motion:cost": "node scripts/motion-cost.ts",
     "db:migrate": "tsx --env-file-if-exists=.env scripts/migrate.ts",
     "db:seed": "tsx --env-file-if-exists=.env scripts/seed.ts",
     "seed:owner": "tsx --env-file-if-exists=.env scripts/seed-owner.ts",

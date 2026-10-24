@@ -103,3 +103,8 @@ html[data-motion~="enter"] .lk-hero [data-enter="0"]{animation-name:lk-rise-stil
 html[data-motion~="enter"] .lk-hero [data-enter="1"]{animation-delay:60ms}
 html[data-motion~="enter"] .lk-hero [data-enter="2"]{animation-delay:120ms}
 html[data-motion~="enter"] .lk-hero [data-enter="slide"]{animation-name:lk-slide;animation-delay:120ms}
+
+/* The pinned strip (lib/motion/strip-pin.ts): the section's content sticks where the section's own top padding ends while a
+   spacer (added by the script) scrolls by; the script sets scrollLeft from that progress, so snapping would pull it back. */
+.lk-pinned .lk-pin{position:sticky;inset-block-start:var(--space-9)}
+.lk-pinned .lk-strip{scroll-snap-type:none}
