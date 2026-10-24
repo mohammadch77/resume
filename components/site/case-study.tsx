@@ -45,7 +45,8 @@ export function CaseStudyExtra({ project }: { project: LandingProject }) {
               <li key={item.id}>
                 <figure className="lk-case__figure">
                   {item.kind === "image" ? (
-                    <ResponsivePicture asset={item.picture} sizes={IMAGE_SIZES.gallery} className="lk-cover-img" />
+                    // a caption that repeats the alt text already names the image: read twice, it is noise for screen readers
+                    <ResponsivePicture asset={item.picture} sizes={IMAGE_SIZES.gallery} alt={item.caption && item.caption === item.picture.altFa ? "" : undefined} className="lk-cover-img" />
                   ) : (
                     <GalleryVideo video={item.video} poster={item.poster} className="lk-cover-img" />
                   )}

@@ -39,7 +39,7 @@ Libraries to install (requested by the owner):
 ## 3. Performance budget (hard gates, enforced by Lighthouse CI)
 
 Mobile profile, throttled: LCP <= 1.8s, CLS <= 0.02, INP <= 200ms, TBT <= 150ms, Performance score >= 95.
-- Initial JS on first paint <= 120 KB gzip. GSAP, ScrollTrigger, SplitText, Lenis are **dynamically imported after first paint** (`requestIdleCallback` fallback `setTimeout`). The hero must look complete without them (CSS-only initial state, no layout shift when they load).
+- Initial JS on first paint <= 160 KB gzip (was 120; the Next + React framework floor alone is ~135 KB, measured in Phase 5b; owner decision). Lighthouse CI hard-fails only on CLS <= 0.02 and Accessibility = 1; the speed gates above (Performance, LCP, TBT) are warnings until Phase 8, where they must pass as errors on the real server (Nginx, HTTP/2, brotli). GSAP, ScrollTrigger, SplitText, Lenis are **dynamically imported after first paint** (`requestIdleCallback` fallback `setTimeout`). The hero must look complete without them (CSS-only initial state, no layout shift when they load).
 - Admin code is a separate route group; GSAP/Lenis/React Bits never enter its bundle.
 - At most **one** WebGL/canvas effect on the whole page, only in the hero, mounted lazily, paused offscreen (IntersectionObserver), disabled when `prefers-reduced-motion`, `saveData`, or `navigator.hardwareConcurrency <= 4` / `deviceMemory <= 4`. Prefer CSS/SVG backgrounds. Heavy React Bits backgrounds (Ballpit-class) are forbidden.
 - Animate only `transform` and `opacity`. No animating layout properties. Use `will-change` sparingly and remove after animation.
