@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { Chip, Modal, ProjectCard } from "@/components/ds";
+import { setScrollLocked } from "@/lib/motion/scroll-lock";
 import { StripProgress } from "./strip-progress";
 
 export type WorkCard = {
@@ -44,6 +45,13 @@ export function WorkExplorer({ cards, filters, ctaLabel }: Props) {
   const shown = filter === ALL ? cards : cards.filter((c) => c.industry === filter);
   const openSlug = DEEP_LINK.exec(hash)?.[1] ?? null;
   const openCard = openSlug ? (cards.find((c) => c.slug === decodeURIComponent(openSlug)) ?? null) : null;
+
+  // The dialog owns the scroll while it is open: the smooth-scroll engine (if it is running) stops.
+  const dialogOpen = openCard !== null;
+  useEffect(() => {
+    setScrollLocked(dialogOpen);
+    return () => setScrollLocked(false);
+  }, [dialogOpen]);
 
   const open = (slug: string) => {
     history.pushState(null, "", `#work/${slug}`);

@@ -3,12 +3,14 @@ import { env } from "@/lib/env";
 import type { LandingData } from "@/lib/content/landing";
 import { mediaUrl } from "@/lib/media/paths";
 import { IMAGE_SIZES } from "@/lib/media/sizes";
+import { CAPS_SCRIPT } from "@/lib/motion/caps-script";
 import { parseVariants } from "@/lib/media/variants";
 import { CaseStudyExtra } from "./case-study";
 import { ContactSection } from "./contact-section";
 import { coverNode } from "./cover";
 import { Hero } from "./hero";
 import { JsonLd } from "./json-ld";
+import { MotionRoot } from "./motion-root";
 import { FALLBACK_SETTINGS } from "./process";
 import { ClientsSection, ProcessSection, ResultsSection, ServicesSection, TestimonialSection } from "./sections";
 import { SiteFooter } from "./site-footer";
@@ -72,6 +74,8 @@ export function Landing({ data }: { data: LandingData }) {
 
   return (
     <>
+      {/* First thing in <body>: decides the motion set before anything paints (lib/motion/caps-script.ts). */}
+      <script dangerouslySetInnerHTML={{ __html: CAPS_SCRIPT }} />
       <a className="lk-skip" href="#main">
         رفتن به محتوای اصلی
       </a>
@@ -97,6 +101,7 @@ export function Landing({ data }: { data: LandingData }) {
       </main>
       <SiteFooter brand={brand} />
       <JsonLd data={organization} />
+      <MotionRoot />
     </>
   );
 }

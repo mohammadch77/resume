@@ -137,3 +137,26 @@ describe("the landing's browser bundle stays small", () => {
     expect(readFileSync(path.join(ROOT, "lib/leads/state.ts"), "utf8")).not.toMatch(/^\s*import\s/m);
   });
 });
+
+describe("motion libraries stay out of the first bundle", () => {
+  const rel = (f: string) => path.relative(ROOT, f).replaceAll("\\", "/");
+  const read = (f: string) => readFileSync(f, "utf8");
+  const MOTION_PKG = /from "(gsap|gsap\/[^"]*|@gsap\/react|lenis|lenis\/[^"]*)"/;
+
+  it("only lib/motion/engine.ts (and its helpers) import GSAP or Lenis, and no admin file ever does", () => {
+    const importers = files.filter((f) => MOTION_PKG.test(read(f))).map(rel);
+    expect(importers.every((f) => f.startsWith("lib/motion/") || f === "components/site/motion-root.tsx")).toBe(true);
+    expect(importers.filter((f) => /^(components\/admin|lib\/admin|app\/\(admin\))/.test(f))).toEqual([]);
+    expect(importers).toContain("lib/motion/engine.ts");
+  });
+
+  it("nothing imports the engine statically: it is reached only by a dynamic import() in motion-root.tsx", () => {
+    const staticImports = files.filter((f) => /^\s*import[^;]*from "@\/lib\/motion\/(engine|strip-pin)"/m.test(read(f))).map(rel);
+    expect(staticImports).toEqual([]);
+    expect(read(path.join(ROOT, "components/site/motion-root.tsx"))).toMatch(/import\("@\/lib\/motion\/engine"\)/);
+  });
+
+  it("scroll-lock.ts and caps-script.ts, which the first bundle includes, import nothing heavy", () => {
+    for (const f of ["lib/motion/scroll-lock.ts", "lib/motion/caps-script.ts"]) expect(read(path.join(ROOT, f))).not.toMatch(/^\s*import\s/m);
+  });
+});

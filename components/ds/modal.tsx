@@ -40,7 +40,8 @@ const FOCUSABLE = 'a[href],button:not([disabled]),input,textarea,select,[tabinde
 /**
  * Case-study dialog: tags, title, crop-marked cover, challenge / solution / outcome in three columns, primary and
  * secondary actions. Traps focus, closes on Escape and on a scrim click, locks page scroll while open and gives focus
- * back to what opened it.
+ * back to what opened it. `data-lenis-prevent` on the scrolling element keeps a smooth-scroll engine (Lenis) from taking
+ * the wheel over the dialog; without such an engine it is an inert attribute.
  */
 export function Modal({ open = true, onClose, title, tags = [], art = 1, image, alt, sample = false, challenge, solution, outcome, labels, primaryLabel = "درخواست مشاوره رایگان", primaryHref, onPrimary, secondaryLabel = "بستن", onSecondary, contained = false, className = "", cover, extra }: ModalProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -88,7 +89,7 @@ export function Modal({ open = true, onClose, title, tags = [], art = 1, image, 
         if (e.target === e.currentTarget) onClose?.();
       }}
     >
-      <div ref={ref} className={["gw-modal", className].filter(Boolean).join(" ")} role="dialog" aria-modal="true" aria-labelledby={titleId}>
+      <div ref={ref} className={["gw-modal", className].filter(Boolean).join(" ")} data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <header className="gw-modal__head">
           <div className="gw-modal__titles">
             {tags.length > 0 && (
