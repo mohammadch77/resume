@@ -17,9 +17,15 @@ export function Hero({ title, subtitle, ctaLabel, projects, hasWork }: Props) {
   return (
     <section className="lk-wrap lk-hero" id="top" aria-labelledby="hero-title">
       <div>
-        <h1 id="hero-title">{title}</h1>
-        {subtitle && <p className="lk-lead">{subtitle}</p>}
-        <div className="lk-actions">
+        <h1 id="hero-title" data-enter="0">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="lk-lead" data-enter="1">
+            {subtitle}
+          </p>
+        )}
+        <div className="lk-actions" data-enter="2">
           <Button href="#contact">{ctaLabel}</Button>
           {hasWork && (
             <Button variant="secondary" href="#work">
@@ -31,10 +37,10 @@ export function Hero({ title, subtitle, ctaLabel, projects, hasWork }: Props) {
       </div>
       <div className="lk-art" aria-hidden="true">
         <div className="lk-art__block" />
-        <div className="lk-art__a">
+        <div className="lk-art__a" data-enter="slide">
           <CropFrame>{back ? <div className="gw-cover">{back}</div> : <CoverArt art={3} />}</CropFrame>
         </div>
-        <div className="lk-art__b">
+        <div className="lk-art__b" data-enter="slide">
           <CropFrame>{front ? <div className="gw-cover">{front}</div> : <CoverArt art={1} sample />}</CropFrame>
         </div>
       </div>

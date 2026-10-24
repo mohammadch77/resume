@@ -89,3 +89,17 @@
 .lk-cols,.lk-metrics,.lk-contact,.lk-work__cols{grid-template-columns:minmax(0,1fr)}.lk-contact{gap:var(--space-7)}.lk-form{padding:var(--space-5)}
 .lk-case{padding:0 var(--space-5) var(--space-5)}
 }
+
+/* Hero entrance (design/guidelines/motion.md, moment 1): once, CSS only, only transform and opacity. It exists only under
+   html[data-motion~="enter"], which lib/motion/caps-script.ts sets before first paint (never for reduced motion or
+   low-end devices); without the attribute everything is simply visible. Covers come from the inline-end edge (left in RTL).
+   The headline and the covers move but do not fade: one of them is the page's LCP element, and a fade from opacity 0 delays
+   the paint Lighthouse counts (measured: +300 ms LCP when they faded). */
+@keyframes lk-rise{from{opacity:0;transform:translateY(.75rem)}}
+@keyframes lk-rise-still{from{transform:translateY(.75rem)}}
+@keyframes lk-slide{from{transform:translateX(-1rem)}}
+html[data-motion~="enter"] .lk-hero [data-enter]{animation:lk-rise var(--duration-slow) var(--ease-out) backwards}
+html[data-motion~="enter"] .lk-hero [data-enter="0"]{animation-name:lk-rise-still}
+html[data-motion~="enter"] .lk-hero [data-enter="1"]{animation-delay:60ms}
+html[data-motion~="enter"] .lk-hero [data-enter="2"]{animation-delay:120ms}
+html[data-motion~="enter"] .lk-hero [data-enter="slide"]{animation-name:lk-slide;animation-delay:120ms}

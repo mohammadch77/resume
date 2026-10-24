@@ -52,7 +52,8 @@ describe("which motion a visitor gets (lib/motion/caps-script.ts)", () => {
 describe("the landing's CSS never relies on the motion script for visible content", () => {
   it("entrance rules are scoped to html[data-motion~=enter], so without the attribute everything is visible", () => {
     const css = readFileSync(path.join(process.cwd(), "components/site/landing.css"), "utf8");
-    const rules = css.split("}").filter((r) => /lk-rise|lk-slide/.test(r) && /animation\s*:/.test(r));
+    const rules = css.split("}").filter((r) => /data-enter/.test(r));
+    expect(rules.length).toBeGreaterThan(0);
     for (const rule of rules) expect(rule).toContain('html[data-motion~="enter"]');
   });
 });

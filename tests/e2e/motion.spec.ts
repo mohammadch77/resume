@@ -97,3 +97,37 @@ test.describe("smooth scrolling and the dialog", () => {
     await expect(html(page)).toHaveClass(/lenis-stopped/);
   });
 });
+
+test.describe("hero entrance", () => {
+  const animationOf = (page: Page) => page.locator("#top h1").evaluate((el) => getComputedStyle(el).animationName);
+
+  test("a capable visitor gets the CSS entrance; it ends fully visible and in place", async ({ page }) => {
+    await machine(page);
+    await page.goto("/");
+    expect(await animationOf(page)).toBe("lk-rise-still");
+    await expect.poll(() => page.locator("#top h1").evaluate((el) => el.getAnimations().length), { timeout: 5000 }).toBe(0);
+    const end = await page.locator("#top h1").evaluate((el) => ({ opacity: getComputedStyle(el).opacity, transform: getComputedStyle(el).transform }));
+    expect(end).toEqual({ opacity: "1", transform: "none" });
+    await expect(page.locator("#top .lk-art__b")).toHaveCSS("opacity", "1");
+  });
+
+  test("with reduced motion, on a low-end machine or without JavaScript the hero has no animation at all", async ({ page, browser }) => {
+    await machine(page, { cores: 4 });
+    await page.goto("/");
+    expect(await animationOf(page)).toBe("none");
+    await expect(page.locator("#top h1")).toHaveCSS("opacity", "1");
+
+    const reduced = await page.context().newPage();
+    await reduced.emulateMedia({ reducedMotion: "reduce" });
+    await machine(reduced);
+    await reduced.goto("/");
+    expect(await animationOf(reduced)).toBe("none");
+
+    const noJs = await browser.newContext({ javaScriptEnabled: false });
+    const bare = await noJs.newPage();
+    await bare.goto(page.url());
+    expect(await animationOf(bare)).toBe("none");
+    await expect(bare.locator("#top h1")).toHaveCSS("opacity", "1");
+    await noJs.close();
+  });
+});
