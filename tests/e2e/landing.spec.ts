@@ -87,7 +87,9 @@ test.describe("landing content", () => {
 
   test("structured data, canonical, Open Graph, robots and sitemap", async ({ page, request }) => {
     await page.goto("/");
-    const org = JSON.parse((await page.locator("script[type='application/ld+json']").first().textContent()) ?? "{}");
+    const rawOrg = (await page.locator("script[type='application/ld+json']").first().textContent()) ?? "{}";
+    expect(rawOrg, "no raw <, > or & inside the JSON-LD block").not.toMatch(/[<>&]/);
+    const org = JSON.parse(rawOrg);
     expect(org).toMatchObject({ "@type": "Organization", name: "Grin Web", telephone: "02100000000", email: "hello@example.com" });
     expect(org.sameAs).toContain("https://t.me/example");
     expect(await page.locator("link[rel='canonical']").getAttribute("href")).toMatch(/^https?:\/\/[^/]+\/?$/); // Next prints the root without a slash

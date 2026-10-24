@@ -12,7 +12,7 @@ services:
       APP_RW_PASSWORD: dev-app-rw
       MIGRATOR_PASSWORD: dev-migrator
     ports:
-      - "127.0.0.1:5433:5432"
+      - "127.0.0.1:5435:5432"
     volumes:
       - pgdata-dev:/var/lib/postgresql
       - ./postgres/init:/docker-entrypoint-initdb.d:ro
