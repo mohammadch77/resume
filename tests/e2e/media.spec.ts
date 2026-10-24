@@ -43,10 +43,12 @@ test.describe("media library", () => {
     // 1. a real photo (unique content so dedupe cannot interfere with reruns)
     const photo = await makePhoto(1600, 1000, { seed: Date.now() % 100000 });
     await page.locator("#images").setInputFiles({ name: "نمونه.jpg", mimeType: "image/jpeg", buffer: photo });
-    const card = page.getByTestId("media-card").first();
     // sharp re-encodes a photo into AVIF, WebP and JPEG at several widths before the card can appear; on a loaded
-    // 8 GB machine that alone can pass the default 5 s (it failed twice in full runs).
-    await expect(card).toBeVisible({ timeout: 30_000 });
+    // 8 GB machine that alone can pass the default 5 s. The library already holds other specs' images (and the landing
+    // fixture), so "a card is visible" proves nothing: wait for THIS file's confirmation, then find its card by its size.
+    await expect(page.getByRole("listitem").filter({ hasText: "نمونه.jpg" }).getByText("بارگذاری شد.")).toBeVisible({ timeout: 30_000 });
+    const card = page.getByTestId("media-card").filter({ hasText: "1600×1000" }).first();
+    await expect(card).toBeVisible();
     await expect(card.getByText("متن جایگزین ندارد؛ برای انتشار لازم است")).toBeVisible();
     await expect(card.getByText("استفاده نشده")).toBeVisible();
 
@@ -62,7 +64,7 @@ test.describe("media library", () => {
     await card.getByRole("button", { name: "ذخیره" }).click();
     await expect(card.getByText("ذخیره شد.")).toBeVisible();
     await page.reload();
-    await expect(page.getByTestId("media-card").first().getByLabel("متن جایگزین (فارسی)")).toHaveValue("نمایی از یک پروژه‌ی نمونه");
+    await expect(card.getByLabel("متن جایگزین (فارسی)")).toHaveValue("نمایی از یک پروژه‌ی نمونه");
 
     // 3. spoofed types: an .exe renamed .jpg is rejected with the Persian message
     await page.locator("#images").setInputFiles({ name: "photo.jpg", mimeType: "image/jpeg", buffer: fakeExe() });
@@ -71,7 +73,7 @@ test.describe("media library", () => {
     // 4. delete
     const count = await page.getByTestId("media-card").count();
     page.once("dialog", (d) => d.accept());
-    await page.getByTestId("media-card").first().getByRole("button", { name: "حذف" }).click();
+    await card.getByRole("button", { name: "حذف" }).click();
     await expect(page.getByTestId("media-card")).toHaveCount(count - 1);
     expect(problems).toEqual([]);
   });
