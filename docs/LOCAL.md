@@ -28,6 +28,7 @@ Needs Node 24 (the version the Dockerfile uses) and Docker (only for the databas
    npm run db:migrate     # applies drizzle/migrations as `migrator`
    npm run seed:owner     # creates the owner from OWNER_EMAIL / OWNER_PASSWORD (idempotent)
    npm run db:seed        # optional: draft sample content, every title/summary starts with «نمونه»
+   npm run seed:services  # the four real services of the landing, published (idempotent; edits in the admin are never overwritten)
    ```
 
 4. **Run and sign in**:

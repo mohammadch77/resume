@@ -7,14 +7,14 @@ const FIRST = { slug: "home-appliances-store", title: "فروشگاه آنلای
 const card = (page: import("@playwright/test").Page, title: string) => page.locator(".gw-project").filter({ hasText: title });
 
 test.describe("landing content", () => {
-  test("sections come in the order of the brief, with one primary CTA label three times", async ({ page }) => {
+  test("sections come in the order of the brief; the primary CTA label is a button four times", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("h1")).toHaveText("سایت و نرم‌افزاری که کسب‌وکارتان را جلو می‌برد");
     const order = await page.locator("main > section").evaluateAll((els) => els.map((e) => e.id || e.getAttribute("aria-label")));
-    expect(order).toEqual(["top", "work", "services", "process", "results", "نظر مشتری", "clients", "contact"]);
-    // navbar, hero and contact: the same label, nothing else uses it
-    const primary = page.locator("a, button").filter({ hasText: new RegExp(`^${CTA}$`) }).filter({ visible: true });
-    await expect(primary).toHaveCount(3);
+    expect(order).toEqual(["top", "work", "services", "results", "نظر مشتری", "clients", "contact"]);
+    // navbar, hero, the services band and the contact form are buttons with this label; the footer one is a plain link (tests/e2e/landing-sections.spec.ts)
+    const primary = page.locator(".gw-btn").filter({ hasText: new RegExp(`^${CTA}$`) }).filter({ visible: true });
+    await expect(primary).toHaveCount(4);
   });
 
   test("demo content published by direct SQL is never shown (page, work route, sitemap, structured data)", async ({ request }) => {

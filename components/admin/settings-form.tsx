@@ -80,6 +80,9 @@ export function SettingsForm({ version, initial }: Props) {
         <FormRow label="نشانی" htmlFor="st-address" error={errors.contactAddress?.message}>
           <Textarea id="st-address" rows={2} aria-invalid={Boolean(errors.contactAddress)} {...register("contactAddress")} />
         </FormRow>
+        <FormRow label="لینک «درخواست مشاوره رایگان» در فوتر" htmlFor="st-consult-href" error={errors.consultCtaHref?.message} hint="مثال: tel:+98912xxxxxxx (روی موبایل مستقیم تماس می‌گیرد)، https://... یا #contact. خالی = فرم تماس.">
+          <Input id="st-consult-href" dir="ltr" inputMode="url" aria-invalid={Boolean(errors.consultCtaHref)} {...register("consultCtaHref")} />
+        </FormRow>
       </section>
 
       <section className="flex flex-col gap-5" aria-labelledby="st-social">

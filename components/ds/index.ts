@@ -4,6 +4,7 @@
  * app/globals.css.
  */
 export { Button, type ButtonProps } from "./button";
+export { CtaBand, type CtaBandProps } from "./cta-band";
 export { Chip, type ChipProps } from "./chip";
 export { CoverArt, type CoverArtProps } from "./cover-art";
 export { CropFrame, type CropFrameProps } from "./crop-frame";
@@ -13,4 +14,5 @@ export { Metric, type MetricProps } from "./metric";
 export { Modal, type ModalProps } from "./modal";
 export { Navbar, type NavbarProps, type NavLink } from "./navbar";
 export { ProjectCard, type ProjectCardProps } from "./project-card";
+export { ServiceCard, ServiceGrid, type ServiceCardProps, type ServiceGridProps } from "./service-card";
 export { Testimonial, type TestimonialProps } from "./testimonial";

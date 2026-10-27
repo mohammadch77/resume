@@ -215,6 +215,7 @@ export const siteSettings = pgTable("site_settings", {
   contactPhone: text("contact_phone"),
   contactEmail: citext("contact_email"),
   contactAddress: text("contact_address"),
+  consultCtaHref: text("consult_cta_href"),
   socials: jsonb("socials").$type<Record<string, string>>().notNull().default({}),
   seoTitle: text("seo_title"),
   seoDescription: text("seo_description"),

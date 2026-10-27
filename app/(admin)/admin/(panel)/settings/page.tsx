@@ -17,6 +17,7 @@ const BLANK: SettingsFormValues = {
   contactPhone: "",
   contactEmail: "",
   contactAddress: "",
+  consultCtaHref: "",
   socials: Object.fromEntries(SOCIAL_KEYS.map((k) => [k, ""])) as SettingsFormValues["socials"],
   seoTitle: "",
   seoDescription: "",

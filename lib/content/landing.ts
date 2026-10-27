@@ -47,6 +47,8 @@ export type LandingSettings = {
   contactPhone: string | null;
   contactEmail: string | null;
   contactAddress: string | null;
+  /** tel:, https:// or #anchor for the footer link; null = scroll to the contact form. */
+  consultCtaHref: string | null;
   socials: Record<string, string>;
   seoTitle: string | null;
   seoDescription: string | null;
@@ -81,6 +83,7 @@ export async function loadLandingData(db: Db): Promise<LandingData> {
         contactPhone: settingsRow.contactPhone,
         contactEmail: settingsRow.contactEmail,
         contactAddress: settingsRow.contactAddress,
+        consultCtaHref: settingsRow.consultCtaHref,
         socials: settingsRow.socials,
         seoTitle: settingsRow.seoTitle,
         seoDescription: settingsRow.seoDescription,

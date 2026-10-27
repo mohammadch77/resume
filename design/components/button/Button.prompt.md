@@ -10,4 +10,5 @@ Action control; use primary (lapis) once per region for the main outcome, second
 
 **You provide:** an outcome label (verb + result), href or onClick.
 **Do:** keep the same primary label everywhere it repeats; one primary per region.
+**On a lapis ground** (the CtaBand) use `variant="on-lapis"`; it turns into the normal lapis button in the dark theme.
 **Don't:** use two primaries side by side, put icons on primary CTAs for decoration, use sm on touch-first screens.

@@ -39,7 +39,6 @@ const SECTIONS: Section[] = [
   { name: "hero", ref: "#top", ours: "#top" },
   { name: "work", ref: "#work", ours: "#work" },
   { name: "services", ref: "#services", ours: "#services" },
-  { name: "process", ref: "#process", ours: "#process" },
   { name: "results", ref: "main > section:nth-of-type(5)", ours: "#results" },
   { name: "testimonial", ref: "main > section:nth-of-type(6)", ours: "section[aria-label='نظر مشتری']" },
   { name: "clients", ref: "#clients", ours: "#clients" },

@@ -24,6 +24,7 @@ export async function getSettings(db: Db): Promise<SettingsDetail | null> {
       contactPhone: s.contactPhone ?? "",
       contactEmail: s.contactEmail ?? "",
       contactAddress: s.contactAddress ?? "",
+      consultCtaHref: s.consultCtaHref ?? "",
       socials: { ...emptySocials(), ...s.socials },
       seoTitle: s.seoTitle ?? "",
       seoDescription: s.seoDescription ?? "",
@@ -39,6 +40,7 @@ const columns = (v: SettingsFormValues) => ({
   contactPhone: blankToNull(v.contactPhone),
   contactEmail: blankToNull(v.contactEmail),
   contactAddress: blankToNull(v.contactAddress),
+  consultCtaHref: blankToNull(v.consultCtaHref),
   // Only filled networks are stored: the CHECK rejects empty strings.
   socials: Object.fromEntries(SOCIAL_KEYS.flatMap((k) => (v.socials[k].trim() === "" ? [] : [[k, v.socials[k].trim()]]))),
   seoTitle: blankToNull(v.seoTitle),

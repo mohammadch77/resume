@@ -53,6 +53,11 @@ export async function listLeads(db: Db, page: PageInfo, status?: LeadStatus): Pr
   return { rows, total };
 }
 
+/** The newest leads of any status, for the dashboard. */
+export async function recentLeads(db: Db, limit = 5): Promise<LeadRow[]> {
+  return select(db).orderBy(desc(leads.createdAt), desc(leads.id)).limit(limit);
+}
+
 export async function getLead(db: Db, id: string): Promise<LeadRow | null> {
   const [row] = await select(db).where(eq(leads.id, id));
   return row ?? null;

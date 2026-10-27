@@ -1,0 +1,17 @@
+/* Call-to-action band. Added by Grin Web (not in the original export; see design/decisions.md).
+   Light theme: the section's one lapis block, white text, a saffron rule on the inline-start edge, the on-lapis button.
+   Dark theme: lapis would be a large pale-blue slab, so the ground is --color-lapis-tint with a lapis frame and the normal lapis button. */
+.gw-band{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--space-6);padding:var(--space-8) var(--space-7);background:var(--color-lapis);color:var(--color-on-lapis);border:var(--border-hairline) solid var(--color-lapis)}
+.gw-band::before{content:"";position:absolute;inset-block:var(--space-7);inset-inline-start:0;inline-size:.25rem;background:var(--color-saffron)}
+.gw-band__title{margin:0 0 var(--space-3);font:800 var(--text-display-md)/var(--text-display-md--line-height) var(--font-display);text-wrap:balance}
+.gw-band__text{margin:0;font:400 var(--text-body-lg)/var(--text-body-lg--line-height) var(--font-sans);max-inline-size:var(--measure-prose);text-wrap:pretty}
+[data-theme="dark"] .gw-band{background:var(--color-lapis-tint);color:var(--color-ink)}
+/* the default focus ring (lapis-deep) is invisible on lapis: white ring on the light band, the normal ring on the dark one */
+.gw-band :focus-visible{outline-color:var(--color-on-lapis)}
+[data-theme="dark"] .gw-band :focus-visible{outline-color:var(--color-focus-ring)}
+@media (max-width:760px){
+  .gw-band{grid-template-columns:minmax(0,1fr);padding:var(--space-6) var(--space-5);gap:var(--space-5)}
+  .gw-band::before{inset-block:var(--space-5)}
+  .gw-band__title{font-size:var(--text-heading-1);line-height:var(--text-heading-1--line-height)}
+  .gw-band .gw-btn{inline-size:100%}
+}

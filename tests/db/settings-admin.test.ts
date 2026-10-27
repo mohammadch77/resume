@@ -6,7 +6,7 @@ import type { Db } from "@/lib/db/client";
 import * as schema from "@/lib/db/schema";
 import { withActor } from "@/lib/db/with-actor";
 import { SOCIAL_KEYS, settingsFormSchema, type SettingsFormValues } from "@/lib/validation/settings";
-import { connect, mkUser } from "./helpers";
+import { CHECK_VIOLATION, connect, mkUser, rejected } from "./helpers";
 
 const pools = connect();
 const db = drizzle(pools.app, { schema }) as Db;
@@ -20,7 +20,7 @@ afterAll(() => pools.close());
 const blankSocials = () => Object.fromEntries(SOCIAL_KEYS.map((k) => [k, ""])) as SettingsFormValues["socials"];
 const values = (over: Partial<SettingsFormValues> = {}): SettingsFormValues => ({
   brandName: "گرین وب", heroTitle: "سایتی که مشتری می‌آورد", heroSubtitle: "برای کسب‌وکارهای کوچک", primaryCtaLabel: "درخواست مشاوره رایگان",
-  contactPhone: "", contactEmail: "", contactAddress: "", socials: blankSocials(), seoTitle: "", seoDescription: "", ...over,
+  contactPhone: "", contactEmail: "", contactAddress: "", consultCtaHref: "", socials: blankSocials(), seoTitle: "", seoDescription: "", ...over,
 });
 const run = <T>(fn: Parameters<typeof withActor<T>>[3]) => withActor(db, userId, null, fn);
 
@@ -77,5 +77,49 @@ describe("settings form validation", () => {
     expect(r.success).toBe(false);
     const fields = r.success ? [] : r.error.issues.map((i) => i.path.join("."));
     expect(fields).toEqual(expect.arrayContaining(["contactPhone", "contactEmail", "socials.github"]));
+  });
+});
+
+describe("0006: the footer's consultation link (site_settings.consult_cta_href)", () => {
+  const set = (href: string | null) => pools.su.query(`UPDATE site_settings SET consult_cta_href = $1, version = version + 1 WHERE id = 1`, [href]);
+
+  it.each(["tel:+989121234567", "tel:02112345678", "https://example.com/consult?a=1", "#contact", "#work-strip"])("accepts %s", async (href) => {
+    await set(href);
+    expect((await pools.su.query(`SELECT consult_cta_href FROM site_settings WHERE id = 1`)).rows[0].consult_cta_href).toBe(href);
+  });
+
+  it("accepts NULL (the link then goes to #contact)", async () => {
+    await set(null);
+    expect((await pools.su.query(`SELECT consult_cta_href FROM site_settings WHERE id = 1`)).rows[0].consult_cta_href).toBeNull();
+  });
+
+  it.each([
+    ["javascript:alert(1)", "scripts"],
+    ["http://example.com", "plain http"],
+    ["mailto:a@example.com", "other schemes"],
+    ["tel:", "an empty number"],
+    ["tel:12", "a number that is too short"],
+    ["tel:+98 912 123 4567", "spaces in a number"],
+    ["tel:abc123", "letters in a number"],
+    ["#", "an empty anchor"],
+    ["#a b", "spaces in an anchor"],
+    ["https://exa mple.com", "spaces in a URL"],
+    ["https://example.com/<script>", "angle brackets"],
+    ["", "an empty string (the form stores NULL instead)"],
+    ["/contact", "a relative path"],
+  ])("rejects %s (%s)", async (href) => {
+    expect((await rejected(set(href))).code).toBe(CHECK_VIOLATION);
+  });
+
+  it("rejects a value longer than 200 characters", async () => {
+    expect((await rejected(set(`https://example.com/${"a".repeat(200)}`))).code).toBe(CHECK_VIOLATION);
+  });
+
+  it("round-trips through saveSettings; blank is stored as NULL", async () => {
+    const version = (await getSettings(db))!.version;
+    await run((tx) => saveSettings(tx, version, values({ consultCtaHref: "tel:+989121234567" })));
+    expect((await getSettings(db))!.values.consultCtaHref).toBe("tel:+989121234567");
+    await run((tx) => saveSettings(tx, version + 1, values({ consultCtaHref: "" })));
+    expect((await pools.su.query(`SELECT consult_cta_href FROM site_settings WHERE id = 1`)).rows[0].consult_cta_href).toBeNull();
   });
 });

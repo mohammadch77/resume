@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { absoluteCoverUrl, Landing } from "@/components/site/landing";
-import { FALLBACK_SETTINGS } from "@/components/site/process";
+import { FALLBACK_SETTINGS } from "@/components/site/settings-fallback";
 import { getLandingData } from "@/lib/content/landing";
 import { env } from "@/lib/env";
 

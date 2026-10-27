@@ -51,8 +51,8 @@
         "message": "<Button> doesn't accept that prop. Declared props: variant, size, href, iconStart, iconEnd, iconOnly, label, disabled, type, className, onClick, children."
       },
       {
-        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|secondary|quiet|danger)$/]",
-        "message": "<Button> variant must be one of 'primary' | 'secondary' | 'quiet' | 'danger'."
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|secondary|quiet|danger|on-lapis)$/]",
+        "message": "<Button> variant must be one of 'primary' | 'secondary' | 'quiet' | 'danger' | 'on-lapis'."
       },
       {
         "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:md|sm)$/]",
@@ -109,6 +109,18 @@
       {
         "selector": "JSXOpeningElement[name.name='Testimonial'] > JSXAttribute > JSXIdentifier[name!=/^(?:quote|name|role|sample|className|style|key|ref|className|style|children)$/]",
         "message": "<Testimonial> doesn't accept that prop. Declared props: quote, name, role, sample, className, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ServiceCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:icon|title|index|headingLevel|className|style|key|ref|className|style|children)$/]",
+        "message": "<ServiceCard> doesn't accept that prop. Declared props: icon, title, index, headingLevel, className, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ServiceGrid'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|className|key|ref|className|style|children)$/]",
+        "message": "<ServiceGrid> doesn't accept that prop. Declared props: label, className."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='CtaBand'] > JSXAttribute > JSXIdentifier[name!=/^(?:title|text|ctaLabel|ctaHref|headingLevel|className|key|ref|className|style|children)$/]",
+        "message": "<CtaBand> doesn't accept that prop. Declared props: title, text, ctaLabel, ctaHref, headingLevel, className."
       }
     ]
   },
@@ -155,6 +167,15 @@
         "replaces": []
       },
       "Testimonial": {
+        "replaces": []
+      },
+      "ServiceCard": {
+        "replaces": []
+      },
+      "ServiceGrid": {
+        "replaces": []
+      },
+      "CtaBand": {
         "replaces": []
       }
     },

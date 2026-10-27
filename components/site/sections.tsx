@@ -1,52 +1,35 @@
-import { Icon, ICON_NAMES, Metric, Testimonial, type IconName } from "@/components/ds";
+import { CtaBand, ICON_NAMES, Metric, ServiceCard, ServiceGrid, Testimonial, type IconName } from "@/components/ds";
 import type { LandingData, LandingProject } from "@/lib/content/landing";
 import { formatNumber } from "@/lib/format";
 import { IMAGE_SIZES } from "@/lib/media/sizes";
-import { PROCESS_STEPS } from "./process";
 import { ResponsivePicture } from "./responsive-picture";
 
 const isIcon = (name: string): name is IconName => (ICON_NAMES as string[]).includes(name);
-const PERSIAN_STEP = "۱۲۳۴۵۶۷۸۹";
 
-export function ServicesSection({ services }: { services: LandingData["services"] }) {
+/** The closing band under the services (copy lives here until it moves to the database; see docs/BACKLOG.md). */
+const BAND = {
+  title: "پروژه‌تان را با یک گفت‌وگوی کوتاه شروع کنید",
+  text: "شرح کوتاهی از نیازتان کافی است؛ مسیر پیشنهادی را با هم بررسی می‌کنیم.",
+} as const;
+
+const serviceIndex = (n: number) => (n < 9 ? `۰${formatNumber(n + 1)}` : formatNumber(n + 1));
+
+/** The published services (from the database) and, closing the section, the CTA band with the section's one primary action. */
+export function ServicesSection({ services, ctaLabel }: { services: LandingData["services"]; ctaLabel: string }) {
   return (
     <section className="lk-sec" id="services" aria-labelledby="services-title">
       <div className="lk-wrap">
         <h2 className="lk-h2" id="services-title">
           خدمات
         </h2>
-        <ul className="lk-cols lk-list">
-          {services.map((s) => (
-            <li className="lk-col" key={s.id}>
-              {isIcon(s.iconKey) && <Icon name={s.iconKey} />}
-              <h3>{s.title}</h3>
-              <p>{s.summary}</p>
-            </li>
+        <ServiceGrid>
+          {services.map((s, n) => (
+            <ServiceCard key={s.id} icon={isIcon(s.iconKey) ? s.iconKey : "layout-grid"} index={serviceIndex(n)} title={s.title}>
+              {s.summary}
+            </ServiceCard>
           ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-export function ProcessSection() {
-  return (
-    <section className="lk-sec lk-sec--flush" id="process" aria-labelledby="process-title">
-      <div className="lk-wrap">
-        <h2 className="lk-h2" id="process-title">
-          روش کار
-        </h2>
-        <ol className="lk-cols lk-list">
-          {PROCESS_STEPS.map((s, n) => (
-            <li className="lk-col" key={s.title}>
-              <span className="lk-step-n" aria-hidden="true">
-                {PERSIAN_STEP[n]}
-              </span>
-              <h3>{s.title}</h3>
-              <p>{s.text}</p>
-            </li>
-          ))}
-        </ol>
+        </ServiceGrid>
+        <CtaBand className="lk-services__band" title={BAND.title} text={BAND.text} ctaLabel={ctaLabel} ctaHref="#contact" />
       </div>
     </section>
   );

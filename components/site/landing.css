@@ -32,12 +32,6 @@
 .lk-progress__track{position:relative;flex:1;block-size:var(--border-hairline);background:var(--color-line-strong)}
 .lk-progress__bar{position:absolute;inset-block:calc(var(--border-hairline) * -1);inset-inline-start:0;background:var(--color-lapis);transition:inline-size var(--duration-base) var(--ease-out)}
 .lk-progress span{font:600 var(--text-label)/var(--text-label--line-height) var(--font-sans);color:var(--color-ink-muted);white-space:nowrap}
-.lk-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-6)}
-.lk-col{display:flex;flex-direction:column;gap:var(--space-3);padding-block-start:var(--space-4);border-block-start:var(--border-hairline) solid var(--color-line)}
-.lk-col .gw-icon{color:var(--color-ink-muted)}
-.lk-col h3{margin:0;font:800 var(--text-heading-3)/var(--text-heading-3--line-height) var(--font-display)}
-.lk-col p{margin:0;font:400 var(--text-body-sm)/var(--text-body-sm--line-height) var(--font-sans);color:var(--color-ink-muted)}
-.lk-step-n{font:800 var(--text-display-md)/var(--text-display-md--line-height) var(--font-display);color:var(--color-lapis-text)}
 .lk-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-6)}
 .lk-note{margin:var(--space-5) 0 0;font:400 var(--text-caption)/var(--text-caption--line-height) var(--font-sans);color:var(--color-ink-subtle)}
 .lk-form .lk-note{margin:0}
@@ -57,6 +51,10 @@
 .lk-foot{background:var(--color-ink);color:var(--color-paper);padding-block:var(--space-7)}
 .lk-foot .lk-wrap{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:var(--space-5)}
 .lk-foot b{font:800 1.75rem/1 var(--font-display)}
+.lk-services__band{margin-block-start:var(--space-8)}
+.lk-foot :focus-visible{outline-color:var(--color-paper)}
+.lk-foot__link{display:inline-flex;align-items:center;min-block-size:2.75rem;color:var(--color-paper);font:600 var(--text-button)/var(--text-button--line-height) var(--font-sans);text-decoration:underline;text-underline-offset:.25em}
+.lk-foot__link:hover{color:var(--color-paper);text-decoration-thickness:.125rem}
 .lk-foot small{font:400 var(--text-caption)/var(--text-caption--line-height) var(--font-sans)}
 
 /* real covers: <picture> wraps the <img>, so the design's `.gw-cover>img` rule needs its twin */
@@ -79,14 +77,14 @@
 .lk-work .gw-cover{aspect-ratio:16/7}
 .lk-back{display:inline-flex;align-items:center;gap:var(--space-2);font:600 var(--text-label)/var(--text-label--line-height) var(--font-sans)}
 
-@media (max-width:1023px){.lk-cols{grid-template-columns:repeat(2,minmax(0,1fr))}.lk-logos{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:1023px){.lk-logos{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:760px){
 .lk-sec{padding-block:var(--space-8)}.lk-sec--flush{padding-block-start:0}
 .lk-hero{grid-template-columns:minmax(0,1fr);padding-block:var(--space-7)}
 .lk-hero h1{font-size:var(--text-display-md);line-height:var(--text-display-md--line-height)}
 .lk-h2{font-size:var(--text-heading-1);line-height:var(--text-heading-1--line-height)}
 .lk-strip{flex-direction:column;overflow:visible;padding-inline:var(--gutter)}.lk-strip>.gw-project{flex:none}.lk-progress{display:none}
-.lk-cols,.lk-metrics,.lk-contact,.lk-work__cols{grid-template-columns:minmax(0,1fr)}.lk-contact{gap:var(--space-7)}.lk-form{padding:var(--space-5)}
+.lk-metrics,.lk-contact,.lk-work__cols{grid-template-columns:minmax(0,1fr)}.lk-contact{gap:var(--space-7)}.lk-form{padding:var(--space-5)}
 .lk-case{padding:0 var(--space-5) var(--space-5)}
 }
 

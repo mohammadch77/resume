@@ -3,8 +3,8 @@
  * @startingPoint section="Actions" subtitle="Primary, secondary, quiet, danger" viewport="700x320"
  */
 export interface ButtonProps {
-  /** primary = lapis fill (one per view region); secondary = outline; quiet = text-only lapis; danger = destructive (admin). */
-  variant?: "primary" | "secondary" | "quiet" | "danger";
+  /** primary = lapis fill (one per view region); secondary = outline; quiet = text-only lapis; danger = destructive (admin); on-lapis = the primary action on a lapis ground (CtaBand). */
+  variant?: "primary" | "secondary" | "quiet" | "danger" | "on-lapis";
   /** md = 48px tall (default, touch-safe); sm = 36px, desktop/admin density only. */
   size?: "md" | "sm";
   /** Renders an <a> when set. */

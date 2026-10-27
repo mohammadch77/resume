@@ -7,6 +7,10 @@
 .gw-btn--secondary:hover{border-color:var(--color-ink);color:var(--color-ink);background:var(--color-raised)}
 .gw-btn--quiet{background:transparent;color:var(--color-lapis-text);padding-inline:var(--space-3)}
 .gw-btn--quiet:hover{background:var(--color-lapis-tint);color:var(--color-lapis-text)}
+.gw-btn--on-lapis{background:var(--color-on-lapis);color:var(--color-lapis);border-color:var(--color-on-lapis)}
+.gw-btn--on-lapis:hover{background:transparent;color:var(--color-on-lapis)}
+[data-theme="dark"] .gw-btn--on-lapis{background:var(--color-lapis);color:var(--color-on-lapis);border-color:var(--color-lapis)}
+[data-theme="dark"] .gw-btn--on-lapis:hover{background:var(--color-lapis-deep);color:var(--color-on-lapis);border-color:var(--color-lapis-deep)}
 .gw-btn--danger{background:var(--color-danger-tint);color:var(--color-danger);border-color:var(--color-danger)}
 .gw-btn--danger:hover{background:var(--color-danger);color:var(--color-raised)}
 .gw-btn--sm{min-block-size:36px;padding-block:var(--space-1);padding-inline:var(--space-4);font-size:var(--text-label);line-height:var(--text-label--line-height)}

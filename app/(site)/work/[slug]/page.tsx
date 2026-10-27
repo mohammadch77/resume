@@ -6,7 +6,7 @@ import { CaseStudyExtra } from "@/components/site/case-study";
 import { coverNode } from "@/components/site/cover";
 import { JsonLd } from "@/components/site/json-ld";
 import { absoluteCoverUrl } from "@/components/site/landing";
-import { FALLBACK_SETTINGS } from "@/components/site/process";
+import { FALLBACK_SETTINGS } from "@/components/site/settings-fallback";
 import { SiteFooter } from "@/components/site/site-footer";
 import { getPublishedProject } from "@/lib/content/public";
 import { getLandingData } from "@/lib/content/landing";
@@ -44,7 +44,6 @@ export async function generateMetadata({ params }: PageProps<"/work/[slug]">): P
 const HOME_LINKS = [
   { label: "نمونه‌کارها", href: "/#work" },
   { label: "خدمات", href: "/#services" },
-  { label: "روش کار", href: "/#process" },
 ];
 
 export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
@@ -114,7 +113,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
           </div>
         </article>
       </main>
-      <SiteFooter brand={brand} />
+      <SiteFooter brand={brand} ctaLabel={cta} consultHref={settings?.consultCtaHref ?? "/#contact"} />
       <JsonLd data={creativeWork} />
     </>
   );

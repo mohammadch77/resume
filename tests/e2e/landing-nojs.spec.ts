@@ -8,8 +8,8 @@ test.use({ javaScriptEnabled: false });
 test("the content, the navigation anchors and the case-study links work without JavaScript", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("h1")).toBeVisible();
-  for (const id of ["work", "services", "process", "results", "clients", "contact"]) await expect(page.locator(`#${id}`)).toBeAttached();
-  for (const href of ["#work", "#services", "#process", "#clients"]) await expect(page.locator(`.gw-nav__links a[href='${href}']`)).toBeAttached();
+  for (const id of ["work", "services", "results", "clients", "contact"]) await expect(page.locator(`#${id}`)).toBeAttached();
+  for (const href of ["#work", "#services", "#clients"]) await expect(page.locator(`.gw-nav__links a[href='${href}']`)).toBeAttached();
   await expect(page.locator(".gw-project")).toHaveCount(4);
   // the filter row needs JavaScript, so it is hidden rather than shown dead
   await expect(page.getByRole("group", { name: "فیلتر نمونه‌کارها" })).toBeHidden();

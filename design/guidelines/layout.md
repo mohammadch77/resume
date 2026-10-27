@@ -13,20 +13,19 @@
 - "Forward" arrows point left (`arrow-left`).
 
 ## Section order (landing)
-1. **Navbar** — sticky capsule: wordmark, anchors (نمونه‌کارها، خدمات، روش کار، مشتریان), CTA.
+1. **Navbar** — sticky capsule: wordmark, anchors (نمونه‌کارها، خدمات، مشتریان), CTA.
 2. **Hero** — display-xl (display-md on mobile), lead, primary + secondary CTA, proof line with placeholders; two overlapping crop-marked covers over one lapis block.
 3. **Selected Work** — sunken ground, display-lg heading, filter chips, horizontal strip of 420px ProjectCards from the content start edge running off the far edge, progress line «۱ از ۴». Mobile: vertical list.
-4. **Services** — 4 columns with top hairlines (2 at tablet, 1 on mobile).
-5. **How we work** — 4 numbered steps, numerals in `--color-lapis-text`.
-6. **Results** — 3 Metric components from the admin panel. **Omitted when empty.**
-7. **Testimonials** — one quote, saffron rule. **Omitted when empty.**
-8. **Clients** — real logos only; dashed «[لوگو]» frames as placeholders.
-9. **Contact** — headline «درباره‌ی پروژه‌تان بگویید» + contact details; raised form (name, phone, message) with the primary CTA and consent caption.
-10. **Footer** — ink ground, paper text.
+4. **Services** — `ServiceGrid` of `ServiceCard`s (2 columns from 760px, 1 below; hairline cards, icon tile, Persian index; no hover, they are not links) from the database, then the **CTA band** (`CtaBand`): lapis block with a saffron rule and the on-lapis button in the light theme, `--color-lapis-tint` with a lapis frame in the dark theme.
+5. **Results** — 3 Metric components from the admin panel. **Omitted when empty.**
+6. **Testimonials** — one quote, saffron rule. **Omitted when empty.**
+7. **Clients** — real logos only; dashed «[لوگو]» frames as placeholders.
+8. **Contact** — headline «درباره‌ی پروژه‌تان بگویید» + contact details; raised form (name, phone, message) with the primary CTA and consent caption.
+9. **Footer** — ink ground, paper text; brand, a plain text link with the CTA label (href from the site settings: `tel:`, `https://` or `#anchor`, `#contact` while empty) and the copyright line.
 
 ## CTA rule
-The primary CTA «درخواست مشاوره رایگان» appears exactly 3 times — navbar, hero, contact — with the identical label, always linking to `#contact`.
+The primary CTA «درخواست مشاوره رایگان» is a button exactly 4 times — navbar, hero, the services CTA band, contact — with the identical label, linking to `#contact` (the contact one submits the form). The footer repeats it as a plain link, never as a button.
 
 ## Density
 - Touch targets ≥ 44px (Button md is 48px; sm 36px is desktop/admin only).
-- Saffron once per screen area; lapis blocks max one per section.
+- Saffron once per screen area; lapis blocks max one per section (the services section's one lapis block is the CTA band).

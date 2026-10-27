@@ -24,6 +24,16 @@ const phone = z
   .transform(normalizeDigits)
   .refine((v) => v === "" || /^0\d{10}$/.test(v), "شماره باید ۱۱ رقم و با صفر شروع شود؛ مثال: ۰۲۱۱۲۳۴۵۶۷۸ یا ۰۹۱۲۱۲۳۴۵۶۷");
 
+/** Same shape as CHECK `site_settings_consult_href_format` (migration 0006). */
+export const CONSULT_HREF_PATTERN = /^(tel:\+?[0-9]{5,15}|https:\/\/[^\s<>"]+|#[A-Za-z0-9_-]+)$/;
+
+const consultHref = z
+  .string()
+  .trim()
+  .transform(normalizeDigits)
+  .refine((v) => v.length <= 200, "لینک خیلی طولانی است.")
+  .refine((v) => v === "" || CONSULT_HREF_PATTERN.test(v), "لینک باید با tel: یا https:// شروع شود یا یک # باشد؛ مثال: tel:+98912xxxxxxx");
+
 const email = z
   .string()
   .trim()
@@ -39,6 +49,7 @@ export const settingsFormSchema = z.object({
   contactPhone: phone,
   contactEmail: email,
   contactAddress: optionalText("نشانی", 300),
+  consultCtaHref: consultHref,
   socials: z.object(Object.fromEntries(SOCIAL_KEYS.map((k) => [k, optionalHttpsUrl(SOCIAL_NETWORKS[k])])) as Record<SocialKey, ReturnType<typeof optionalHttpsUrl>>),
   seoTitle: optionalText("عنوان سئو", 70),
   seoDescription: optionalText("توضیح سئو", 160),

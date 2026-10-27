@@ -11,8 +11,8 @@ import { coverNode } from "./cover";
 import { Hero } from "./hero";
 import { JsonLd } from "./json-ld";
 import { MotionRoot } from "./motion-root";
-import { FALLBACK_SETTINGS } from "./process";
-import { ClientsSection, ProcessSection, ResultsSection, ServicesSection, TestimonialSection } from "./sections";
+import { FALLBACK_SETTINGS } from "./settings-fallback";
+import { ClientsSection, ResultsSection, ServicesSection, TestimonialSection } from "./sections";
 import { SiteFooter } from "./site-footer";
 import { SiteNavbar } from "./site-navbar";
 import { WorkExplorer, type WorkCard } from "./work-explorer";
@@ -41,7 +41,6 @@ export function Landing({ data }: { data: LandingData }) {
   const links: NavLink[] = [
     ...(hasWork ? [{ label: "نمونه‌کارها", href: "#work" }] : []),
     ...(data.services.length > 0 ? [{ label: "خدمات", href: "#services" }] : []),
-    { label: "روش کار", href: "#process" },
     ...(data.clientLogos.length > 0 ? [{ label: "مشتریان", href: "#clients" }] : []),
   ];
 
@@ -89,8 +88,7 @@ export function Landing({ data }: { data: LandingData }) {
             <WorkExplorer cards={cards} filters={filters} ctaLabel={cta} />
           </section>
         )}
-        {data.services.length > 0 && <ServicesSection services={data.services} />}
-        <ProcessSection />
+        {data.services.length > 0 && <ServicesSection services={data.services} ctaLabel={cta} />}
         <ResultsSection projects={projects} />
         <TestimonialSection testimonial={data.testimonial} />
         <ClientsSection logos={data.clientLogos} />
@@ -99,7 +97,7 @@ export function Landing({ data }: { data: LandingData }) {
           ctaLabel={cta}
         />
       </main>
-      <SiteFooter brand={brand} />
+      <SiteFooter brand={brand} ctaLabel={cta} consultHref={data.settings?.consultCtaHref ?? "#contact"} />
       <JsonLd data={organization} />
       <MotionRoot />
     </>

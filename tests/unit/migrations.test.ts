@@ -9,6 +9,7 @@ describe("migrations carry rules, not data", () => {
   it("finds the migrations in order", () => {
     expect(files[0]).toBe("0001_schema.sql");
     expect(files).toContain("0005_admin_guards.sql");
+    expect(files).toContain("0006_consult_cta_href.sql");
   });
 
   for (const file of files) {

@@ -63,3 +63,35 @@ matching position (`lib/motion/strip-pin.ts`, tests in `tests/e2e/motion.spec.ts
 `npm run motion:cost` measures the main-thread time of what is built on first interaction. Findings (details in `docs/BACKLOG.md`):
 the Lighthouse TBT of two identical pages differs by up to about 85 ms between arms (A/A control), so the 25 ms rule cannot be
 decided by the lab TBT alone; effects are judged on the A/B, the A/A noise, and the direct cost together.
+
+
+## Services, CTA band, footer link (Phase 7, owner-approved proposal)
+
+Added by us on top of the export. The export has no JSX for them; they live in `design/components/service-card`, `design/components/cta-band`
+(CSS, `.d.ts`, `.prompt.md`) and as typed ports in `components/ds`. The adherence lint (`design/_adherence.oxlintrc.json`) got prop whitelists for
+`ServiceCard`, `ServiceGrid` and `CtaBand`, and the `on-lapis` value for `Button`'s `variant`.
+
+- **ServiceCard + ServiceGrid (`gw-service`, `gw-service-grid`).** Replaces the four hairline-topped columns. A 2 x 2 grid of hairline cards reads
+  faster than four narrow columns of Persian text; the icon sits in a bordered tile, the index is a Persian numeral in
+  `--color-lapis-text`. No new token. **No hover state**: a card is not a link, and a hover that changes the border says "click me" (ui-ux-pro-max:
+  `hover-vs-tap`). Border `--color-line`, tile border `--color-line-strong` (3.76:1 / 3.85:1 non-text).
+- **CtaBand (`gw-band`).** One sentence of context and the section's single primary action. Light theme: `--color-lapis` ground, `--color-on-lapis` text, a 4px
+  saffron rule on the inline-start edge (saffron once in this area), the new **`Button variant="on-lapis"`** (white with lapis text; lapis on lapis would vanish).
+  Dark theme: lapis is pale there (`#8c9bff`) and would be a large light slab on a dark page, so the ground is `--color-lapis-tint` with a lapis frame, ink text and
+  the normal lapis button (same variant name, restyled under `[data-theme="dark"]`). Focus: the default ring (`--color-focus-ring`) has 1.5:1 on lapis, so
+  inside the band it is `--color-on-lapis` (light) or the normal ring (dark).
+- **Footer link.** `.lk-foot__link`: paper text, underlined, 44px tall, a plain link (never a button; the CTA is a button four times, see below). The footer's default
+  focus ring is as dark as the ground (1.42:1), so `.lk-foot :focus-visible` uses `--color-paper` (15.8:1).
+- **CTA count changed from 3 to 4 buttons** (Navbar, Hero, band, contact) plus the plain footer link. Updated: CLAUDE.md section 6,
+  `design/guidelines/layout.md`, `tests/e2e/landing.spec.ts`, `tests/e2e/landing-sections.spec.ts`.
+- **"How we work" removed.** The section, its copy (`components/site/process.ts`) and its anchor are gone; `layout.md` and the navbar lose the link.
+  The export's own kit (`design/ui_kits/landing`) still shows it; it is a visual reference only.
+- **Contrast is checked by script**: `npm run design:contrast` (also run as a unit test) computes WCAG ratios from the generated tokens for every listed pair in
+  both themes (text 4.5:1, frames/icons/focus rings 3:1). It found the two focus-ring failures above before they shipped. New component colours must be added to its list.
+- **Visual regression.** `tests/e2e/design-system.spec.ts` diffs our components against the export's own card pages. The three added components have no export
+  counterpart, so they are covered by markup unit tests, `design:contrast`, axe on the landing in both themes (`tests/e2e/landing-a11y.spec.ts`) and the landing e2e.
+  The `Button` card and the navbar card still match the export (the `on-lapis` variant adds a CSS rule only).
+- **Icons** stay Lucide through the DS Icon map: `globe`, `smartphone`, `palette`, `search` were already in it; nothing was added, so the bundle is unchanged.
+- **Tools.** ui-ux-pro-max supplied rules (single primary action, hover versus tap, touch targets, spacing scale, contrast); 21st.dev was used for three free
+  searches only (metadata, no code retrieved, 0 of 2 daily retrievals spent). Its generic shadcn sections (solid-ground CTA, service card with hover) confirmed the
+  patterns but nothing was imported: its output is Tailwind/shadcn markup that ignores the dossier concept, RTL tokens and fonts.
