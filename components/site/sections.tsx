@@ -2,6 +2,7 @@ import { CtaBand, ICON_NAMES, Metric, ServiceCard, ServiceGrid, Testimonial, typ
 import type { LandingData, LandingProject } from "@/lib/content/landing";
 import { formatNumber } from "@/lib/format";
 import { IMAGE_SIZES } from "@/lib/media/sizes";
+import { CONTACT_HREF } from "@/lib/site/links";
 import { ResponsivePicture } from "./responsive-picture";
 
 const isIcon = (name: string): name is IconName => (ICON_NAMES as string[]).includes(name);
@@ -29,7 +30,7 @@ export function ServicesSection({ services, ctaLabel }: { services: LandingData[
             </ServiceCard>
           ))}
         </ServiceGrid>
-        <CtaBand className="lk-services__band" title={BAND.title} text={BAND.text} ctaLabel={ctaLabel} ctaHref="#contact" />
+        <CtaBand className="lk-services__band" title={BAND.title} text={BAND.text} ctaLabel={ctaLabel} ctaHref={CONTACT_HREF} />
       </div>
     </section>
   );

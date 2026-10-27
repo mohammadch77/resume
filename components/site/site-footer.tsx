@@ -2,7 +2,7 @@ const year = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { year: "numeric", ti
 
 type Props = { brand: string; ctaLabel: string; consultHref: string };
 
-/** `consultHref` is a plain link (tel:, https:// or #anchor, from the site settings; "#contact" until one is saved), not a button. */
+/** `consultHref` is a plain link (tel:, https:// or #anchor from the site settings; /contact, the contact form, until one is saved), not a button. */
 export function SiteFooter({ brand, ctaLabel, consultHref }: Props) {
   return (
     <footer className="lk-foot">

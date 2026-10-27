@@ -8,14 +8,16 @@ const publishedServices = () =>
   withDb(async (db) => (await db.query<{ title: string; summary: string; icon_key: string }>(`SELECT title, summary, icon_key FROM services WHERE status = 'published' AND deleted_at IS NULL AND title NOT LIKE 'نمونه%' AND summary NOT LIKE 'نمونه%' ORDER BY sort_order, created_at`)).rows);
 
 test.describe("section order and the navbar", () => {
-  test("Navbar, hero, work, services + band, results, testimonial, clients, contact, footer; no «روش کار»", async ({ page }) => {
+  test("Navbar, hero, work, services + band, results, testimonial, clients, footer; no «روش کار», no contact section", async ({ page }) => {
     await page.goto("/");
     const order = await page.locator("main > section").evaluateAll((els) => els.map((e) => e.id || e.getAttribute("aria-label")));
-    expect(order).toEqual(["top", "work", "services", "results", "نظر مشتری", "clients", "contact"]);
+    expect(order).toEqual(["top", "work", "services", "results", "نظر مشتری", "clients"]);
     const html = await page.content();
     expect(html).not.toContain("روش کار");
     expect(html).not.toContain("#process");
     expect(await page.locator("#process").count()).toBe(0);
+    expect(await page.locator("#contact").count()).toBe(0);
+    expect(html).not.toContain("#contact");
     await expect(page.locator("footer")).toBeVisible();
   });
 
@@ -59,7 +61,7 @@ test.describe("services (from the database) and the CTA band", () => {
     expect(await card.evaluate((el) => getComputedStyle(el).borderTopColor)).toBe(before);
   });
 
-  test("the band follows the cards and carries the section's single primary action, to the contact form", async ({ page }) => {
+  test("the band follows the cards and carries the section's single primary action, which opens the contact dialog", async ({ page }) => {
     await page.goto("/");
     const band = page.locator("#services .gw-band");
     await expect(band).toHaveCount(1);
@@ -72,18 +74,19 @@ test.describe("services (from the database) and the CTA band", () => {
     const buttons = band.locator(".gw-btn");
     await expect(buttons).toHaveCount(1);
     await expect(buttons).toHaveText(CTA);
-    await expect(buttons).toHaveAttribute("href", "#contact");
+    await expect(buttons).toHaveAttribute("href", "/contact");
     await expect(buttons).toHaveClass(/gw-btn--on-lapis/);
     await expect(page.locator("#services .gw-btn")).toHaveCount(1); // nothing else in the region is a button
     await buttons.click();
-    await expect(page).toHaveURL(/#contact$/);
+    await expect(page.getByRole("dialog", { name: "درباره‌ی پروژه‌تان بگویید" })).toBeVisible();
+    await expect(page).toHaveURL(/\/$/);
   });
 
-  test("the main CTA label is a button four times (Navbar, hero, band, contact) and the footer link is a plain link", async ({ page }) => {
+  test("the main CTA label is a button three times (Navbar, hero, band) and the footer link is a plain link", async ({ page }) => {
     await page.goto("/");
     const buttons = page.locator(".gw-btn").filter({ hasText: new RegExp(`^${CTA}$`) }).filter({ visible: true });
-    await expect(buttons).toHaveCount(4);
-    expect(await buttons.evaluateAll((els) => els.map((e) => e.closest("header, #top, #services, #contact")?.id || e.closest("header")?.tagName.toLowerCase()))).toEqual(["header", "top", "services", "contact"]);
+    await expect(buttons).toHaveCount(3);
+    expect(await buttons.evaluateAll((els) => els.map((e) => e.closest("header, #top, #services")?.id || e.closest("header")?.tagName.toLowerCase()))).toEqual(["header", "top", "services"]);
     const link = page.locator(".lk-foot a").filter({ hasText: CTA });
     await expect(link).toHaveCount(1);
     await expect(link).not.toHaveClass(/gw-btn/);
@@ -99,16 +102,16 @@ test.describe("services (from the database) and the CTA band", () => {
 test.describe("the footer's consultation link", () => {
   const link = (page: Page) => page.locator(".lk-foot__link");
 
-  test("is a plain link to the contact form until a link is set; it is not a button", async ({ page }) => {
+  test("is a plain link to the contact form (/contact) until a link is set; it is not a button", async ({ page }) => {
     await page.goto("/");
     await expect(link(page)).toHaveText(CTA);
-    await expect(link(page)).toHaveAttribute("href", "#contact");
+    await expect(link(page)).toHaveAttribute("href", "/contact");
     await expect(page.locator(".lk-foot .gw-btn")).toHaveCount(0);
     await expect(link(page)).toBeVisible();
     expect((await link(page).boundingBox())!.height).toBeGreaterThanOrEqual(44); // touch target
   });
 
-  test("takes its href from the settings: an invalid one is refused in Persian, tel: works, clearing restores #contact", async ({ page }) => {
+  test("takes its href from the settings: an invalid one is refused in Persian, tel: works, clearing restores /contact", async ({ page }) => {
     await signInAndWait(page, "owner@e2e.test");
     await page.goto("/admin/settings");
     const field = page.locator("#st-consult-href");
@@ -133,6 +136,6 @@ test.describe("the footer's consultation link", () => {
     await page.getByRole("button", { name: "ذخیره‌ی تنظیمات" }).click();
     await expect(page.getByText("تنظیمات ذخیره شد.").first()).toBeVisible();
     await page.goto("/");
-    await expect(link(page)).toHaveAttribute("href", "#contact");
+    await expect(link(page)).toHaveAttribute("href", "/contact");
   });
 });

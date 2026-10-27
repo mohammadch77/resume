@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Navbar, type NavLink } from "@/components/ds";
+import { CONTACT_HREF } from "@/lib/site/links";
 import { SCROLL_SPY_MARGIN } from "@/lib/site/scroll-spy";
 
 type Props = { brand: string; links: NavLink[]; ctaLabel: string };
@@ -24,5 +25,5 @@ export function SiteNavbar({ brand, links, ctaLabel }: Props) {
     return () => observer.disconnect();
   }, [links]);
 
-  return <Navbar brand={brand} links={links} current={current} ctaLabel={ctaLabel} />;
+  return <Navbar brand={brand} links={links} current={current} ctaLabel={ctaLabel} ctaHref={CONTACT_HREF} />;
 }

@@ -20,11 +20,10 @@
 5. **Results** — 3 Metric components from the admin panel. **Omitted when empty.**
 6. **Testimonials** — one quote, saffron rule. **Omitted when empty.**
 7. **Clients** — real logos only; dashed «[لوگو]» frames as placeholders.
-8. **Contact** — headline «درباره‌ی پروژه‌تان بگویید» + contact details; raised form (name, phone, message) with the primary CTA and consent caption.
-9. **Footer** — ink ground, paper text; brand, a plain text link with the CTA label (href from the site settings: `tel:`, `https://` or `#anchor`, `#contact` while empty) and the copyright line.
+8. **Footer** — ink ground, paper text; brand, a plain text link with the CTA label (href from the site settings: `tel:`, `https://` or `#anchor`, `#contact` while empty) and the copyright line.
 
 ## CTA rule
-The primary CTA «درخواست مشاوره رایگان» is a button exactly 4 times — navbar, hero, the services CTA band, contact — with the identical label, linking to `#contact` (the contact one submits the form). The footer repeats it as a plain link, never as a button.
+The primary CTA «درخواست مشاوره رایگان» is a button exactly 3 times — navbar, hero, the services CTA band — with the identical label, linking to `/contact`. The footer repeats it as a plain link, never as a button. There is no contact section: the form (name, phone, message, outcome-worded submit, consent caption; `ContactForm`) opens in a drop-in `Dialog` over the page when a CTA is clicked, and is the whole of the `/contact` page without JavaScript.
 
 ## Density
 - Touch targets ≥ 44px (Button md is 48px; sm 36px is desktop/admin only).

@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Chip, Modal, ProjectCard } from "@/components/ds";
-import { setScrollLocked } from "@/lib/motion/scroll-lock";
+import { lockScroll } from "@/lib/motion/scroll-lock";
+import { CONTACT_HREF } from "@/lib/site/links";
 import { StripProgress } from "./strip-progress";
 
 export type WorkCard = {
@@ -20,7 +21,7 @@ export type WorkCard = {
   extra: React.ReactNode;
 };
 
-type Props = { cards: WorkCard[]; filters: string[]; ctaLabel: string };
+type Props = { cards: WorkCard[]; filters: string[]; ctaLabel: string; /** Dev preview: draw the cover placeholders with the «نمونه» label. */ sample?: boolean };
 
 const ALL = "همه";
 const DEEP_LINK = /^#work\/(.+)$/;
@@ -37,7 +38,7 @@ const noopSubscribe = () => () => {};
  * - Without JavaScript the cards are plain links to /work/<slug> and the filter row stays hidden (it needs JS).
  * - The modal's open state IS the URL hash (#work/<slug>): deep links work, Back closes it, and there is no state to sync.
  */
-export function WorkExplorer({ cards, filters, ctaLabel }: Props) {
+export function WorkExplorer({ cards, filters, ctaLabel, sample = false }: Props) {
   const [filter, setFilter] = useState(ALL);
   const hash = useSyncExternalStore(subscribeHash, () => window.location.hash, () => "");
   const hydrated = useSyncExternalStore(noopSubscribe, () => true, () => false);
@@ -48,10 +49,7 @@ export function WorkExplorer({ cards, filters, ctaLabel }: Props) {
 
   // The dialog owns the scroll while it is open: the smooth-scroll engine (if it is running) stops.
   const dialogOpen = openCard !== null;
-  useEffect(() => {
-    setScrollLocked(dialogOpen);
-    return () => setScrollLocked(false);
-  }, [dialogOpen]);
+  useEffect(() => (dialogOpen ? lockScroll() : undefined), [dialogOpen]);
 
   const open = (slug: string) => {
     history.pushState(null, "", `#work/${slug}`);
@@ -81,7 +79,7 @@ export function WorkExplorer({ cards, filters, ctaLabel }: Props) {
           <ProjectCard
             key={c.slug}
             art={ARTS[i % ARTS.length]}
-            sample={false}
+            sample={sample}
             tags={c.tags}
             title={c.title}
             summary={c.summary}
@@ -107,7 +105,7 @@ export function WorkExplorer({ cards, filters, ctaLabel }: Props) {
           solution={openCard.solution || "—"}
           outcome={openCard.outcome || "—"}
           primaryLabel={ctaLabel}
-          primaryHref="#contact"
+          primaryHref={CONTACT_HREF}
           onPrimary={close}
           cover={openCard.modalCover}
           extra={openCard.extra}

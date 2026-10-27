@@ -11,11 +11,12 @@ test("a visitor's request becomes a «جدید» lead in the panel and shows up 
 
   // the visitor
   await page.goto("/");
+  await page.locator(".lk-actions").getByRole("link", { name: CTA }).click(); // the hero button opens the dialog
   await page.waitForTimeout(3300); // the form refuses to be sent in under 3 s
   await page.getByLabel("نام و نام خانوادگی").fill(name);
   await page.getByLabel("شماره تماس").fill("۰۹۱۲۱۲۳۴۵۶۷");
   await page.getByRole("textbox", { name: "درباره‌ی پروژه", exact: true }).fill("یک وب‌سایت شرکتی می‌خواهم.");
-  await page.locator("#contact").getByRole("button", { name: CTA }).click();
+  await page.getByRole("dialog").getByRole("button", { name: CTA }).click();
   await expect(page.getByRole("status")).toContainText("درخواستتان رسید");
 
   // one row, status new

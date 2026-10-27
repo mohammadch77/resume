@@ -16,3 +16,9 @@
 @media (max-width:760px){.gw-modal__cols{grid-template-columns:minmax(0,1fr);gap:var(--space-5)}.gw-modal__head,.gw-modal__cols{padding:var(--space-5)}.gw-modal__cover{padding-inline:var(--space-5)}.gw-modal__title{font-size:var(--text-heading-2);line-height:var(--text-heading-2--line-height)}.gw-scrim{padding:var(--space-3)}}
 @keyframes gw-fade{from{opacity:0}to{opacity:1}}
 @keyframes gw-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+/* Dialog (added by Grin Web): the same frame, dropping in from the top. Transform + opacity only. */
+.gw-scrim--top{place-items:start center;padding-block-start:var(--space-7)}
+.gw-modal--drop{max-inline-size:36rem;animation:gw-drop var(--duration-base) var(--ease-out)}
+.gw-dialog__body{padding:0 var(--space-6) var(--space-6)}
+@keyframes gw-drop{from{opacity:0;transform:translateY(-1.5rem)}to{opacity:1;transform:none}}
+@media (max-width:760px){.gw-scrim--top{padding-block-start:var(--space-3)}.gw-dialog__body{padding:0 var(--space-5) var(--space-5)}}

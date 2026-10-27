@@ -38,6 +38,8 @@
 .lk-logos{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--space-4)}
 .lk-logo{display:grid;place-items:center;block-size:5.5rem;padding:var(--space-3);border:var(--border-hairline) dashed var(--color-line-strong)}
 .lk-logo__img{max-inline-size:100%;max-block-size:100%;inline-size:auto;block-size:auto;object-fit:contain}
+.lk-dialog__lead{margin-block-end:var(--space-5)}
+.gw-dialog__body .lk-form{padding:0;border:0;background:transparent}
 .lk-contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--space-8);align-items:start}
 .lk-contact dl{display:grid;grid-template-columns:auto 1fr;gap:var(--space-3) var(--space-4);margin:var(--space-6) 0 0}
 .lk-contact dt{display:flex;align-items:center;gap:var(--space-2);font:600 var(--text-label)/var(--text-label--line-height) var(--font-sans);color:var(--color-ink-muted)}

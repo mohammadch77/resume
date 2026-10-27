@@ -17,24 +17,32 @@ function Submit({ label }: { label: string }) {
 
 /**
  * Name, phone and message (three fields, outcome-worded button). It is a plain <form action>: without JavaScript the
- * browser posts it and the server renders the result; with JavaScript the same action runs without a page load.
+ * browser posts it and the server renders the result; with JavaScript the same action runs without a page load. The one form
+ * is used by the /contact page and by the dialog over the landing, so both give the same result (a lead, the same messages).
  * Validation lives on the server (lib/leads/submit.ts), shown here with the design system's Field error state.
  */
 export function ContactForm({ ctaLabel }: { ctaLabel: string }) {
   const [state, action] = useActionState<ContactState, FormData>(submitContactAction, IDLE);
   const startedAt = useRef<HTMLInputElement>(null);
+  const sent = useRef<HTMLParagraphElement>(null);
 
   // When the form appeared, for the minimum-fill-time check. Written to the input directly: no state, no re-render.
   useEffect(() => {
     if (startedAt.current) startedAt.current.value = String(Date.now());
   }, []);
 
-  if (state.status === "sent") {
+  // The submit button is gone once the request is sent; keep keyboard focus on the confirmation instead of dropping it.
+  const isSent = state.status === "sent";
+  useEffect(() => {
+    if (isSent) sent.current?.focus();
+  }, [isSent]);
+
+  if (isSent) {
     return (
       <div className="lk-form">
-        <p className="lk-sent" role="status">
+        <p className="lk-sent" role="status" tabIndex={-1} ref={sent}>
           <Icon name="circle-check" />
-          درخواستتان رسید. تا یک روز کاری تماس می‌گیریم.
+          درخواستتان رسید. پس از بررسی با شما تماس می‌گیریم.
         </p>
       </div>
     );

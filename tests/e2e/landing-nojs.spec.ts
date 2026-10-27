@@ -1,6 +1,4 @@
-import { randomBytes } from "node:crypto";
 import { expect, test } from "@playwright/test";
-import { withDb } from "./helpers";
 
 /** JavaScript is off for the whole file: the landing must be fully usable as plain HTML. */
 test.use({ javaScriptEnabled: false });
@@ -8,7 +6,7 @@ test.use({ javaScriptEnabled: false });
 test("the content, the navigation anchors and the case-study links work without JavaScript", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("h1")).toBeVisible();
-  for (const id of ["work", "services", "results", "clients", "contact"]) await expect(page.locator(`#${id}`)).toBeAttached();
+  for (const id of ["work", "services", "results", "clients"]) await expect(page.locator(`#${id}`)).toBeAttached();
   for (const href of ["#work", "#services", "#clients"]) await expect(page.locator(`.gw-nav__links a[href='${href}']`)).toBeAttached();
   await expect(page.locator(".gw-project")).toHaveCount(4);
   // the filter row needs JavaScript, so it is hidden rather than shown dead
@@ -23,23 +21,12 @@ test("the content, the navigation anchors and the case-study links work without 
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
 
-test("the contact form posts and shows the result with no JavaScript at all", async ({ page }) => {
-  const name = `بدون جاوااسکریپت ${randomBytes(3).toString("hex")}`;
+test("without JavaScript every CTA is a plain link to the contact page, which has the same form", async ({ page }) => {
   await page.goto("/");
-  await page.getByLabel("نام و نام خانوادگی").fill(name);
-  await page.getByLabel("شماره تماس").fill("09123334444");
-  await page.getByRole("textbox", { name: "درباره‌ی پروژه", exact: true }).fill("ارسال فرم بدون جاوااسکریپت.");
-  await page.locator("#contact").getByRole("button", { name: "درخواست مشاوره رایگان" }).click();
-  await expect(page.getByRole("status")).toContainText("درخواستتان رسید");
-  const rows = await withDb(async (db) => (await db.query(`SELECT phone, source FROM leads WHERE name = $1`, [name])).rows);
-  expect(rows).toEqual([{ phone: "09123334444", source: "landing" }]);
-});
-
-test("without JavaScript a bad phone number still gets the Persian instruction", async ({ page }) => {
-  await page.goto("/");
-  await page.getByLabel("نام و نام خانوادگی").fill("علی");
-  await page.getByLabel("شماره تماس").fill("0912");
-  await page.getByRole("textbox", { name: "درباره‌ی پروژه", exact: true }).fill("سلام");
-  await page.locator("#contact").getByRole("button", { name: "درخواست مشاوره رایگان" }).click();
-  await expect(page.getByText("شماره را با ۰۹ شروع کنید و ۱۱ رقم بنویسید.")).toBeVisible();
+  const links = page.locator("a[href='/contact']");
+  expect(await links.count()).toBeGreaterThanOrEqual(4); // Navbar (twice: bar and menu sheet), hero, band, footer
+  await page.locator(".lk-actions").getByRole("link", { name: "درخواست مشاوره رایگان" }).click();
+  await expect(page).toHaveURL(/\/contact$/);
+  await expect(page.getByRole("heading", { level: 1, name: "درباره‌ی پروژه‌تان بگویید" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "درخواست مشاوره رایگان" })).toBeVisible();
 });

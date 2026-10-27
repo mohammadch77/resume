@@ -13,7 +13,7 @@ export default defineConfig({
   webServer: {
     command: `npm run build && npx next start -p ${PORT}`,
     url: `http://localhost:${PORT}/admin/login`,
-    timeout: 300_000,
+    timeout: 600_000,
     reuseExistingServer: false,
     env: {
       NODE_ENV: "production",

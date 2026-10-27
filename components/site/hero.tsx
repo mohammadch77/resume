@@ -2,6 +2,7 @@ import { Button, CoverArt, CropFrame } from "@/components/ds";
 import type { LandingProject } from "@/lib/content/landing";
 import { formatNumber } from "@/lib/format";
 import { IMAGE_SIZES } from "@/lib/media/sizes";
+import { CONTACT_HREF } from "@/lib/site/links";
 import { coverNode } from "./cover";
 
 type Props = { title: string; subtitle: string | null; ctaLabel: string; projects: LandingProject[]; hasWork: boolean };
@@ -26,7 +27,7 @@ export function Hero({ title, subtitle, ctaLabel, projects, hasWork }: Props) {
           </p>
         )}
         <div className="lk-actions" data-enter="2">
-          <Button href="#contact">{ctaLabel}</Button>
+          <Button href={CONTACT_HREF}>{ctaLabel}</Button>
           {hasWork && (
             <Button variant="secondary" href="#work">
               مشاهده نمونه‌کارها

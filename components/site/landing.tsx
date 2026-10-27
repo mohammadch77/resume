@@ -5,8 +5,9 @@ import { mediaUrl } from "@/lib/media/paths";
 import { IMAGE_SIZES } from "@/lib/media/sizes";
 import { CAPS_SCRIPT } from "@/lib/motion/caps-script";
 import { parseVariants } from "@/lib/media/variants";
+import { resolveConsultHref } from "@/lib/site/links";
 import { CaseStudyExtra } from "./case-study";
-import { ContactSection } from "./contact-section";
+import { ContactLauncher } from "./contact-launcher";
 import { coverNode } from "./cover";
 import { Hero } from "./hero";
 import { JsonLd } from "./json-ld";
@@ -31,7 +32,7 @@ export function absoluteCoverUrl(cover: { variants: unknown } | null): string | 
  * never filled with placeholders. The primary CTA label is one value from the site settings, used in the navbar, the hero
  * and the contact form.
  */
-export function Landing({ data }: { data: LandingData }) {
+export function Landing({ data, preview = false }: { data: LandingData; preview?: boolean }) {
   const brand = data.settings?.brandName ?? FALLBACK_SETTINGS.brandName;
   const cta = data.settings?.primaryCtaLabel ?? FALLBACK_SETTINGS.primaryCtaLabel;
   const heroTitle = data.settings?.heroTitle ?? FALLBACK_SETTINGS.heroTitle;
@@ -85,21 +86,18 @@ export function Landing({ data }: { data: LandingData }) {
         <Hero title={heroTitle} subtitle={data.settings?.heroSubtitle ?? null} ctaLabel={cta} projects={projects} hasWork={hasWork} />
         {hasWork && (
           <section className="lk-sec lk-sec--sunken" id="work" aria-label="نمونه‌کارهای منتخب">
-            <WorkExplorer cards={cards} filters={filters} ctaLabel={cta} />
+            <WorkExplorer cards={cards} filters={filters} ctaLabel={cta} sample={preview} />
           </section>
         )}
         {data.services.length > 0 && <ServicesSection services={data.services} ctaLabel={cta} />}
         <ResultsSection projects={projects} />
         <TestimonialSection testimonial={data.testimonial} />
         <ClientsSection logos={data.clientLogos} />
-        <ContactSection
-          settings={{ contactPhone: data.settings?.contactPhone ?? null, contactEmail: data.settings?.contactEmail ?? null, contactAddress: data.settings?.contactAddress ?? null, socials: data.settings?.socials ?? {} }}
-          ctaLabel={cta}
-        />
       </main>
-      <SiteFooter brand={brand} ctaLabel={cta} consultHref={data.settings?.consultCtaHref ?? "#contact"} />
+      <SiteFooter brand={brand} ctaLabel={cta} consultHref={resolveConsultHref(data.settings?.consultCtaHref)} />
       <JsonLd data={organization} />
       <MotionRoot />
+      {!preview && <ContactLauncher ctaLabel={cta} />}
     </>
   );
 }

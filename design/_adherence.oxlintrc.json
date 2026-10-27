@@ -121,6 +121,10 @@
       {
         "selector": "JSXOpeningElement[name.name='CtaBand'] > JSXAttribute > JSXIdentifier[name!=/^(?:title|text|ctaLabel|ctaHref|headingLevel|className|key|ref|className|style|children)$/]",
         "message": "<CtaBand> doesn't accept that prop. Declared props: title, text, ctaLabel, ctaHref, headingLevel, className."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Dialog'] > JSXAttribute > JSXIdentifier[name!=/^(?:open|onClose|title|initialFocus|className|children|key|ref|className|style|children)$/]",
+        "message": "<Dialog> doesn't accept that prop. Declared props: open, onClose, title, initialFocus, className."
       }
     ]
   },
@@ -176,6 +180,9 @@
         "replaces": []
       },
       "CtaBand": {
+        "replaces": []
+      },
+      "Dialog": {
         "replaces": []
       }
     },

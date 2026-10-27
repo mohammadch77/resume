@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
+import { useId, useRef } from "react";
 import { Button } from "./button";
 import { Chip } from "./chip";
 import { CoverArt } from "./cover-art";
 import { CropFrame } from "./crop-frame";
+import { useDialog } from "./use-dialog";
 
 export type ModalProps = {
   open?: boolean;
@@ -35,8 +36,6 @@ export type ModalProps = {
   extra?: React.ReactNode;
 };
 
-const FOCUSABLE = 'a[href],button:not([disabled]),input,textarea,select,[tabindex]:not([tabindex="-1"])';
-
 /**
  * Case-study dialog: tags, title, crop-marked cover, challenge / solution / outcome in three columns, primary and
  * secondary actions. Traps focus, closes on Escape and on a scrim click, locks page scroll while open and gives focus
@@ -48,38 +47,7 @@ export function Modal({ open = true, onClose, title, tags = [], art = 1, image, 
   const L = { challenge: "چالش", solution: "راه‌حل", outcome: "نتیجه", ...labels };
   const titleId = `${useId().replace(/:/g, "")}-t`;
 
-  useEffect(() => {
-    if (!open) return;
-    const previous = document.activeElement as HTMLElement | null;
-    const node = ref.current;
-    if (!contained) node?.querySelector("button")?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose?.();
-        return;
-      }
-      if (e.key !== "Tab" || !node) return;
-      const focusable = node.querySelectorAll<HTMLElement>(FOCUSABLE);
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    node?.addEventListener("keydown", onKey);
-    const overflow = document.body.style.overflow;
-    if (!contained) document.body.style.overflow = "hidden";
-    return () => {
-      node?.removeEventListener("keydown", onKey);
-      document.body.style.overflow = overflow;
-      if (!contained) previous?.focus?.();
-    };
-  }, [open, contained, onClose]);
+  useDialog(ref, { open, contained, onClose });
 
   if (!open) return null;
   return (

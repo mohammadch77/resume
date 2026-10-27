@@ -125,7 +125,7 @@ describe("the landing's browser bundle stays small", () => {
   const FORBIDDEN = /from "(zod|drizzle-orm[^"]*|pg|@\/lib\/db\/[^"]*|@\/lib\/validation\/[^"]*|@\/lib\/leads\/submit|@\/lib\/leads\/notify|@\/lib\/content\/[^"]*|@\/lib\/env|@\/lib\/auth\/[^"]*|@\/lib\/admin\/[^"]*)"/;
 
   it("finds the client components of the public site", () => {
-    expect(clientFiles.map(rel)).toEqual(expect.arrayContaining(["components/site/work-explorer.tsx", "components/site/contact-form.tsx", "components/ds/modal.tsx"]));
+    expect(clientFiles.map(rel)).toEqual(expect.arrayContaining(["components/site/work-explorer.tsx", "components/site/contact-form.tsx", "components/site/contact-launcher.tsx", "components/ds/modal.tsx", "components/ds/dialog.tsx"]));
   });
 
   it("no client component imports zod, the database layer, validation schemas or server content code", () => {
@@ -158,5 +158,31 @@ describe("motion libraries stay out of the first bundle", () => {
 
   it("scroll-lock.ts and caps-script.ts, which the first bundle includes, import nothing heavy", () => {
     for (const f of ["lib/motion/scroll-lock.ts", "lib/motion/caps-script.ts"]) expect(read(path.join(ROOT, f))).not.toMatch(/^\s*import\s/m);
+  });
+});
+
+describe("the dev landing preview", () => {
+  const read = (rel: string) => readFileSync(path.join(ROOT, rel), "utf8");
+  const preview = ["app/dev/landing-preview/page.tsx", "components/dev/landing-preview-data.ts"];
+
+  it("is made-up content in code: no database layer, no content loader, only types from lib/content/landing", () => {
+    for (const f of preview) {
+      const src = read(f);
+      expect(src, f).not.toMatch(/@\/lib\/db|drizzle|getLandingData|getPublishedProject|from "pg"/);
+      const contentImports = src.split(String.fromCharCode(10)).filter((l) => l.includes('from "@/lib/content/landing"'));
+      for (const line of contentImports) expect(line.startsWith("import type "), f + ": " + line).toBe(true);
+    }
+  });
+
+  it("lives under /dev, whose layout answers 404 unless dev pages are enabled", () => {
+    expect(read("app/dev/layout.tsx")).toMatch(/devPagesEnabled\(\)/);
+    expect(read("app/dev/layout.tsx")).toMatch(/notFound\(\)/);
+    expect(read("app/dev/landing-preview/page.tsx")).toContain("<Landing");
+  });
+
+  it("every sample title starts with the sample label", () => {
+    const data = read("components/dev/landing-preview-data.ts");
+    expect(data).toContain("title: `نمونه · ${title}`");
+    expect([...data.matchAll(/title: "([^"]+)"/g)].map((m) => m[1]).every((t) => t.startsWith("نمونه"))).toBe(true);
   });
 });

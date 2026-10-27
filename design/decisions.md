@@ -95,3 +95,22 @@ Added by us on top of the export. The export has no JSX for them; they live in `
 - **Tools.** ui-ux-pro-max supplied rules (single primary action, hover versus tap, touch targets, spacing scale, contrast); 21st.dev was used for three free
   searches only (metadata, no code retrieved, 0 of 2 daily retrievals spent). Its generic shadcn sections (solid-ground CTA, service card with hover) confirmed the
   patterns but nothing was imported: its output is Tailwind/shadcn markup that ignores the dossier concept, RTL tokens and fonts.
+
+
+## Contact form as a drop-in dialog (Phase 8, owner-approved)
+
+- **The contact section is gone.** The form opens from the CTA: a dialog over the landing with JavaScript, the `/contact` page without. The CTA links stay real links
+  to `/contact` and one click handler (`components/site/contact-launcher.tsx`) turns them into "open the dialog"; a modified click (new tab) is left alone.
+- **`Dialog` (new DS component, `gw-modal--drop`).** A small dialog on the Modal's frame and scrim that drops in from the top: `translateY(-1.5rem)` to `none` with
+  opacity, 240 ms, `--ease-out` (the Modal's rise turned upside down; transform and opacity only). Closing is instant (motion.md). Reduced motion: the global 1 ms rule.
+  `Modal` and `Dialog` share one behaviour hook (`components/ds/use-dialog.ts`): focus trap, Escape, scroll lock, focus returns to the trigger. The scroll lock is now
+  counted, because two dialogs can overlap for a moment (a case study closing as the contact dialog opens) and each used to restore the overflow it had found.
+  The Lenis lock is counted the same way (`lockScroll()` in `lib/motion/scroll-lock.ts`).
+- **One result, two surfaces.** `ContactForm` is the same component in the dialog and on `/contact`; the server action, validation messages, honeypot, minimum fill time
+  and rate limits are unchanged. After a successful send the dialog stays open and shows the confirmation (focus moves to it); the text no longer promises a time.
+- **`/contact`** is `noindex`, not in the sitemap and not disallowed in robots.txt (a crawler must be able to read the noindex). It also carries the contact details
+  from the site settings, which used to sit in the contact section.
+- **Weight.** The dialog, the form and its server action are a separate chunk fetched by the first click (a plain dynamic import; `next/dynamic` added ~1.5 KB of loader to
+  the first load). First-load JS on `/`: 158,373 B before, 158,770 B after (+397 B: the launcher and the shared dialog hook; the form itself left the first load).
+- **Dev preview.** `/dev/landing-preview` renders the landing from literals in code (`components/dev/landing-preview-data.ts`): labelled «نمونه» cards drawn with the design
+  system's placeholder art, no database, nothing publishable. It lives under `/dev`, whose layout answers 404 unless `ENABLE_DEV_PAGES`. The contact dialog is not mounted there.

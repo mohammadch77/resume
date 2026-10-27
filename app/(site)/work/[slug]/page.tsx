@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button, Chip, CoverArt, CropFrame, Navbar } from "@/components/ds";
 import { CaseStudyExtra } from "@/components/site/case-study";
+import { ContactLauncher } from "@/components/site/contact-launcher";
 import { coverNode } from "@/components/site/cover";
 import { JsonLd } from "@/components/site/json-ld";
 import { absoluteCoverUrl } from "@/components/site/landing";
@@ -12,6 +13,7 @@ import { getPublishedProject } from "@/lib/content/public";
 import { getLandingData } from "@/lib/content/landing";
 import { env } from "@/lib/env";
 import { IMAGE_SIZES } from "@/lib/media/sizes";
+import { CONTACT_HREF, resolveConsultHref } from "@/lib/site/links";
 import "@/components/site/landing.css";
 
 /**
@@ -74,7 +76,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
   return (
     <>
       <header className="lk-navwrap">
-        <Navbar brand={brand} brandHref="/" links={HOME_LINKS} ctaLabel={cta} ctaHref="/#contact" />
+        <Navbar brand={brand} brandHref="/" links={HOME_LINKS} ctaLabel={cta} ctaHref={CONTACT_HREF} />
       </header>
       <main id="main" className="lk-wrap lk-work">
         <Link className="lk-back" href="/#work">
@@ -109,11 +111,12 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
           </div>
           <CaseStudyExtra project={project} />
           <div>
-            <Button href="/#contact">{cta}</Button>
+            <Button href={CONTACT_HREF}>{cta}</Button>
           </div>
         </article>
       </main>
-      <SiteFooter brand={brand} ctaLabel={cta} consultHref={settings?.consultCtaHref ?? "/#contact"} />
+      <SiteFooter brand={brand} ctaLabel={cta} consultHref={resolveConsultHref(settings?.consultCtaHref)} />
+      <ContactLauncher ctaLabel={cta} />
       <JsonLd data={creativeWork} />
     </>
   );

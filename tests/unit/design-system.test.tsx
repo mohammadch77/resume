@@ -67,8 +67,8 @@ describe("dev pages gate", () => {
 });
 
 describe("design-system components", () => {
-  it("the barrel exports the eleven components of the export and the three we added (CtaBand, ServiceCard, ServiceGrid)", () => {
-    expect(Object.keys(ds).filter((k) => /^[A-Z][a-z]/.test(k)).sort()).toEqual(["Button", "Chip", "CoverArt", "CropFrame", "CtaBand", "Field", "Icon", "Metric", "Modal", "Navbar", "ProjectCard", "ServiceCard", "ServiceGrid", "Testimonial"]);
+  it("the barrel exports the eleven components of the export and the four we added (CtaBand, Dialog, ServiceCard, ServiceGrid)", () => {
+    expect(Object.keys(ds).filter((k) => /^[A-Z][a-z]/.test(k)).sort()).toEqual(["Button", "Chip", "CoverArt", "CropFrame", "CtaBand", "Dialog", "Field", "Icon", "Metric", "Modal", "Navbar", "ProjectCard", "ServiceCard", "ServiceGrid", "Testimonial"]);
   });
 
   it("every icon the service form offers exists in the icon map", () => {
