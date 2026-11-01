@@ -394,6 +394,7 @@ describe("schema-wide invariants", () => {
         "projects.published_at", "projects.seo_description", "projects.seo_title",
         "services.deleted_at",
         "sessions.ip_hash", "sessions.user_agent",
+        "home_content.about_note", "home_content.hero_image_base_id", "home_content.hero_image_hover_id", "home_content.hero_rating_label", "home_content.hero_rating_score", "home_content.status_center", "home_content.status_left", "home_content.status_right",
         "site_settings.consult_cta_href", "site_settings.contact_address", "site_settings.contact_email", "site_settings.contact_phone",
         "site_settings.seo_description", "site_settings.seo_title",
         "tech_tags.deleted_at",

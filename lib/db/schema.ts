@@ -224,6 +224,64 @@ export const siteSettings = pgTable("site_settings", {
   updatedAt: ts("updated_at").notNull().defaultNow(),
 });
 
+/** Everything that is text or a picture on the landing page (singleton). Rules and meaning of every column: drizzle/migrations/0007. */
+export const homeContent = pgTable("home_content", {
+  id: smallint("id").primaryKey(),
+  heroEyebrow: text("hero_eyebrow").notNull(),
+  heroLine1: text("hero_line1").notNull(),
+  heroLine2: text("hero_line2").notNull(),
+  heroLine3: text("hero_line3").notNull(),
+  heroDescription: text("hero_description").notNull(),
+  heroSecondaryCtaLabel: text("hero_secondary_cta_label").notNull(),
+  heroImageBaseId: uuid("hero_image_base_id").references(() => mediaAssets.id),
+  heroImageHoverId: uuid("hero_image_hover_id").references(() => mediaAssets.id),
+  heroRatingScore: smallint("hero_rating_score"),
+  heroRatingLabel: text("hero_rating_label"),
+  statusLeft: text("status_left"),
+  statusCenter: text("status_center"),
+  statusRight: text("status_right"),
+  aboutEyebrow: text("about_eyebrow").notNull(),
+  aboutLead: text("about_lead").notNull(),
+  aboutRest: text("about_rest").notNull(),
+  aboutNote: text("about_note"),
+  workEyebrow: text("work_eyebrow").notNull(),
+  workTitle: text("work_title").notNull(),
+  servicesEyebrow: text("services_eyebrow").notNull(),
+  servicesTitle: text("services_title").notNull(),
+  statsEyebrow: text("stats_eyebrow").notNull(),
+  statsTitle: text("stats_title").notNull(),
+  bandTitle: text("band_title").notNull(),
+  bandText: text("band_text").notNull(),
+  footerTagline: text("footer_tagline").notNull(),
+  footerLegal: text("footer_legal").notNull(),
+  version: integer("version").notNull().default(1),
+  createdAt: ts("created_at").notNull().defaultNow(),
+  updatedAt: ts("updated_at").notNull().defaultNow(),
+});
+
+export const heroCards = pgTable("hero_cards", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  caption: text("caption").notNull(),
+  title: text("title").notNull(),
+  position: smallint("position").notNull(),
+  status: contentStatus("status").notNull().default("draft"),
+  version: integer("version").notNull().default(1),
+  createdAt: ts("created_at").notNull().defaultNow(),
+  updatedAt: ts("updated_at").notNull().defaultNow(),
+});
+
+export const homeStats = pgTable("home_stats", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  value: integer("value").notNull(),
+  suffix: text("suffix").notNull().default(""),
+  label: text("label").notNull(),
+  position: smallint("position").notNull(),
+  status: contentStatus("status").notNull().default("draft"),
+  version: integer("version").notNull().default(1),
+  createdAt: ts("created_at").notNull().defaultNow(),
+  updatedAt: ts("updated_at").notNull().defaultNow(),
+});
+
 export const auditLog = pgTable("audit_log", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   tableName: text("table_name").notNull(),
