@@ -12,17 +12,28 @@ import { readMotion } from "@/lib/motion/caps-script";
 export function MotionRoot() {
   useEffect(() => {
     const effects = readMotion();
-    const scripted = [...effects].some((e) => e !== "enter");
-    if (!scripted) return;
+    const engine = effects.has("lenis") || effects.has("pin");
+    const trail = effects.has("trail") ? document.querySelector<HTMLElement>("[data-trail-src]") : null;
+    if (!engine && !trail) return;
     let stop: (() => void) | undefined;
+    let stopTrail: (() => void) | undefined;
     let cancelled = false;
     const start = () => {
-      void import("@/lib/motion/engine")
-        .then((m) => m.startMotion(effects))
-        .then((teardown) => {
-          if (cancelled) teardown();
-          else stop = teardown;
+      if (engine) {
+        void import("@/lib/motion/engine")
+          .then((m) => m.startMotion(effects))
+          .then((teardown) => {
+            if (cancelled) teardown();
+            else stop = teardown;
+          });
+      }
+      if (trail) {
+        // its own small chunk, with no GSAP or Lenis in it
+        void import("@/lib/motion/hero-trail").then((m) => {
+          if (cancelled) return;
+          stopTrail = m.startHeroTrail(trail);
         });
+      }
     };
     const idle = typeof requestIdleCallback === "function" ? requestIdleCallback(start, { timeout: 2000 }) : window.setTimeout(start, 200);
     return () => {
@@ -30,6 +41,7 @@ export function MotionRoot() {
       if (typeof requestIdleCallback === "function") cancelIdleCallback(idle);
       else window.clearTimeout(idle);
       stop?.();
+      stopTrail?.();
     };
   }, []);
   return null;

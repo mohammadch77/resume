@@ -3,14 +3,15 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { CAPS_SCRIPT, readMotion } from "@/lib/motion/caps-script";
 
-type Env = { reduced?: boolean; mouse?: boolean; saveData?: boolean; cores?: number; memory?: number; observer?: boolean; search?: string };
+type Env = { reduced?: boolean; mouse?: boolean; saveData?: boolean; cores?: number; memory?: number; observer?: boolean; search?: string; width?: number };
 
 /** Runs the inline script against a fake browser and returns the `data-motion` it sets (null when it sets nothing). */
-function run({ reduced = false, mouse = true, saveData = false, cores = 8, memory = 8, observer = true, search = "" }: Env = {}): string | null {
+function run({ reduced = false, mouse = true, saveData = false, cores = 8, memory = 8, observer = true, search = "", width = 1440 }: Env = {}): string | null {
   let attr: string | null = null;
   const win = {
     matchMedia: (q: string) => ({ matches: q.includes("prefers-reduced-motion") ? reduced : q.includes("pointer: fine") ? mouse : false }),
     location: { search },
+    innerWidth: width,
     ...(observer ? { IntersectionObserver: class {} } : {}),
   };
   const nav = { connection: { saveData }, hardwareConcurrency: cores, deviceMemory: memory };
@@ -20,8 +21,12 @@ function run({ reduced = false, mouse = true, saveData = false, cores = 8, memor
 }
 
 describe("which motion a visitor gets (lib/motion/caps-script.ts)", () => {
-  it("a capable desktop gets the hero entrance, wheel smoothing and the pinned strip", () => {
-    expect(run()).toBe("enter lenis pin");
+  it("a capable desktop gets the hero entrance, wheel smoothing, the pinned strip and the hero's pointer trail", () => {
+    expect(run()).toBe("enter lenis pin trail");
+  });
+  it("the pointer trail needs a viewport of 1024 px or more", () => {
+    expect(run({ width: 1023 })).toBe("enter lenis pin");
+    expect(run({ width: 1024 })).toBe("enter lenis pin trail");
   });
   it("a touch device gets only the CSS entrance (no smoothing, no pin)", () => {
     expect(run({ mouse: false })).toBe("enter");
@@ -36,10 +41,11 @@ describe("which motion a visitor gets (lib/motion/caps-script.ts)", () => {
     expect(run(env)).toBeNull();
   });
   it("a missing deviceMemory (Firefox, Safari) does not count as low memory", () => {
-    expect(run({ memory: undefined })).toBe("enter lenis pin");
+    expect(run({ memory: undefined })).toBe("enter lenis pin trail");
   });
   it("?motion= limits the set, and none turns everything off", () => {
     expect(run({ search: "?motion=enter,pin" })).toBe("enter pin");
+    expect(run({ search: "?motion=trail" })).toBe("trail");
     expect(run({ search: "?x=1&motion=lenis" })).toBe("lenis");
     expect(run({ search: "?motion=none" })).toBeNull();
   });
@@ -51,9 +57,11 @@ describe("which motion a visitor gets (lib/motion/caps-script.ts)", () => {
 
 describe("the landing's CSS never relies on the motion script for visible content", () => {
   it("entrance rules are scoped to html[data-motion~=enter], so without the attribute everything is visible", () => {
-    const css = readFileSync(path.join(process.cwd(), "components/site/landing.css"), "utf8");
-    const rules = css.split("}").filter((r) => /data-enter/.test(r));
-    expect(rules.length).toBeGreaterThan(0);
-    for (const rule of rules) expect(rule).toContain('html[data-motion~="enter"]');
+    for (const file of ["components/site/landing.css", "components/site/hero.css"]) {
+      const css = readFileSync(path.join(process.cwd(), file), "utf8");
+      const rules = css.split("}").filter((r) => /data-enter/.test(r));
+      expect(rules.length, file).toBeGreaterThan(0);
+      for (const rule of rules) expect(rule, file).toContain('html[data-motion~="enter"]');
+    }
   });
 });

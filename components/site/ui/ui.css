@@ -111,6 +111,7 @@
 .lm-stats__figure { display: block; font: 600 var(--text-display-md)/var(--text-stat--line-height) var(--font-sans); }
 @media (min-width: 640px) { .lm-stats__figure { font-size: var(--text-display-lg); } }
 @media (min-width: 768px) { .lm-stats__figure { font-size: var(--text-stat); } }
+.lm-stats__num { display: inline-block; unicode-bidi: isolate; }
 .lm-stats__label { display: block; margin-block-start: 0.75rem; font: 400 var(--text-body-sm)/var(--text-body-sm--line-height) var(--font-sans); color: var(--color-on-ink-muted); }
 
 /* ---- NavMenu ---- */

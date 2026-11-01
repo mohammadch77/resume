@@ -21,7 +21,7 @@ const surfaces: Surface[] = [
       const context = await browser.newContext();
       const page = await context.newPage();
       await page.goto("/");
-      await page.locator(".lk-actions").getByRole("link", { name: CTA }).click();
+      await page.locator(".lm-hero__actions").getByRole("link", { name: CTA }).click();
       return { page, root: dialog(page), close: () => context.close() };
     },
   },
@@ -80,7 +80,7 @@ test.describe("one form, one result: dialog, page and no-JS page", () => {
 
   test("the dialog stays open after a successful send, with keyboard focus on the confirmation", async ({ page }) => {
     await page.goto("/");
-    await page.locator(".lk-actions").getByRole("link", { name: CTA }).click();
+    await page.locator(".lm-hero__actions").getByRole("link", { name: CTA }).click();
     await settle(page);
     await dialog(page).getByLabel("نام و نام خانوادگی").fill(unique());
     await dialog(page).getByLabel("شماره تماس").fill("09121234567");
@@ -95,7 +95,7 @@ test.describe("one form, one result: dialog, page and no-JS page", () => {
   test("a form sent within three seconds is refused with a request to slow down, and works after the pause (dialog)", async ({ page }) => {
     const name = unique();
     await page.goto("/");
-    await page.locator(".lk-actions").getByRole("link", { name: CTA }).click();
+    await page.locator(".lm-hero__actions").getByRole("link", { name: CTA }).click();
     await dialog(page).getByLabel("نام و نام خانوادگی").fill(name);
     await dialog(page).getByLabel("شماره تماس").fill("09121234567");
     await dialog(page).getByRole("textbox", { name: "درباره‌ی پروژه", exact: true }).fill("سلام");
@@ -128,7 +128,7 @@ test.describe("one form, one result: dialog, page and no-JS page", () => {
 test.describe("the dialog", () => {
   const triggers: Array<[string, (page: Page) => Locator]> = [
     ["Navbar", (page) => page.locator("header .gw-nav__end .gw-btn").first()],
-    ["hero", (page) => page.locator(".lk-actions").getByRole("link", { name: CTA })],
+    ["hero", (page) => page.locator(".lm-hero__actions").getByRole("link", { name: CTA })],
     ["services band", (page) => page.locator("#services .gw-band").getByRole("link", { name: CTA })],
     ["footer link", (page) => page.locator(".lk-foot__link")],
   ];
@@ -151,7 +151,7 @@ test.describe("the dialog", () => {
 
   test("a modified click (new tab) is left alone: it is not prevented and no dialog opens", async ({ page }) => {
     await page.goto("/");
-    const link = page.locator(".lk-actions").getByRole("link", { name: CTA });
+    const link = page.locator(".lm-hero__actions").getByRole("link", { name: CTA });
     const prevented = await link.evaluate((el) => {
       const e = new MouseEvent("click", { bubbles: true, cancelable: true, ctrlKey: true });
       el.dispatchEvent(e);
@@ -164,7 +164,7 @@ test.describe("the dialog", () => {
 
   test("traps Tab and Shift+Tab inside, and closes on a click on the scrim", async ({ page }) => {
     await page.goto("/");
-    await page.locator(".lk-actions").getByRole("link", { name: CTA }).click();
+    await page.locator(".lm-hero__actions").getByRole("link", { name: CTA }).click();
     await expect(dialog(page)).toBeVisible();
     for (let i = 0; i < 9; i += 1) {
       await page.keyboard.press("Tab");
@@ -179,7 +179,7 @@ test.describe("the dialog", () => {
 
   test("drops in with transform and opacity only", async ({ page }) => {
     await page.goto("/");
-    await page.locator(".lk-actions").getByRole("link", { name: CTA }).click();
+    await page.locator(".lm-hero__actions").getByRole("link", { name: CTA }).click();
     const props = await dialog(page).evaluate((el) => {
       const a = el.getAnimations().find((x) => (x as CSSAnimation).animationName === "gw-drop");
       return a ? [...new Set((a.effect as KeyframeEffect).getKeyframes().flatMap((k) => Object.keys(k)))].filter((k) => !["offset", "easing", "composite", "computedOffset"].includes(k)).sort() : null;
@@ -191,7 +191,7 @@ test.describe("the dialog", () => {
     const context = await browser.newContext({ reducedMotion: "reduce" });
     const page = await context.newPage();
     await page.goto("/");
-    await page.locator(".lk-actions").getByRole("link", { name: CTA }).click();
+    await page.locator(".lm-hero__actions").getByRole("link", { name: CTA }).click();
     await expect(dialog(page)).toBeVisible();
     const seconds = await dialog(page).evaluate((el) => Number.parseFloat(getComputedStyle(el).animationDuration));
     expect(seconds).toBeLessThanOrEqual(0.01);
@@ -244,7 +244,7 @@ test.describe("/dev/landing-preview", () => {
     await expect(page.getByRole("note")).toContainText("نمونه");
     expect(await sampleRows()).toBe(before);
     // the contact dialog is not mounted here, so a CTA is a plain link to the real page
-    await page.locator(".lk-actions").getByRole("link", { name: CTA }).click();
+    await page.locator(".lm-hero__actions").getByRole("link", { name: CTA }).click();
     await expect(page).toHaveURL(/\/contact$/);
   });
 });

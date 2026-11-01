@@ -55,7 +55,7 @@
 .lk-foot b{font:800 1.75rem/1 var(--font-display)}
 .lk-services__band{margin-block-start:var(--space-8)}
 .lk-foot :focus-visible{outline-color:var(--color-paper)}
-.lk-foot__link{display:inline-flex;align-items:center;min-block-size:2.75rem;color:var(--color-paper);font:600 var(--text-button)/var(--text-button--line-height) var(--font-sans);text-decoration:underline;text-underline-offset:.25em}
+.lk-foot__link{display:inline-flex;align-items:center;min-block-size:var(--space-7);color:var(--color-paper);font:600 var(--text-button)/var(--text-button--line-height) var(--font-sans);text-decoration:underline;text-underline-offset:.25em}
 .lk-foot__link:hover{color:var(--color-paper);text-decoration-thickness:.125rem}
 .lk-foot small{font:400 var(--text-caption)/var(--text-caption--line-height) var(--font-sans)}
 

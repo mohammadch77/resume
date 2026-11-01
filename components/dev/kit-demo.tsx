@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { NavMenu, PageDialog, PillButton } from "@/components/site/ui";
+import { PillButton } from "@/components/site/ui";
+import { NavMenu, PageDialog } from "@/components/site/ui/client";
 
 const ITEMS = [
   { label: "خانه", href: "#home" },

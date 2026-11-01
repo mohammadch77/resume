@@ -25,7 +25,7 @@ test("without JavaScript every CTA is a plain link to the contact page, which ha
   await page.goto("/");
   const links = page.locator("a[href='/contact']");
   expect(await links.count()).toBeGreaterThanOrEqual(4); // Navbar (twice: bar and menu sheet), hero, band, footer
-  await page.locator(".lk-actions").getByRole("link", { name: "درخواست مشاوره رایگان" }).click();
+  await page.locator(".lm-hero__actions").getByRole("link", { name: "درخواست مشاوره رایگان" }).click();
   await expect(page).toHaveURL(/\/contact$/);
   await expect(page.getByRole("heading", { level: 1, name: "درباره‌ی پروژه‌تان بگویید" })).toBeVisible();
   await expect(page.getByRole("button", { name: "درخواست مشاوره رایگان" })).toBeVisible();

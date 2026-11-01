@@ -7,6 +7,7 @@ import * as schema from "../lib/db/schema";
 import type { Db } from "../lib/db/client";
 import { ingestImage, ingestVideo } from "../lib/media/ingest";
 import { fakeMp4 } from "../tests/support/media-fixtures";
+import { seedHome } from "./seed-home";
 
 /**
  * Content for the e2e database (and therefore for Lighthouse and the screenshot comparison): the copy of
@@ -156,6 +157,9 @@ export async function seedLandingFixture(migratorUrl: string, uploadsDir: string
       [clientA],
     );
     await q(`UPDATE testimonials SET status = 'published', version = version + 1 WHERE id = $1`, [sampleTestimonial]);
+
+    // The v2 landing's texts and the two hero pictures (the same pictures the reference uses: development and tests only).
+    await seedHome(pool, { uploadsDir, images: true });
   } finally {
     await pool.end();
   }

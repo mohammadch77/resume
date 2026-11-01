@@ -1,3 +1,4 @@
+import { HOME_TEXT_DEFAULTS } from "@/lib/content/home-defaults";
 import type { LandingData, LandingProject } from "@/lib/content/landing";
 
 /**
@@ -30,6 +31,8 @@ const project = (n: number, title: string, industry: string, tags: string[]): La
 });
 
 export const PREVIEW_DATA: LandingData = {
+  // no pictures: the preview shows the typography-only hero (the other layout is covered by the e2e fixture database)
+  home: { texts: HOME_TEXT_DEFAULTS, rating: null, status: { left: null, center: null, right: null }, heroImages: null, cards: [], stats: [] },
   settings: {
     brandName: "Grin Web",
     heroTitle: "سایت و نرم‌افزاری که کسب‌وکارتان را جلو می‌برد",

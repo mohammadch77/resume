@@ -9,9 +9,9 @@ test.describe("landing content", () => {
     await page.goto("/");
     await expect(page.locator("h1")).toHaveText("سایت و نرم‌افزاری که کسب‌وکارتان را جلو می‌برد");
     const order = await page.locator("main > section").evaluateAll((els) => els.map((e) => e.id || e.getAttribute("aria-label")));
-    expect(order).toEqual(["top", "work", "services", "results", "نظر مشتری", "clients"]);
+    expect(order).toEqual(["home", "work", "services", "results", "نظر مشتری", "clients"]);
     // navbar, hero and the services band are buttons with this label; the footer one is a plain link (tests/e2e/landing-sections.spec.ts)
-    const primary = page.locator(".gw-btn").filter({ hasText: new RegExp(`^${CTA}$`) }).filter({ visible: true });
+    const primary = page.locator(".gw-btn, .lm-pill").filter({ hasText: new RegExp(`^${CTA}$`) }).filter({ visible: true });
     await expect(primary).toHaveCount(3);
   });
 
@@ -37,7 +37,7 @@ test.describe("landing content", () => {
     expect(Number(await img.getAttribute("width"))).toBeGreaterThan(0);
     expect(Number(await img.getAttribute("height"))).toBeGreaterThan(0);
     expect(await img.getAttribute("loading")).toBe("lazy");
-    await expect(page.locator("#top img[fetchpriority='high']")).toHaveCount(1); // the one hero image that may be the LCP
+    await expect(page.locator("#home img[fetchpriority='high']")).toHaveCount(1); // the one hero image that may be the LCP
   });
 
   test("every image on the page actually loads (a stale content cache once served 404 cover paths)", async ({ page }) => {
@@ -54,13 +54,13 @@ test.describe("landing content", () => {
     const broken = await page.$$eval("img", (imgs) => imgs.filter((i) => i.complete && i.naturalWidth === 0).map((i) => i.currentSrc || i.src));
     expect(failed).toEqual([]);
     expect(broken).toEqual([]);
-    expect(await page.locator("main img").count()).toBeGreaterThanOrEqual(8); // 2 hero + 4 cards + 2 client logos
+    expect(await page.locator("main img").count()).toBeGreaterThanOrEqual(7); // 1 hero monitor + 4 cards + 2 client logos
   });
 
   test("the hero and the cards never render a <video>; a video exists only inside the case-study gallery, behind a poster", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("video")).toHaveCount(0);
-    await expect(page.locator("#top video, .lk-art video, .gw-project video")).toHaveCount(0);
+    await expect(page.locator("#home video, .lk-art video, .gw-project video")).toHaveCount(0);
 
     await card(page, FIRST.title).getByRole("link", { name: /جزئیات/ }).click();
     const dialog = page.getByRole("dialog");

@@ -11,7 +11,7 @@ test("a visitor's request becomes a «جدید» lead in the panel and shows up 
 
   // the visitor
   await page.goto("/");
-  await page.locator(".lk-actions").getByRole("link", { name: CTA }).click(); // the hero button opens the dialog
+  await page.locator(".lm-hero__actions").getByRole("link", { name: CTA }).click(); // the hero button opens the dialog
   await page.waitForTimeout(3300); // the form refuses to be sent in under 3 s
   await page.getByLabel("نام و نام خانوادگی").fill(name);
   await page.getByLabel("شماره تماس").fill("۰۹۱۲۱۲۳۴۵۶۷");

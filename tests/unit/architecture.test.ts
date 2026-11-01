@@ -112,8 +112,8 @@ describe("public landing rules", () => {
 
   it("covers go through ResponsivePicture; CoverArt appears in the site only as the design system's own fallback", () => {
     const usesCoverArt = siteFiles.filter((f) => /<CoverArt/.test(read(f))).map(rel);
-    // hero art and the /work page fall back to CoverArt when a project has no image; nothing else may
-    expect(usesCoverArt.sort()).toEqual(["app/(site)/work/[slug]/page.tsx", "components/site/hero.tsx"]);
+    // the /work page falls back to CoverArt when a project has no image; nothing else may (the v2 hero does not use it)
+    expect(usesCoverArt.sort()).toEqual(["app/(site)/work/[slug]/page.tsx"]);
     expect(siteFiles.filter((f) => /<img[\s>]/.test(read(f))).map(rel)).toEqual(["components/site/responsive-picture.tsx"]);
   });
 });
@@ -151,9 +151,10 @@ describe("motion libraries stay out of the first bundle", () => {
   });
 
   it("nothing imports the engine statically: it is reached only by a dynamic import() in motion-root.tsx", () => {
-    const staticImports = files.filter((f) => /^\s*import[^;]*from "@\/lib\/motion\/(engine|strip-pin)"/m.test(read(f))).map(rel);
+    const staticImports = files.filter((f) => /^\s*import[^;]*from "@\/lib\/motion\/(engine|strip-pin|hero-trail)"/m.test(read(f))).map(rel);
     expect(staticImports).toEqual([]);
     expect(read(path.join(ROOT, "components/site/motion-root.tsx"))).toMatch(/import\("@\/lib\/motion\/engine"\)/);
+    expect(read(path.join(ROOT, "components/site/motion-root.tsx"))).toMatch(/import\("@\/lib\/motion\/hero-trail"\)/);
   });
 
   it("scroll-lock.ts and caps-script.ts, which the first bundle includes, import nothing heavy", () => {
@@ -184,5 +185,19 @@ describe("the dev landing preview", () => {
     const data = read("components/dev/landing-preview-data.ts");
     expect(data).toContain("title: `نمونه · ${title}`");
     expect([...data.matchAll(/title: "([^"]+)"/g)].map((m) => m[1]).every((t) => t.startsWith("نمونه"))).toBe(true);
+  });
+});
+
+describe("the v2 kit's barrel stays server-only", () => {
+  it("components/site/ui/index.ts re-exports no 'use client' module (a server component importing it would drag them into the first load)", () => {
+    const dir = path.join(ROOT, "components/site/ui");
+    const barrel = readFileSync(path.join(dir, "index.ts"), "utf8");
+    const exported = [...barrel.matchAll(/from "\.\/([a-z-]+)"/g)].map((m) => m[1]);
+    expect(exported.length).toBeGreaterThan(5);
+    for (const name of exported) {
+      const file = readdirSync(dir).find((f) => f.startsWith(name + "."));
+      expect(file, name).toBeTruthy();
+      expect(readFileSync(path.join(dir, file!), "utf8").slice(0, 200), name).not.toMatch(/["']use client["']/);
+    }
   });
 });

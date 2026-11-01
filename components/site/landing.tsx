@@ -35,7 +35,6 @@ export function absoluteCoverUrl(cover: { variants: unknown } | null): string | 
 export function Landing({ data, preview = false }: { data: LandingData; preview?: boolean }) {
   const brand = data.settings?.brandName ?? FALLBACK_SETTINGS.brandName;
   const cta = data.settings?.primaryCtaLabel ?? FALLBACK_SETTINGS.primaryCtaLabel;
-  const heroTitle = data.settings?.heroTitle ?? FALLBACK_SETTINGS.heroTitle;
   const { projects } = data;
   const hasWork = projects.length > 0;
 
@@ -83,7 +82,7 @@ export function Landing({ data, preview = false }: { data: LandingData; preview?
         <SiteNavbar brand={brand} links={links} ctaLabel={cta} />
       </header>
       <main id="main">
-        <Hero title={heroTitle} subtitle={data.settings?.heroSubtitle ?? null} ctaLabel={cta} projects={projects} hasWork={hasWork} />
+        <Hero home={data.home} ctaLabel={cta} hasWork={hasWork} />
         {hasWork && (
           <section className="lk-sec lk-sec--sunken" id="work" aria-label="نمونه‌کارهای منتخب">
             <WorkExplorer cards={cards} filters={filters} ctaLabel={cta} sample={preview} />

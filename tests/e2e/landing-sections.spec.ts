@@ -11,7 +11,7 @@ test.describe("section order and the navbar", () => {
   test("Navbar, hero, work, services + band, results, testimonial, clients, footer; no «روش کار», no contact section", async ({ page }) => {
     await page.goto("/");
     const order = await page.locator("main > section").evaluateAll((els) => els.map((e) => e.id || e.getAttribute("aria-label")));
-    expect(order).toEqual(["top", "work", "services", "results", "نظر مشتری", "clients"]);
+    expect(order).toEqual(["home", "work", "services", "results", "نظر مشتری", "clients"]);
     const html = await page.content();
     expect(html).not.toContain("روش کار");
     expect(html).not.toContain("#process");
@@ -84,9 +84,9 @@ test.describe("services (from the database) and the CTA band", () => {
 
   test("the main CTA label is a button three times (Navbar, hero, band) and the footer link is a plain link", async ({ page }) => {
     await page.goto("/");
-    const buttons = page.locator(".gw-btn").filter({ hasText: new RegExp(`^${CTA}$`) }).filter({ visible: true });
+    const buttons = page.locator(".gw-btn, .lm-pill").filter({ hasText: new RegExp(`^${CTA}$`) }).filter({ visible: true });
     await expect(buttons).toHaveCount(3);
-    expect(await buttons.evaluateAll((els) => els.map((e) => e.closest("header, #top, #services")?.id || e.closest("header")?.tagName.toLowerCase()))).toEqual(["header", "top", "services"]);
+    expect(await buttons.evaluateAll((els) => els.map((e) => e.closest("header, #home, #services")?.id || e.closest("header")?.tagName.toLowerCase()))).toEqual(["header", "home", "services"]);
     const link = page.locator(".lk-foot a").filter({ hasText: CTA });
     await expect(link).toHaveCount(1);
     await expect(link).not.toHaveClass(/gw-btn/);

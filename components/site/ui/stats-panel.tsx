@@ -20,8 +20,11 @@ export function StatsPanel({ eyebrow, title, stats }: { eyebrow: string; title: 
         {stats.map((s) => (
           <li key={s.label} className="lm-stats__item">
             <span className="lm-stats__figure">
-              <span data-count={s.value}>{faNumber.format(s.value)}</span>
-              {s.suffix}
+              {/* number and suffix are one isolated left-to-right unit, so «۱۵۰+» reads like «150+» (a bare "+" at the end of RTL text lands on the wrong side) */}
+              <span className="lm-stats__num" dir="ltr">
+                <span data-count={s.value}>{faNumber.format(s.value)}</span>
+                {s.suffix}
+              </span>
             </span>
             <span className="lm-stats__label">{s.label}</span>
           </li>

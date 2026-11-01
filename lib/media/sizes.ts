@@ -12,6 +12,8 @@ export const IMAGE_SIZES = {
   work: "(min-width: 1200px) 1152px, 100vw",
   /** Hero covers. */
   hero: "(min-width: 1024px) 380px, 60vw",
+  /** The hero monitor: about 46vw beside the text from 1024px, nearly full width below. */
+  heroMonitor: "(min-width: 1024px) 46vw, 92vw",
   /** A gallery thumbnail. */
   gallery: "(min-width: 760px) 280px, 100vw",
   /** A client logo. */

@@ -1,9 +1,9 @@
-export { Arrow, BrandMark } from "./icons";
+export { Arrow, BrandMark, StarIcon } from "./icons";
 export { PillButton, type PillButtonProps, type PillVariant } from "./pill-button";
 export { Eyebrow } from "./eyebrow";
 export { TagChip } from "./tag-chip";
 export { PortfolioCard, type PortfolioCardProps } from "./portfolio-card";
 export { ServiceRow } from "./service-row";
 export { StatsPanel, type Stat } from "./stats-panel";
-export { NavMenu, type NavItem } from "./nav-menu";
-export { PageDialog } from "./dialog";
+// The two client components (NavMenu, PageDialog) are exported from ./client, not from here: a server component importing this
+// barrel would otherwise pull them (and their hooks) into the page's first-load JavaScript.

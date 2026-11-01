@@ -84,4 +84,21 @@ test.describe("v2 kit", () => {
     const accent = page.locator(".lm-pill--accent").first();
     expect(await accent.evaluate((el) => getComputedStyle(el).color)).toBe("rgb(20, 20, 20)");
   });
+
+  test("a figure's suffix sits on the far side of the number, left to right: «۱۵۰+» not «+۱۵۰»", async ({ page }) => {
+    await page.goto(KIT);
+    const first = page.locator(".lm-stats__num").first();
+    expect(await first.evaluate((el) => getComputedStyle(el).direction)).toBe("ltr");
+    expect(await first.evaluate((el) => getComputedStyle(el).unicodeBidi)).toBe("isolate");
+    const order = await first.evaluate((el) => {
+      const number = el.querySelector("[data-count]")!.getBoundingClientRect();
+      const range = document.createRange();
+      range.selectNodeContents(el.lastChild!); // the text node holding the suffix
+      const suffix = range.getBoundingClientRect();
+      return { numberRight: number.right, suffixLeft: suffix.left, text: el.lastChild!.textContent };
+    });
+    expect(order.text).toBe("+");
+    expect(order.suffixLeft).toBeGreaterThanOrEqual(order.numberRight - 1);
+    await page.locator(".lm-stats").screenshot({ path: "test-results/stats-suffix.png" });
+  });
 });

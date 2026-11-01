@@ -2,8 +2,11 @@ import { and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 import type { Db } from "@/lib/db/client";
 import { getDb } from "@/lib/db/client";
-import { clients, industries, mediaAssets, projectMedia, projectMetrics, projects, projectServices, projectTech, services, siteSettings, techTags, testimonials } from "@/lib/db/schema";
+import { clients, heroCards, homeContent, homeStats, industries, mediaAssets, projectMedia, projectMetrics, projects, projectServices, projectTech, services, siteSettings, techTags, testimonials } from "@/lib/db/schema";
+import { mediaUrl } from "@/lib/media/paths";
+import { parseVariants } from "@/lib/media/variants";
 import { CONTENT_TAGS } from "./cache";
+import { HOME_TEXT_DEFAULTS, type HomeTexts } from "./home-defaults";
 import { isSample, isSampleText } from "./sample";
 
 /** What `ResponsivePicture` needs, as plain JSON. */
@@ -54,8 +57,33 @@ export type LandingSettings = {
   seoDescription: string | null;
 };
 
+/** The two hero images: the base one as a picture (the LCP), the second one as URLs the pointer effect fetches later. */
+export type HeroImages = { base: PictureData; trailSrc: string; maskSrc: string };
+
+/** Everything on the page that is text, a figure or a picture the owner edits (home_content, hero_cards, home_stats). */
+export type HomeData = {
+  texts: HomeTexts;
+  /** null = no rating row (it is a claim: never shown until entered). */
+  rating: { score: number; label: string } | null;
+  status: { left: string | null; center: string | null; right: string | null };
+  /** null = the hero is typography only. */
+  heroImages: HeroImages | null;
+  cards: Array<{ id: string; caption: string; title: string }>;
+  stats: Array<{ id: string; value: number; suffix: string; label: string }>;
+};
+
+export const EMPTY_HOME: HomeData = {
+  texts: HOME_TEXT_DEFAULTS,
+  rating: null,
+  status: { left: null, center: null, right: null },
+  heroImages: null,
+  cards: [],
+  stats: [],
+};
+
 export type LandingData = {
   settings: LandingSettings | null;
+  home: HomeData;
   projects: LandingProject[];
   services: Array<{ id: string; title: string; summary: string; iconKey: string }>;
   testimonial: { quote: string; authorName: string; authorRole: string | null } | null;
@@ -66,6 +94,65 @@ const MAX_PROJECTS = 60;
 
 const picture = (m: typeof mediaAssets.$inferSelect): PictureData => ({ altFa: m.altFa, width: m.width, height: m.height, dominantColor: m.dominantColor, variants: m.variants });
 const clean = (names: Array<string | null | undefined>): string[] => names.filter((n): n is string => Boolean(n) && !isSampleText(n));
+
+/** The webp of a picture at least `min` px wide (the widest one when none is), as a URL; null when the asset has no variants. */
+function webpUrl(variants: unknown, min: number): string | null {
+  const v = parseVariants(variants);
+  if (!v) return null;
+  const item = v.items.find((i) => i.width >= min) ?? v.items[v.items.length - 1];
+  return mediaUrl(item.webp.path);
+}
+
+/** home_content + the published (never «نمونه») hero cards and figures. A missing row means the defaults, so a fresh database still renders. */
+async function loadHome(db: Db): Promise<HomeData> {
+  const [row] = await db.select().from(homeContent).where(eq(homeContent.id, 1));
+  const [cardRows, statRows] = await Promise.all([
+    db.select().from(heroCards).where(eq(heroCards.status, "published")).orderBy(asc(heroCards.position)),
+    db.select().from(homeStats).where(eq(homeStats.status, "published")).orderBy(asc(homeStats.position)),
+  ]);
+  const cards = cardRows.filter((c) => !isSample(c.caption, c.title)).map((c) => ({ id: c.id, caption: c.caption, title: c.title }));
+  const stats = statRows.filter((x) => !isSample(x.label)).map((x) => ({ id: x.id, value: x.value, suffix: x.suffix, label: x.label }));
+  if (!row) return { ...EMPTY_HOME, cards, stats };
+
+  let heroImages: HeroImages | null = null;
+  if (row.heroImageBaseId && row.heroImageHoverId) {
+    const rows = await db.select().from(mediaAssets).where(inArray(mediaAssets.id, [row.heroImageBaseId, row.heroImageHoverId]));
+    const base = rows.find((m) => m.id === row.heroImageBaseId);
+    const hover = rows.find((m) => m.id === row.heroImageHoverId);
+    const trailSrc = hover ? webpUrl(hover.variants, Number.MAX_SAFE_INTEGER) : null;
+    const maskSrc = base ? webpUrl(base.variants, 768) : null;
+    if (base && base.kind === "image" && trailSrc && maskSrc) heroImages = { base: picture(base), trailSrc, maskSrc };
+  }
+  const texts: HomeTexts = {
+    heroEyebrow: row.heroEyebrow,
+    heroLine1: row.heroLine1,
+    heroLine2: row.heroLine2,
+    heroLine3: row.heroLine3,
+    heroDescription: row.heroDescription,
+    heroSecondaryCtaLabel: row.heroSecondaryCtaLabel,
+    aboutEyebrow: row.aboutEyebrow,
+    aboutLead: row.aboutLead,
+    aboutRest: row.aboutRest,
+    workEyebrow: row.workEyebrow,
+    workTitle: row.workTitle,
+    servicesEyebrow: row.servicesEyebrow,
+    servicesTitle: row.servicesTitle,
+    statsEyebrow: row.statsEyebrow,
+    statsTitle: row.statsTitle,
+    bandTitle: row.bandTitle,
+    bandText: row.bandText,
+    footerTagline: row.footerTagline,
+    footerLegal: row.footerLegal,
+  };
+  return {
+    texts,
+    rating: row.heroRatingScore !== null && row.heroRatingLabel !== null ? { score: row.heroRatingScore, label: row.heroRatingLabel } : null,
+    status: { left: row.statusLeft, center: row.statusCenter, right: row.statusRight },
+    heroImages,
+    cards,
+    stats,
+  };
+}
 
 /**
  * Everything the landing and the case-study pages show, read in one go. This is the single place where demo content is
@@ -89,6 +176,8 @@ export async function loadLandingData(db: Db): Promise<LandingData> {
         seoDescription: settingsRow.seoDescription,
       }
     : null;
+
+  const home = await loadHome(db);
 
   const projectRows = (
     await db
@@ -187,6 +276,7 @@ export async function loadLandingData(db: Db): Promise<LandingData> {
 
   return {
     settings,
+    home,
     projects: landingProjects,
     services: serviceRows.map((s) => ({ id: s.id, title: s.title, summary: s.summary, iconKey: s.iconKey })),
     testimonial: testimonialRow ? { quote: testimonialRow.quote, authorName: testimonialRow.authorName, authorRole: testimonialRow.authorRole } : null,
