@@ -3,14 +3,13 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import pg from "pg";
 import { z } from "zod";
-import { HOME_TEXT_DEFAULTS } from "../lib/content/home-defaults";
 import type { Db } from "../lib/db/client";
 import * as schema from "../lib/db/schema";
 import { ingestImage } from "../lib/media/ingest";
 
 /**
- * `npm run seed:home [-- --images] [-- --sample]`: creates the landing's singleton row (home_content) with the default copy of
- * lib/content/home-defaults.ts. Idempotent: an existing row is never overwritten, so edits made in the admin survive.
+ * `npm run seed:home [-- --images] [-- --sample]`: adds to the landing's singleton row (created by migration 0008) what a migration must not
+ * carry. Idempotent: nothing already set is overwritten, so edits made in the admin survive.
  *   --images  also uploads the two hero pictures of design/reference/hero through the media pipeline and sets them, if none is set.
  *             The rights to these two pictures are NOT confirmed (docs/BACKLOG.md, launch blocker): for development and tests.
  *   --sample  also adds draft hero cards and figures labelled «نمونه» (they can not be published as they are).
@@ -26,15 +25,10 @@ type Options = { uploadsDir: string; images?: boolean; sample?: boolean };
 
 export async function seedHome(pool: pg.Pool, { uploadsDir, images = false, sample = false }: Options): Promise<string[]> {
   const done: string[] = [];
-  const d = HOME_TEXT_DEFAULTS;
-  const created = await pool.query(
-    `INSERT INTO home_content (id, hero_eyebrow, hero_line1, hero_line2, hero_line3, hero_description, hero_secondary_cta_label, about_eyebrow, about_lead, about_rest,
-       work_eyebrow, work_title, services_eyebrow, services_title, stats_eyebrow, stats_title, band_title, band_text, footer_tagline, footer_legal)
-     VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) ON CONFLICT (id) DO NOTHING`,
-    [d.heroEyebrow, d.heroLine1, d.heroLine2, d.heroLine3, d.heroDescription, d.heroSecondaryCtaLabel, d.aboutEyebrow, d.aboutLead, d.aboutRest, d.workEyebrow, d.workTitle,
-      d.servicesEyebrow, d.servicesTitle, d.statsEyebrow, d.statsTitle, d.bandTitle, d.bandText, d.footerTagline, d.footerLegal],
-  );
-  done.push(created.rowCount ? "home_content created" : "home_content already there, left untouched");
+  // the row itself comes from migration 0008; this script only adds what a migration must not: the pictures and the sample rows
+  const row = await pool.query("SELECT 1 FROM home_content WHERE id = 1");
+  if (!row.rowCount) throw new Error("home_content has no row: run `npm run db:migrate` first (migration 0008 creates it).");
+  done.push("home_content row present");
 
   if (images) {
     const current = await pool.query<{ hero_image_base_id: string | null }>("SELECT hero_image_base_id FROM home_content WHERE id = 1");
