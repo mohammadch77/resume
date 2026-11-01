@@ -4,6 +4,10 @@ import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 import { designCard, ensureReferenceFixtures, serveReferenceCdn } from "../support/ds-reference";
 
+// v2: the old design system is retired (CLAUDE.md section 7) and its tokens now map onto the v2 palette, so these comparisons with the old
+// export cannot hold any more. The file is deleted with components/ds in phase 5.
+test.skip(true, "old design system retired in v2; deleted in phase 5");
+
 /**
  * Visual regression against the design export: each component page of ours (/dev/design-system/cards/<name>) is
  * screenshotted next to the export's own <name>.card.html at the card's declared viewport and the two are diffed.

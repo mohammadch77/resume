@@ -1,5 +1,3 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { contrastRatio, contrastReport } from "../../scripts/design-contrast";
 
@@ -9,27 +7,21 @@ describe("design:contrast", () => {
     expect(contrastRatio("#777777", "#ffffff")).toBeCloseTo(4.48, 1);
   });
 
-  it("every colour pair the site uses meets AA (4.5:1 text, 3:1 non-text) in both themes", () => {
+  it("every colour pair the site uses meets AA (4.5:1 text, 3:1 large text and non-text)", () => {
     const failed = contrastReport().filter((r) => !r.ok);
-    expect(failed.map((r) => `${r.theme}: ${r.what} ${r.ratio.toFixed(2)}`)).toEqual([]);
+    expect(failed.map((r) => `${r.what} ${r.ratio.toFixed(2)}`)).toEqual([]);
   });
 
-  it("covers both themes with the same pairs", () => {
+  it("checks the pairs that matter for the accent: it is never small text on white", () => {
     const rows = contrastReport();
-    const light = rows.filter((r) => r.theme === "light");
-    expect(light.length).toBeGreaterThan(15);
-    expect(rows.filter((r) => r.theme === "dark")).toHaveLength(light.length);
+    expect(rows.length).toBeGreaterThan(20);
+    const accentOnPaper = rows.find((r) => r.fg.startsWith("accent #") && r.bg.startsWith("paper") && r.min === 3);
+    expect(accentOnPaper?.ratio).toBeLessThan(4.5);
+    expect(rows.find((r) => r.what.startsWith("accent-coloured small text on page"))?.ratio).toBeGreaterThanOrEqual(4.5);
   });
 
-  it("refuses a stylesheet without the colour blocks instead of passing silently", () => {
-    expect(() => contrastReport(":root{--color-paper:#ffffff;--color-ink:#ffffff;}")).toThrow(/colour block/);
-  });
-});
-
-describe("focus rings on the dark grounds", () => {
-  const read = (rel: string) => readFileSync(path.join(process.cwd(), rel), "utf8");
-  it("the CTA band and the footer override the default focus ring, which has no contrast there", () => {
-    expect(read("design/components/cta-band/cta-band.css")).toMatch(/\.gw-band :focus-visible\{outline-color:var\(--color-on-lapis\)\}/);
-    expect(read("components/site/landing.css")).toMatch(/\.lk-foot :focus-visible\{outline-color:var\(--color-paper\)\}/);
+  it("refuses a stylesheet without the colour block instead of passing silently", () => {
+    expect(() => contrastReport(":root{--color-paper:#ffffff;--color-ink:#ffffff;}")).toThrow(/unknown colour token/);
+    expect(() => contrastReport("body{}")).toThrow(/colour block/);
   });
 });

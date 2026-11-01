@@ -8,10 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  // The @font-face rules live in tokens.css (generated from the design system). Only the two faces every page needs
-  // are preloaded: Vazirmatn UI FD Regular (body) and Estedad ExtraBold (display). SemiBold loads on demand.
-  preload("/fonts/Vazirmatn-UI-FD-Regular.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
-  preload("/fonts/Estedad-ExtraBold.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
+  // The @font-face rules live in tokens.css (generated from design/tokens.json). Only the weight the first screen needs is
+  // preloaded: Estedad SemiBold (the headline). Regular loads with the first body text and swaps in.
+  preload("/fonts/Estedad-SemiBold.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
   return (
     <html lang="fa" dir="rtl" className="h-full antialiased">
       <body className="min-h-full flex flex-col">{children}</body>

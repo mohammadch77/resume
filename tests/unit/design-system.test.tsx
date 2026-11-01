@@ -28,7 +28,7 @@ describe("generated token files", () => {
 
   it("the font faces point at /fonts and the base element rules sit in a layer", () => {
     const css = buildTokensCss();
-    expect(css).toContain('url("/fonts/Estedad-ExtraBold.woff2")');
+    expect(css).toContain('url("/fonts/Estedad-SemiBold.woff2")');
     expect(css).not.toContain("../fonts/");
     expect(css).toMatch(/@layer base \{[\s\S]*html\{background/);
   });

@@ -4,6 +4,7 @@
 @import "./tokens.css";
 @import "./theme.css";
 @import "../design/components/bundle.css" layer(components);
+@import "../components/site/ui/ui.css" layer(components);
 
 /* The design system switches themes with [data-theme="dark"] (on <html> or any wrapper); Tailwind's dark: follows it. */
 @custom-variant dark (&:is([data-theme="dark"] *));
@@ -31,9 +32,9 @@
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
-  /* shadcn's "accent" (menu hover) is lapis-tint. It must not be the --accent variable: the design system already
-     defines --accent as the lapis brand colour (tokens.css) and the two would collide. */
-  --color-accent: var(--color-lapis-tint);
+  /* shadcn's "accent" (menu hover) is the quiet surface fill. The brand accent is --color-accent in tokens.css (used as
+     var(--color-accent) in CSS, never as the Tailwind class), so the utility name is the only thing that is overridden here. */
+  --color-accent: var(--color-surface);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -56,15 +57,15 @@
   /* shadcn semantic variables -> Grin Web design tokens (tokens.css). No raw colours here. */
   --background: var(--color-paper);
   --foreground: var(--color-ink);
-  --card: var(--color-raised);
+  --card: var(--color-paper);
   --card-foreground: var(--color-ink);
-  --popover: var(--color-raised);
+  --popover: var(--color-paper);
   --popover-foreground: var(--color-ink);
-  --primary: var(--color-lapis);
-  --primary-foreground: var(--color-on-lapis);
-  --secondary: var(--color-sunken);
+  --primary: var(--color-accent);
+  --primary-foreground: var(--color-on-accent);
+  --secondary: var(--color-surface);
   --secondary-foreground: var(--color-ink);
-  --muted: var(--color-sunken);
+  --muted: var(--color-surface);
   --muted-foreground: var(--color-ink-muted);
   --accent-foreground: var(--color-ink);
   --destructive: var(--color-danger);
@@ -72,11 +73,11 @@
   --input: var(--color-line-strong);
   --ring: var(--color-focus-ring);
   --radius: 0.5rem;
-  --sidebar: var(--color-raised);
+  --sidebar: var(--color-paper);
   --sidebar-foreground: var(--color-ink);
-  --sidebar-primary: var(--color-lapis);
-  --sidebar-primary-foreground: var(--color-on-lapis);
-  --sidebar-accent: var(--color-lapis-tint);
+  --sidebar-primary: var(--color-accent);
+  --sidebar-primary-foreground: var(--color-on-accent);
+  --sidebar-accent: var(--color-surface);
   --sidebar-accent-foreground: var(--color-ink);
   --sidebar-border: var(--color-line);
   --sidebar-ring: var(--color-focus-ring);
