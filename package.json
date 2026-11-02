@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "audit:prod": "npm audit --omit=dev",
     "fonts:subset": "python scripts/subset-fonts.py --check",
     "tokens:gen": "tsx scripts/gen-tokens.ts",
     "design:contrast": "tsx scripts/design-contrast.ts",

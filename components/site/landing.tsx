@@ -46,6 +46,8 @@ export function Landing({ data, preview = false }: { data: LandingData; preview?
     "@type": "Organization",
     name: brand,
     url: new URL("/", env().SITE_URL).href,
+    description: data.settings?.seoDescription ?? data.settings?.heroSubtitle ?? home.texts.heroDescription,
+    image: new URL("/og-default.png", env().SITE_URL).href,
     ...(data.settings?.contactEmail ? { email: data.settings.contactEmail } : {}),
     ...(data.settings?.contactPhone ? { telephone: data.settings.contactPhone } : {}),
     ...(data.settings?.contactAddress ? { address: data.settings.contactAddress } : {}),

@@ -15,6 +15,7 @@ import { PillButton, TagChip } from "@/components/site/ui";
 import { getPublishedProject } from "@/lib/content/public";
 import { getLandingData } from "@/lib/content/landing";
 import { env } from "@/lib/env";
+import { DEFAULT_OG_IMAGE } from "@/lib/seo/json-ld";
 import { IMAGE_SIZES } from "@/lib/media/sizes";
 import { CONTACT_HREF, resolveConsultHref } from "@/lib/site/links";
 import "@/components/site/page.css";
@@ -36,13 +37,14 @@ export async function generateMetadata({ params }: PageProps<"/work/[slug]">): P
   const { settings } = await getLandingData();
   const title = project.seoTitle ?? project.title;
   const description = project.seoDescription ?? project.summary;
-  const image = absoluteCoverUrl(project.cover);
+  const image = absoluteCoverUrl(project.cover) ?? new URL(DEFAULT_OG_IMAGE.path, env().SITE_URL).href;
   return {
     metadataBase: new URL(env().SITE_URL),
     title: `${title} · ${settings?.brandName ?? FALLBACK_SETTINGS.brandName}`,
     description,
     alternates: { canonical: `/work/${project.slug}` },
-    openGraph: { type: "article", locale: "fa_IR", title, description, ...(image ? { images: [image] } : {}) },
+    openGraph: { type: "article", locale: "fa_IR", title, description, images: [image] },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
   };
 }
 

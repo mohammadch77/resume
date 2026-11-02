@@ -47,3 +47,4 @@ Needs Node 24 (the version the Dockerfile uses) and Docker (only for the databas
 - Reset everything: `docker compose -f deploy/docker-compose.dev.yml down -v` (deletes the dev database).
 - Tests use a separate throwaway database (`npm run test:db`, `npm run test:e2e`); they never touch this one.
 - Run e2e with `npm run test:e2e`, not `npx playwright test` directly: only the first resets the database.
+- Dependency gate: `npm run audit:prod` (`npm audit --omit=dev`) must report 0 vulnerabilities; run it in CI and before every release. Never `npm audit fix --force`. The dev-only findings (the lhci chain) are tracked in `docs/BACKLOG.md`, not gated.
