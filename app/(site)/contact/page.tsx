@@ -3,6 +3,7 @@ import { ContactBody } from "@/components/site/contact-body";
 import { FALLBACK_SETTINGS } from "@/components/site/settings-fallback";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { contactTexts } from "@/lib/content/home-defaults";
 import { getLandingData } from "@/lib/content/landing";
 import { env } from "@/lib/env";
 import { resolveConsultHref } from "@/lib/site/links";
@@ -39,6 +40,7 @@ export default async function ContactPage() {
       <SiteHeader brand={brand} brandHref="/" links={HOME_LINKS} ctaLabel={cta} />
       <main id="main">
         <ContactBody
+          texts={contactTexts(home.texts)}
           settings={{ contactPhone: settings?.contactPhone ?? null, contactEmail: settings?.contactEmail ?? null, contactAddress: settings?.contactAddress ?? null, socials: settings?.socials ?? {} }}
           ctaLabel={cta}
         />

@@ -9,6 +9,7 @@ import { ResponsivePicture } from "@/components/site/responsive-picture";
 import { FALLBACK_SETTINGS } from "@/components/site/settings-fallback";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { contactTexts } from "@/lib/content/home-defaults";
 import { SiteLauncher } from "@/components/site/site-launcher";
 import { PillButton, TagChip } from "@/components/site/ui";
 import { getPublishedProject } from "@/lib/content/public";
@@ -120,7 +121,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
         services={data.services}
         socials={settings?.socials ?? {}}
       />
-      <SiteLauncher ctaLabel={cta} />
+      <SiteLauncher ctaLabel={cta} contact={contactTexts(home.texts)} />
       <MotionRoot />
       <JsonLd data={creativeWork} />
     </div>

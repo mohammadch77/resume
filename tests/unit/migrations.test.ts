@@ -12,6 +12,7 @@ describe("migrations carry rules, not data", () => {
     expect(files).toContain("0005_admin_guards.sql");
     expect(files).toContain("0006_consult_cta_href.sql");
     expect(files).toContain("0008_home_content_row.sql");
+    expect(files).toContain("0009_home_content_marketing_texts.sql");
   });
 
   // the one exception: 0008 creates the singleton row of home_content (app_rw can not INSERT it, see the file's header)
@@ -24,10 +25,25 @@ describe("migrations carry rules, not data", () => {
     });
   }
 
+  const NINE = ["clientsEyebrow", "clientsTitle", "partnersLabel", "contactTitle", "contactLead", "contactNote"];
+  it("0009 adds exactly the six marketing-copy columns, NOT NULL with a length CHECK and the current copy as DEFAULT, and keeps every existing value", () => {
+    const sql = readFileSync(path.join(DIR, "0009_home_content_marketing_texts.sql"), "utf8");
+    for (const key of NINE) {
+      const text = HOME_TEXT_DEFAULTS[key as keyof typeof HOME_TEXT_DEFAULTS];
+      const column = key.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`);
+      expect(sql, key).toContain(`ADD COLUMN ${column} text NOT NULL DEFAULT '${text.replaceAll("'", "''")}'`);
+    }
+    expect(sql).not.toMatch(/(DROP|UPDATE|DELETE)/i);
+    expect((sql.match(/ADD CONSTRAINT/g) ?? []).length).toBe(3);
+  });
+
   it("0008's literals are exactly the default copy of lib/content/home-defaults.ts, and it never touches the pictures", () => {
     const sql = readFileSync(path.join(DIR, "0008_home_content_row.sql"), "utf8");
     const values = sql.slice(sql.indexOf("VALUES"));
-    for (const text of Object.values(HOME_TEXT_DEFAULTS)) expect(values, text).toContain(`'${text.replaceAll("'", "''")}'`);
+    for (const [key, text] of Object.entries(HOME_TEXT_DEFAULTS)) {
+      if (NINE.includes(key)) continue; // these six columns came with 0009
+      expect(values, text).toContain(`'${text.replaceAll("'", "''")}'`);
+    }
     expect(sql).not.toContain("hero_image");
     expect(sql).toMatch(/ON CONFLICT \(id\) DO NOTHING/);
   });

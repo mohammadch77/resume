@@ -77,7 +77,7 @@ export function Hero({ home, ctaLabel, hasWork }: { home: HomeData; ctaLabel: st
             {home.cards.length > 0 ? <HeroCard cards={home.cards} /> : <span />}
             {home.partners.length > 0 ? (
               <div className="lm-partners">
-                <p className="lm-partners__label">مورد اعتماد</p>
+                <p className="lm-partners__label">{home.texts.partnersLabel}</p>
                 <ul className="lm-partners__list">
                   {home.partners.map((name) => (
                     <li key={name}>{name}</li>

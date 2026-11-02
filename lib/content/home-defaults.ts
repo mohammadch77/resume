@@ -3,6 +3,8 @@
  * `scripts/seed-home.ts` writes into it. It is copy, not claims: no number, client, rating or year that could be untrue.
  * Every key has the length limit of its column (drizzle/migrations/0007); tests/unit/home-defaults.test.ts keeps them in step.
  */
+import type { ContactTexts } from "@/lib/site/contact-texts";
+
 export type HomeTexts = {
   heroEyebrow: string;
   heroLine1: string;
@@ -23,6 +25,12 @@ export type HomeTexts = {
   bandText: string;
   footerTagline: string;
   footerLegal: string;
+  clientsEyebrow: string;
+  clientsTitle: string;
+  partnersLabel: string;
+  contactTitle: string;
+  contactLead: string;
+  contactNote: string;
 };
 
 export const HOME_TEXT_DEFAULTS: HomeTexts = {
@@ -45,4 +53,13 @@ export const HOME_TEXT_DEFAULTS: HomeTexts = {
   bandText: "چند خط درباره‌ی هدفتان بنویسید؛ پس از بررسی با شما تماس می‌گیریم.",
   footerTagline: "استودیوی مستقل طراحی و توسعه‌ی سایت و نرم‌افزار.",
   footerLegal: "همه‌ی حقوق محفوظ است.",
+  clientsEyebrow: "مشتریان",
+  clientsTitle: "برندهایی که با ما کار کرده‌اند",
+  partnersLabel: "مورد اعتماد",
+  contactTitle: "درباره‌ی پروژه‌تان بگویید",
+  contactLead: "نیازتان را بنویسید؛ مسیر پیشنهادی را با هم بررسی می‌کنیم.",
+  contactNote: "با ارسال این فرم، با تماس ما برای هماهنگی جلسه موافقت می‌کنید.",
 };
+
+/** A client component gets just these three, not the whole page copy. */
+export const contactTexts = (t: HomeTexts): ContactTexts => ({ title: t.contactTitle, lead: t.contactLead, note: t.contactNote });

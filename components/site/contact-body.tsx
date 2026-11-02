@@ -1,11 +1,12 @@
+import type { ContactTexts } from "@/lib/site/contact-texts";
 import type { LandingSettings } from "@/lib/content/landing";
 import { SOCIAL_NETWORKS, type SocialKey } from "@/lib/validation/settings";
 import { ContactForm } from "./contact-form";
 
-type Props = { settings: Pick<LandingSettings, "contactPhone" | "contactEmail" | "contactAddress" | "socials">; ctaLabel: string };
+type Props = { texts: ContactTexts; settings: Pick<LandingSettings, "contactPhone" | "contactEmail" | "contactAddress" | "socials">; ctaLabel: string };
 
 /** The /contact page: headline, contact details from the site settings (an empty one is not shown, no placeholders) and the form. */
-export function ContactBody({ settings, ctaLabel }: Props) {
+export function ContactBody({ texts, settings, ctaLabel }: Props) {
   const { contactPhone, contactEmail, contactAddress, socials } = settings;
   const socialLinks = Object.entries(socials).filter(([key]) => key in SOCIAL_NETWORKS) as Array<[SocialKey, string]>;
   const hasDetails = Boolean(contactPhone || contactEmail || contactAddress || socialLinks.length);
@@ -13,9 +14,9 @@ export function ContactBody({ settings, ctaLabel }: Props) {
     <div className="lm-shell lm-contact">
       <div>
         <h1 className="lm-contact__title" id="contact-title">
-          درباره‌ی پروژه‌تان بگویید
+          {texts.title}
         </h1>
-        <p className="lm-contact__lead">نیازتان را بنویسید؛ مسیر پیشنهادی را با هم بررسی می‌کنیم.</p>
+        <p className="lm-contact__lead">{texts.lead}</p>
         {hasDetails ? (
           <dl className="lm-contact__details">
             {contactPhone ? (
@@ -55,7 +56,7 @@ export function ContactBody({ settings, ctaLabel }: Props) {
           </dl>
         ) : null}
       </div>
-      <ContactForm ctaLabel={ctaLabel} />
+      <ContactForm ctaLabel={ctaLabel} note={texts.note} />
     </div>
   );
 }

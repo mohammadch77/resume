@@ -23,6 +23,12 @@ const MAX: Record<keyof typeof HOME_TEXT_DEFAULTS, number> = {
   bandText: 300,
   footerTagline: 200,
   footerLegal: 120,
+  clientsEyebrow: 60,
+  clientsTitle: 80,
+  partnersLabel: 40,
+  contactTitle: 80,
+  contactLead: 200,
+  contactNote: 200,
 };
 
 describe("the page's default copy (lib/content/home-defaults.ts)", () => {

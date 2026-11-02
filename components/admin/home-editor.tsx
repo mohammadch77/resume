@@ -29,7 +29,7 @@ type Props = {
   partners: string[];
 };
 
-const LONG: Array<keyof HomeTexts> = ["heroDescription", "aboutLead", "aboutRest", "bandText", "footerTagline"];
+const LONG: Array<keyof HomeTexts> = ["heroDescription", "aboutLead", "aboutRest", "bandText", "footerTagline", "contactLead", "contactNote"];
 
 /**
  * The whole landing page's editable content, in the order of the page: hero (texts, the two pictures, rating), carousel cards, status bar,
@@ -120,6 +120,7 @@ export function HomeEditor({ version, initial, images, cards, stats, partners }:
         </div>
         <div className="flex flex-col gap-2 rounded-lg border p-3 text-sm">
           <p className="font-medium">مشتریان «مورد اعتماد» زیر هیرو</p>
+          {text("partnersLabel")}
           {partners.length > 0 ? <p data-testid="partners">{partners.join("، ")}</p> : <p className="text-muted-foreground">هنوز مشتری‌ای با «نمایش عمومی نام» نیست؛ این نوار نمایش داده نمی‌شود.</p>}
           <p className="text-muted-foreground">
             این فهرست خودکار از ماژول <Link href="/admin/clients" className="underline">مشتریان</Link> (گزینه‌ی «نمایش عمومی نام») می‌آید.
@@ -147,6 +148,9 @@ export function HomeEditor({ version, initial, images, cards, stats, partners }:
         {text("aboutEyebrow")}
         {text("aboutLead", "جمله‌ی اول، پررنگ.")}
         {text("aboutRest", "ادامه، کم‌رنگ‌تر.")}
+        <FormRow label="یادداشت زیر درباره" htmlFor="hm-aboutNote" error={errors.aboutNote?.message} hint="یک خط کوچک زیر متن؛ خالی = نمایش داده نمی‌شود." counter={{ value: String(watched.aboutNote ?? "").length, max: 160 }}>
+          <Input id="hm-aboutNote" aria-invalid={Boolean(errors.aboutNote)} {...register("aboutNote")} />
+        </FormRow>
       </section>
 
       <section className="flex flex-col gap-4" aria-labelledby="hm-stats">
@@ -176,6 +180,17 @@ export function HomeEditor({ version, initial, images, cards, stats, partners }:
         <h2 id="hm-footer" className="text-lg font-semibold">۸. فوتر</h2>
         {text("footerTagline")}
         {text("footerLegal", "سال و نام برند خودکار پیش از این متن می‌آیند.")}
+      </section>
+
+      <section className="flex flex-col gap-5" aria-labelledby="hm-clients">
+        <h2 id="hm-clients" className="text-lg font-semibold">۹. مشتریان و فرم تماس</h2>
+        <div className="grid gap-5 sm:grid-cols-2">
+          {text("clientsEyebrow")}
+          {text("clientsTitle")}
+        </div>
+        {text("contactTitle", "عنوان دیالوگ و صفحه‌ی تماس.")}
+        {text("contactLead")}
+        {text("contactNote", "زیر دکمه‌ی فرم تماس.")}
       </section>
 
       <div className="sticky bottom-0 flex flex-wrap items-center gap-3 border-t bg-background py-3">

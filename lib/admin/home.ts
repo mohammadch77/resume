@@ -13,7 +13,7 @@ import {
   type HomeFormValues,
   type HomeStatValues,
 } from "@/lib/validation/home";
-import { BlockedError, ConflictError, expectOne, failed, type Outcome } from "./outcome";
+import { BlockedError, ConflictError, expectOne, type Outcome } from "./outcome";
 
 export type HomeAdmin = { version: number; values: HomeFormValues };
 type Status = "draft" | "published" | "archived";
@@ -47,6 +47,13 @@ export async function getHomeAdmin(db: Db): Promise<HomeAdmin | null> {
       bandText: r.bandText,
       footerTagline: r.footerTagline,
       footerLegal: r.footerLegal,
+      clientsEyebrow: r.clientsEyebrow,
+      clientsTitle: r.clientsTitle,
+      partnersLabel: r.partnersLabel,
+      contactTitle: r.contactTitle,
+      contactLead: r.contactLead,
+      contactNote: r.contactNote,
+      aboutNote: r.aboutNote ?? "",
       heroImageBaseId: r.heroImageBaseId ?? "",
       heroImageHoverId: r.heroImageHoverId ?? "",
       heroRatingScore: r.heroRatingScore === null ? "" : String(r.heroRatingScore),
@@ -119,6 +126,13 @@ const homeColumns = (v: HomeFormValues) => ({
   bandText: v.bandText,
   footerTagline: v.footerTagline,
   footerLegal: v.footerLegal,
+  clientsEyebrow: v.clientsEyebrow,
+  clientsTitle: v.clientsTitle,
+  partnersLabel: v.partnersLabel,
+  contactTitle: v.contactTitle,
+  contactLead: v.contactLead,
+  contactNote: v.contactNote,
+  aboutNote: blankToNull(v.aboutNote),
   heroImageBaseId: v.heroImageBaseId === "" ? null : v.heroImageBaseId,
   heroImageHoverId: v.heroImageHoverId === "" ? null : v.heroImageHoverId,
   heroRatingScore: v.heroRatingScore === "" ? null : Number(v.heroRatingScore),
@@ -223,12 +237,16 @@ export async function removeListRow(tx: Tx, kind: "card" | "stat", id: string, v
   await compact(tx, table, await idsInOrder(tx, table));
 }
 
-/** `orderedIds` must be exactly the ids that exist (nothing missing, nothing extra); otherwise the list changed under the editor. */
+/**
+ * `orderedIds` must be exactly the ids the database holds right now (nothing missing, nothing extra, no duplicate). The rows are locked first
+ * (SELECT ... FOR UPDATE), so the check and the renumbering are one atomic step: if someone added or deleted a row meanwhile, the editor gets the
+ * conflict dialog (reload and arrange again) and nothing is written.
+ */
 export async function reorderList(tx: Tx, kind: "card" | "stat", orderedIds: string[]): Promise<Outcome<null>> {
   const table = kind === "card" ? heroCards : homeStats;
-  const current = await idsInOrder(tx, table);
+  const current = (await tx.select({ id: table.id }).from(table).orderBy(asc(table.position)).for("update")).map((r) => r.id);
   if (current.length !== orderedIds.length || new Set(orderedIds).size !== orderedIds.length || !orderedIds.every((id) => current.includes(id))) {
-    return failed("فهرست در این فاصله تغییر کرده است. صفحه را دوباره بارگذاری کنید.");
+    return { kind: "conflict" };
   }
   await compact(tx, table, orderedIds);
   return { kind: "ok", value: null };

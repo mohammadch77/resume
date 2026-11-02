@@ -68,6 +68,8 @@ export type HomeData = {
   /** null = no rating row (it is a claim: never shown until entered). */
   rating: { score: number; label: string } | null;
   status: { left: string | null; center: string | null; right: string | null };
+  /** The small line under the about statement; null = not shown. */
+  aboutNote: string | null;
   /** null = the hero is typography only. */
   heroImages: HeroImages | null;
   cards: Array<{ id: string; caption: string; title: string }>;
@@ -79,6 +81,7 @@ export const EMPTY_HOME: HomeData = {
   texts: HOME_TEXT_DEFAULTS,
   rating: null,
   status: { left: null, center: null, right: null },
+  aboutNote: null,
   heroImages: null,
   cards: [],
   stats: [],
@@ -148,12 +151,19 @@ async function loadHome(db: Db): Promise<HomeData> {
     bandText: row.bandText,
     footerTagline: row.footerTagline,
     footerLegal: row.footerLegal,
+    clientsEyebrow: row.clientsEyebrow,
+    clientsTitle: row.clientsTitle,
+    partnersLabel: row.partnersLabel,
+    contactTitle: row.contactTitle,
+    contactLead: row.contactLead,
+    contactNote: row.contactNote,
   };
   return {
     partners,
     texts,
     rating: row.heroRatingScore !== null && row.heroRatingLabel !== null ? { score: row.heroRatingScore, label: row.heroRatingLabel } : null,
     status: { left: row.statusLeft, center: row.statusCenter, right: row.statusRight },
+    aboutNote: row.aboutNote,
     heroImages,
     cards,
     stats,

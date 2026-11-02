@@ -41,7 +41,7 @@ export function WorkSection({ projects, texts }: { projects: LandingProject[]; t
 }
 
 /** The about statement from the home content: a bold lead and a quieter rest. With both empty the section is absent. */
-export function AboutSection({ texts }: { texts: HomeData["texts"] }) {
+export function AboutSection({ texts, note }: { texts: HomeData["texts"]; note: string | null }) {
   const lead = texts.aboutLead.trim();
   const rest = texts.aboutRest.trim();
   if (!lead && !rest) return null;
@@ -54,6 +54,7 @@ export function AboutSection({ texts }: { texts: HomeData["texts"] }) {
           {lead && rest ? " " : ""}
           <span className="lm-about__rest">{rest}</span>
         </p>
+        {note?.trim() ? <p className="lm-about__note">{note}</p> : null}
       </div>
     </section>
   );
@@ -120,14 +121,14 @@ export function TestimonialSection({ testimonial }: { testimonial: LandingData["
 }
 
 /** Real logos only. Omitted when no client agreed to be shown (no placeholder frames in production). */
-export function ClientsSection({ logos }: { logos: LandingData["clientLogos"] }) {
+export function ClientsSection({ logos, texts }: { logos: LandingData["clientLogos"]; texts: HomeData["texts"] }) {
   if (logos.length === 0) return null;
   return (
     <section className="lm-sec lm-sec--tight" id="clients" aria-labelledby="clients-title">
       <div className="lm-shell">
-        <Eyebrow>مشتریان</Eyebrow>
+        <Eyebrow>{texts.clientsEyebrow}</Eyebrow>
         <h2 className="lm-sec__title" id="clients-title">
-          برندهایی که با ما کار کرده‌اند
+          {texts.clientsTitle}
         </h2>
         <ul className="lm-logos">
           {logos.map((c) => (

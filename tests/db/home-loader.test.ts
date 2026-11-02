@@ -21,6 +21,14 @@ describe("home_content row (migration 0008)", () => {
     const row = r.rows[0];
     expect(row.hero_line1).toBe(HOME_TEXT_DEFAULTS.heroLine1);
     expect(row.footer_legal).toBe(HOME_TEXT_DEFAULTS.footerLegal);
+    // the six columns migration 0009 added keep the copy the page showed before them
+    expect(row.clients_eyebrow).toBe(HOME_TEXT_DEFAULTS.clientsEyebrow);
+    expect(row.clients_title).toBe(HOME_TEXT_DEFAULTS.clientsTitle);
+    expect(row.partners_label).toBe(HOME_TEXT_DEFAULTS.partnersLabel);
+    expect(row.contact_title).toBe(HOME_TEXT_DEFAULTS.contactTitle);
+    expect(row.contact_lead).toBe(HOME_TEXT_DEFAULTS.contactLead);
+    expect(row.contact_note).toBe(HOME_TEXT_DEFAULTS.contactNote);
+    expect(row.about_note).toBeNull();
     expect(row.hero_image_base_id).toBeNull();
     expect(row.hero_image_hover_id).toBeNull();
     expect(row.hero_rating_score).toBeNull();

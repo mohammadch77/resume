@@ -25,6 +25,12 @@ export const HOME_TEXT_LIMITS: Record<keyof HomeTexts, number> = {
   bandText: 300,
   footerTagline: 200,
   footerLegal: 120,
+  clientsEyebrow: 60,
+  clientsTitle: 80,
+  partnersLabel: 40,
+  contactTitle: 80,
+  contactLead: 200,
+  contactNote: 200,
 };
 
 /** The Persian name of every text field (error messages and the admin labels). */
@@ -48,6 +54,12 @@ export const HOME_TEXT_LABELS: Record<keyof HomeTexts, string> = {
   bandText: "بنر: متن",
   footerTagline: "فوتر: توضیح کوتاه",
   footerLegal: "فوتر: متن حقوقی",
+  clientsEyebrow: "برچسب بخش مشتریان",
+  clientsTitle: "عنوان بخش مشتریان",
+  partnersLabel: "برچسب نوار «مورد اعتماد»",
+  contactTitle: "تماس: عنوان",
+  contactLead: "تماس: متن زیر عنوان",
+  contactNote: "تماس: یادداشت رضایت زیر فرم",
 };
 
 const textShape = Object.fromEntries(
@@ -71,6 +83,7 @@ export const homeFormSchema = z
       .transform(normalizeDigits)
       .refine((v) => v === "" || /^[1-5]$/.test(v), "امتیاز باید عددی از ۱ تا ۵ باشد."),
     heroRatingLabel: optional60("متن امتیاز"),
+    aboutNote: optionalText("یادداشت زیر درباره", 160),
     statusLeft: optional60("نوار وضعیت، سمت راست"),
     statusCenter: optional60("نوار وضعیت، وسط"),
     statusRight: optional60("نوار وضعیت، سمت چپ"),
@@ -95,6 +108,7 @@ export const HOME_FORM_BLANK: HomeFormValues = {
   heroImageHoverId: "",
   heroRatingScore: "",
   heroRatingLabel: "",
+  aboutNote: "",
   statusLeft: "",
   statusCenter: "",
   statusRight: "",

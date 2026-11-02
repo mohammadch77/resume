@@ -37,7 +37,8 @@ export const PREVIEW_DATA: LandingData = {
     texts: HOME_TEXT_DEFAULTS,
     rating: { score: 4, label: "نمونه · برند راضی" },
     status: { left: "نمونه · دورکاری", center: "نمونه · از ۱۴۰۰", right: "نمونه · پایین بروید" },
-    heroImages: null,
+    aboutNote: null,
+  heroImages: null,
     cards: [
       { id: "c1", caption: "نمونه · طراحی", title: "نمونه · برای تبدیل بازدیدکننده به مشتری." },
       { id: "c2", caption: "نمونه · توسعه", title: "نمونه · برای رشد بدون دردسر." },

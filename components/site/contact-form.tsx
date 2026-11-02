@@ -23,7 +23,7 @@ function Submit({ label }: { label: string }) {
  * is used by the /contact page and by the dialog over the landing, so both give the same result (a lead, the same messages).
  * Validation lives on the server (lib/leads/submit.ts), shown here as the field's error line.
  */
-export function ContactForm({ ctaLabel }: { ctaLabel: string }) {
+export function ContactForm({ ctaLabel, note }: { ctaLabel: string; note: string }) {
   const [state, action] = useActionState<ContactState, FormData>(submitContactAction, IDLE);
   const startedAt = useRef<HTMLInputElement>(null);
   const sent = useRef<HTMLParagraphElement>(null);
@@ -72,7 +72,7 @@ export function ContactForm({ ctaLabel }: { ctaLabel: string }) {
         </p>
       ) : null}
       <Submit label={ctaLabel} />
-      <p className="lm-form__note">با ارسال این فرم، با تماس ما برای هماهنگی جلسه موافقت می‌کنید.</p>
+      <p className="lm-form__note">{note}</p>
     </form>
   );
 }

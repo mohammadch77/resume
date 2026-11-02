@@ -17,7 +17,7 @@ test.describe("admin: محتوای صفحه‌ی اصلی", () => {
   test("every part of the page is here, in the order of the page, with what the database holds and the clients that are named", async ({ page }) => {
     await open(page);
     const headings = await page.locator("main h2, h2").evaluateAll((els) => els.map((e) => e.textContent?.trim()));
-    expect(headings).toEqual(["۱. هیرو", "۲. کارت‌های کروسل هیرو", "۳. نوار وضعیت زیر هیرو", "۴. درباره", "۵. آمار", "۶. عنوان بخش‌ها", "۷. بنر بعد از خدمات", "۸. فوتر"]);
+    expect(headings).toEqual(["۱. هیرو", "۲. کارت‌های کروسل هیرو", "۳. نوار وضعیت زیر هیرو", "۴. درباره", "۵. آمار", "۶. عنوان بخش‌ها", "۷. بنر بعد از خدمات", "۸. فوتر", "۹. مشتریان و فرم تماس"]);
     await expect(page.locator("#hm-heroLine1")).not.toHaveValue("");
     await expect(page.locator("#hm-bandText")).not.toHaveValue("");
     await expect(page.locator("#hm-footerLegal")).not.toHaveValue("");

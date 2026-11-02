@@ -49,6 +49,7 @@
 @media (min-width: 1024px) { .lm-sec { padding-block: 7rem; } }
 .lm-about { max-inline-size: 60rem; margin-block-start: 1.25rem; font: 600 var(--text-heading-1)/1.6 var(--font-sans); }
 @media (min-width: 640px) { .lm-about { font-size: var(--text-display-md); line-height: 1.5; } }
+.lm-about__note { margin-block-start: 1.5rem; max-inline-size: 40rem; color: var(--color-ink-muted); font: 400 var(--text-body-sm)/1.7 var(--font-sans); }
 .lm-about__rest { color: var(--color-ink-muted); font-weight: 400; }
 .lm-sec--tight { padding-block-start: 2.5rem; }
 .lm-sec__title { margin-block: 1.25rem 3rem; max-inline-size: 22ch; font: 600 var(--text-heading-1)/1.35 var(--font-sans); }

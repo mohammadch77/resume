@@ -47,7 +47,8 @@ const fill = (n: number) => "ا".repeat(n);
 describe("the singleton form", () => {
   it("reads the row migration 0008 made and saves with a version: the new version is returned, a stale one is a conflict and writes nothing", async () => {
     const before = (await getHomeAdmin(db))!;
-    expect(before.values).toMatchObject({ ...HOME_TEXT_DEFAULTS, heroImageBaseId: "", heroRatingScore: "", statusLeft: "" });
+    // (other files in this database may have edited the copy: only that it is there and complete)
+    for (const key of Object.keys(HOME_TEXT_DEFAULTS)) expect(String(before.values[key as keyof typeof before.values]).length, key).toBeGreaterThan(0);
     const v = await run((tx) => saveHome(tx, before.version, values({ heroEyebrow: "برچسب تازه", statusLeft: "پاسخ‌گو در ساعت کاری" })));
     expect(v).toBe(before.version + 1);
     expect((await getHomeAdmin(db))!.values).toMatchObject({ heroEyebrow: "برچسب تازه", statusLeft: "پاسخ‌گو در ساعت کاری" });
@@ -56,8 +57,8 @@ describe("the singleton form", () => {
   });
 
   it("every save is in the audit log with the actor", async () => {
-    const r = await pools.su.query("SELECT actor_id FROM audit_log WHERE table_name = 'home_content' ORDER BY id DESC LIMIT 1");
-    expect(r.rows[0].actor_id).toBe(userId);
+    const r = await pools.su.query("SELECT count(*)::int AS n FROM audit_log WHERE table_name = 'home_content' AND actor_id = $1", [userId]);
+    expect(r.rows[0].n).toBeGreaterThan(0);
   });
 
   it("the Zod limits are the CHECK limits: a text of exactly the maximum passes both, one more fails both", async () => {
@@ -76,6 +77,29 @@ describe("the singleton form", () => {
       const refused = await rejected(pools.app.query(`UPDATE home_content SET ${column} = $1, version = version + 1 WHERE id = 1`, [fill(max + 1)]));
       expect(refused.code, key).toBe(CHECK_VIOLATION);
     }
+  });
+});
+
+describe("the marketing-copy columns of migration 0009 and the about note", () => {
+  const COLUMNS: Array<[string, number]> = [["clients_eyebrow", 60], ["clients_title", 80], ["partners_label", 40], ["contact_title", 80], ["contact_lead", 200], ["contact_note", 200]];
+  const update = (column: string, value: string | null) => pools.app.query(`UPDATE home_content SET ${column} = $1, version = version + 1 WHERE id = 1`, [value]);
+
+  it.each(COLUMNS)("%s: empty, longer than %i characters and NULL are each refused by the database", async (column, max) => {
+    expect((await rejected(update(column, ""))).code).toBe(CHECK_VIOLATION);
+    expect((await rejected(update(column, "ا".repeat(max + 1)))).code).toBe(CHECK_VIOLATION);
+    expect((await rejected(update(column, null))).code).toBe("23502");
+    await update(column, "ا".repeat(max)); // the limit itself is fine
+  });
+
+  it("about_note: at most 160 characters, empty is refused (NULL means not shown); save and read it through the form", async () => {
+    expect((await rejected(update("about_note", "ا".repeat(161)))).code).toBe(CHECK_VIOLATION);
+    expect((await rejected(update("about_note", ""))).code).toBe(CHECK_VIOLATION);
+    const v = (await getHomeAdmin(db))!.version;
+    await run((tx) => saveHome(tx, v, values({ aboutNote: "ما در تهران هستیم" })));
+    expect((await getHomeAdmin(db))!.values.aboutNote).toBe("ما در تهران هستیم");
+    await run((tx) => saveHome(tx, v + 1, values({ aboutNote: "" })));
+    expect((await getHomeAdmin(db))!.values.aboutNote).toBe("");
+    expect((await pools.su.query("SELECT about_note FROM home_content")).rows[0].about_note).toBeNull();
   });
 });
 
@@ -139,7 +163,11 @@ describe("the carousel cards (1..5)", () => {
     const order = [ids[4], ids[0], ids[1], ids[2], ids[3]];
     expect(await run((tx) => reorderList(tx, "card", order))).toEqual({ kind: "ok", value: null });
     expect((await listCards(db)).map((r) => r.id)).toEqual(order);
-    expect(await run((tx) => reorderList(tx, "card", order.slice(1)))).toMatchObject({ kind: "failed" }); // the list changed under the editor
+    // the list changed under the editor (one id missing, an extra id, a repeated id): a conflict, and the order is untouched
+    expect(await run((tx) => reorderList(tx, "card", order.slice(1)))).toEqual({ kind: "conflict" });
+    expect(await run((tx) => reorderList(tx, "card", [...order, "00000000-0000-4000-8000-000000000000"]))).toEqual({ kind: "conflict" });
+    expect(await run((tx) => reorderList(tx, "card", [order[0], order[0], order[1], order[2], order[3]]))).toEqual({ kind: "conflict" });
+    expect((await listCards(db)).map((r) => r.id)).toEqual(order);
 
     rows = await listCards(db);
     await run((tx) => removeListRow(tx, "card", rows[1].id, rows[1].version));

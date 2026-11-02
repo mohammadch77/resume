@@ -1,4 +1,5 @@
 import { KitDemo } from "@/components/dev/kit-demo";
+import { HOME_TEXT_DEFAULTS, contactTexts } from "@/lib/content/home-defaults";
 import { SiteLauncher } from "@/components/site/site-launcher";
 import { Eyebrow, PillButton, PortfolioCard, ServiceRow, StatsPanel, TagChip } from "@/components/site/ui";
 import tokens from "@/design/tokens.json";
@@ -90,7 +91,7 @@ export default function KitPage() {
           ]}
         />
       </main>
-      <SiteLauncher ctaLabel="درخواست مشاوره رایگان" />
+      <SiteLauncher ctaLabel="درخواست مشاوره رایگان" contact={contactTexts(HOME_TEXT_DEFAULTS)} />
     </div>
   );
 }

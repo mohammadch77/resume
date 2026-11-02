@@ -1,10 +1,11 @@
 "use client";
 
+import type { ContactTexts } from "@/lib/site/contact-texts";
 import { useEffect, useRef, useState, type ComponentType } from "react";
 import { lockScroll } from "@/lib/motion/scroll-lock";
 import { CONTACT_HREF, MENU_HASH } from "@/lib/site/links";
 
-type ContactView = ComponentType<{ ctaLabel: string; onClose: () => void }>;
+type ContactView = ComponentType<{ ctaLabel: string; contact: ContactTexts; onClose: () => void }>;
 type CaseView = ComponentType<{ slug: string; title: string; ctaLabel: string; onClose: () => void }>;
 type View = { kind: "contact"; C: ContactView } | { kind: "case"; C: CaseView; slug: string; title: string };
 
@@ -17,7 +18,7 @@ const CASE_HASH = /^#work\/(.+)$/;
  * (new tab) the browser simply navigates, to /contact, to /work/<slug>, or to the menu's :target. Each overlay's code is a separate chunk,
  * fetched by the first click. Renders the open dialog.
  */
-export function SiteLauncher({ ctaLabel }: { ctaLabel: string }) {
+export function SiteLauncher({ ctaLabel, contact }: { ctaLabel: string; contact: ContactTexts }) {
   const [view, setView] = useState<View | null>(null);
   const closeRef = useRef<(() => void) | undefined>(undefined);
 
@@ -109,5 +110,5 @@ export function SiteLauncher({ ctaLabel }: { ctaLabel: string }) {
 
   if (!view) return null;
   const onClose = () => closeRef.current?.();
-  return view.kind === "contact" ? <view.C ctaLabel={ctaLabel} onClose={onClose} /> : <view.C slug={view.slug} title={view.title} ctaLabel={ctaLabel} onClose={onClose} />;
+  return view.kind === "contact" ? <view.C ctaLabel={ctaLabel} contact={contact} onClose={onClose} /> : <view.C slug={view.slug} title={view.title} ctaLabel={ctaLabel} onClose={onClose} />;
 }

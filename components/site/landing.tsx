@@ -4,6 +4,7 @@ import { mediaUrl } from "@/lib/media/paths";
 import { CAPS_SCRIPT } from "@/lib/motion/caps-script";
 import { parseVariants } from "@/lib/media/variants";
 import { resolveConsultHref } from "@/lib/site/links";
+import { contactTexts } from "@/lib/content/home-defaults";
 import { Hero } from "./hero";
 import { JsonLd } from "./json-ld";
 import { MotionRoot } from "./motion-root";
@@ -61,12 +62,12 @@ export function Landing({ data, preview = false }: { data: LandingData; preview?
       <SiteHeader brand={brand} links={links} ctaLabel={cta} overlay />
       <main id="main">
         <Hero home={home} ctaLabel={cta} hasWork={hasWork} />
-        <AboutSection texts={home.texts} />
+        <AboutSection texts={home.texts} note={home.aboutNote} />
         <WorkSection projects={projects} texts={home.texts} />
         <ServicesSection services={data.services} texts={home.texts} ctaLabel={cta} />
         <StatsSection stats={home.stats} texts={home.texts} />
         <TestimonialSection testimonial={data.testimonial} />
-        <ClientsSection logos={data.clientLogos} />
+        <ClientsSection logos={data.clientLogos} texts={home.texts} />
       </main>
       <SiteFooter
         brand={brand}
@@ -79,7 +80,7 @@ export function Landing({ data, preview = false }: { data: LandingData; preview?
       />
       <JsonLd data={organization} />
       <MotionRoot />
-      {!preview && <SiteLauncher ctaLabel={cta} />}
+      {!preview && <SiteLauncher ctaLabel={cta} contact={contactTexts(home.texts)} />}
     </div>
   );
 }
