@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-/** The motion script refuses machines with <= 4 cores or <= 4 GB; the test machine may be one, so say what it is. */
+/** The motion script refuses a reported 2 GB device; the test machine may be one, so say what it is. */
 async function machine(page: Page) {
   await page.addInitScript(() => {
     Object.defineProperty(navigator, "hardwareConcurrency", { get: () => 8 });
@@ -102,7 +102,7 @@ test.describe("hero with the two pictures (the fixture database has them)", () =
     await expect.poll(() => painted(page), { timeout: 5000 }).toBe(0);
   });
 
-  test("off for reduced motion, for a low-end machine and with ?motion=none: no canvas, no second picture", async ({ page, browser }) => {
+  test("off for reduced motion, for a 2 GB device and with ?motion=none: no canvas, no second picture", async ({ page, browser }) => {
     const trailSrcRequested = async (p: Page, url: string, setup?: () => Promise<void>) => {
       const reqs: string[] = [];
       p.on("request", (r) => reqs.push(r.url()));
@@ -118,9 +118,9 @@ test.describe("hero with the two pictures (the fixture database has them)", () =
     await machine(page);
     await page.emulateMedia({ reducedMotion: "reduce" });
     expect(await trailSrcRequested(page, "/")).toBe(false);
-    // 4 cores
+    // a reported 2 GB device (the core count is not a reason: tests/e2e/hero-trail.spec.ts)
     const low = await browser.newPage();
-    await low.addInitScript(() => Object.defineProperty(navigator, "hardwareConcurrency", { get: () => 4 }));
+    await low.addInitScript(() => Object.defineProperty(navigator, "deviceMemory", { get: () => 2 }));
     expect(await trailSrcRequested(low, "/")).toBe(false);
     await low.close();
     // support switch

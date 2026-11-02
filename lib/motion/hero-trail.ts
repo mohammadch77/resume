@@ -2,13 +2,16 @@
  * The hero's pointer trail: moving the mouse over the monitor paints a soft brush of the second (bold) picture over the first, and the
  * paint decays by itself. One canvas, no library (this is not GSAP: it is a plain 2D canvas and a requestAnimationFrame loop), loaded as
  * its own small chunk only for a visitor whose capabilities include `trail` (lib/motion/caps-script.ts: a desktop with a fine pointer,
- * no reduced motion, no saveData, more than 4 cores and 4 GB). The second picture is not fetched before the first pointer movement
+ * no reduced motion, no saveData, not a 2 GB device). The speed of the machine is not guessed from its core count (Firefox reports 4 on
+ * ordinary laptops): a frame guard (./frame-guard.ts) stops the effect and removes the canvas if its first 2 s of drawing average over 30 ms a frame. The second picture is not fetched before the first pointer movement
  * (or, failing that, an idle moment), so it costs the first paint nothing.
  *
  * Mechanics (the reference's LiquidReveal): brush radius 143 CSS px, the existing trail fades by `decay` per frame, faster while the
  * pointer rests, and everything is cleared after 120 idle frames, when the loop stops. The canvas is clipped to the silhouette of
  * the monitor with a CSS mask made from the base picture, so nothing is ever painted outside the monitor.
  */
+import { createFrameGuard } from "./frame-guard";
+
 const BRUSH_RADIUS = 143;
 const DECAY = 0.016;
 const FADE_FRAMES = 120;
@@ -88,6 +91,8 @@ function mount(host: HTMLElement, image: HTMLImageElement, maskSrc: string): { c
   let queue: Point[] = [];
   let idle = 0;
   let frame = 0;
+  const guard = createFrameGuard();
+  let tooSlow = false;
 
   function measure() {
     const rect = canvas.getBoundingClientRect();
@@ -121,9 +126,9 @@ function mount(host: HTMLElement, image: HTMLImageElement, maskSrc: string): { c
     ctx2d.drawImage(brush, px - c, py - c);
   }
 
-  function tick() {
+  function tick(now: number) {
     frame = 0;
-    if (!visible) return;
+    if (!visible || tooSlow) return;
     const drawing = queue.length > 0;
     if (drawing) idle = 0;
     else {
@@ -142,10 +147,24 @@ function mount(host: HTMLElement, image: HTMLImageElement, maskSrc: string): { c
       ctx2d.clearRect(0, 0, width, height);
       return;
     }
+    if (guard.frame(now)) {
+      giveUp();
+      return;
+    }
     frame = requestAnimationFrame(tick);
   }
+  /** Too slow on this machine: stop, forget the paint and leave the base picture alone. */
+  function giveUp() {
+    tooSlow = true;
+    queue = [];
+    last = null;
+    ctx2d.clearRect(0, 0, width, height);
+    teardown();
+    canvas.remove();
+    host.removeAttribute("data-trail-ready");
+  }
   const wake = () => {
-    if (!frame && visible) frame = requestAnimationFrame(tick);
+    if (!frame && visible && !tooSlow) frame = requestAnimationFrame(tick);
   };
 
   function onMove(e: PointerEvent) {
@@ -189,13 +208,13 @@ function mount(host: HTMLElement, image: HTMLImageElement, maskSrc: string): { c
   io.observe(host);
   window.addEventListener("pointermove", onMove, { passive: true });
 
-  return {
-    canvas,
-    stop: () => {
-      window.removeEventListener("pointermove", onMove);
-      resize.disconnect();
-      io.disconnect();
-      if (frame) cancelAnimationFrame(frame);
-    },
-  };
+  function teardown() {
+    window.removeEventListener("pointermove", onMove);
+    resize.disconnect();
+    io.disconnect();
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+  }
+
+  return { canvas, stop: teardown };
 }

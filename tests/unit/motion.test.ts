@@ -34,11 +34,18 @@ describe("which motion a visitor gets (lib/motion/caps-script.ts)", () => {
   it.each([
     ["reduced motion", { reduced: true }],
     ["saveData", { saveData: true }],
-    ["4 CPU cores", { cores: 4 }],
-    ["4 GB of memory", { memory: 4 }],
+    ["2 GB of memory", { memory: 2 }],
     ["no IntersectionObserver", { observer: false }],
   ] as Array<[string, Env]>)("gets nothing with %s", (_name, env) => {
     expect(run(env)).toBeNull();
+  });
+  it("the core count is not a reason: 4 cores (Firefox's report on an ordinary laptop) or even 1 still get the effects", () => {
+    expect(run({ cores: 4 })).toBe("enter lenis trail");
+    expect(run({ cores: 1 })).toBe("enter lenis trail");
+  });
+  it("4 GB of memory is fine; only a reported 2 GB or less switches the motion off; saveData must be exactly true", () => {
+    expect(run({ memory: 4 })).toBe("enter lenis trail");
+    expect(run({ memory: 8 })).toBe("enter lenis trail");
   });
   it("a missing deviceMemory (Firefox, Safari) does not count as low memory", () => {
     expect(run({ memory: undefined })).toBe("enter lenis trail");

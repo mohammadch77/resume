@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 const FIRST = "فروشگاه آنلاین لوازم خانگی";
 
-/** The motion script refuses machines with <= 4 cores or <= 4 GB; the test machine may be one, so say what it is. */
+/** The motion script refuses a reported 2 GB device; the test machine may be one, so say what it is. */
 async function machine(page: Page, { cores = 8, memory = 8 } = {}) {
   await page.addInitScript(
     ({ cores, memory }) => {
@@ -34,8 +34,8 @@ test.describe("which motion runs", () => {
     expect(lazyScripts.length, "GSAP and Lenis arrive as lazy chunks after DOMContentLoaded").toBeGreaterThan(0);
   });
 
-  test("a low-end machine (4 cores) gets nothing: no attribute, no engine, no extra scripts", async ({ page }) => {
-    await machine(page, { cores: 4 });
+  test("a 2 GB device gets nothing: no attribute, no engine, no extra scripts", async ({ page }) => {
+    await machine(page, { memory: 2 });
     await page.goto("/");
     await page.waitForLoadState("networkidle");
     await expect(html(page)).not.toHaveAttribute("data-motion", /.+/);
@@ -113,8 +113,8 @@ test.describe("hero entrance", () => {
     expect(await page.locator("#home .lm-monitor img").evaluate((el) => el.getAnimations().length)).toBe(0);
   });
 
-  test("with reduced motion, on a low-end machine or without JavaScript the hero has no animation at all", async ({ page, browser }) => {
-    await machine(page, { cores: 4 });
+  test("with reduced motion, on a 2 GB device or without JavaScript the hero has no animation at all", async ({ page, browser }) => {
+    await machine(page, { memory: 2 });
     await page.goto("/");
     expect(await animationOf(page)).toBe("none");
     await expect(page.locator(LINE).first()).toHaveCSS("opacity", "1");

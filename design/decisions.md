@@ -28,6 +28,8 @@ beyond or around the reference, and why. CLAUDE.md section 7 is the rule; this i
 - **Contact flow** (carried over): every CTA is a real link to `/contact`; with JavaScript a click opens the same form in a drop-in
   `PageDialog`. One form, one server action, one result. `/contact` is `noindex` and not in the sitemap. The CTA is a button three times
   (Navbar, hero, services band) and a plain link in the footer.
-- **Motion gate** (carried over): `lib/motion/caps-script.ts` sets `data-motion` from reduced motion, `saveData`, cores, memory and
-  IntersectionObserver; Lenis (wheel only) and GSAP load lazily after first paint. Every effect is measured with `npm run motion:cost` and the
+- **Motion gate** (carried over): `lib/motion/caps-script.ts` sets `data-motion` from reduced motion, `saveData === true`, a reported deviceMemory <= 2 and
+  IntersectionObserver. **The core count and 4 GB memory limits were removed** (owner decision, hero fix): Firefox reports 4 cores and no memory on ordinary
+  laptops, which switched the star effect off for real visitors. The "<= 4 cores / <= 4 GB" rule of CLAUDE.md section 3 is for heavy WebGL; the trail is a light 2D canvas
+  and `lib/motion/frame-guard.ts` stops it (and removes the canvas) when its first 2 s of drawing average over 30 ms a frame; Lenis (wheel only) and GSAP load lazily after first paint. Every effect is measured with `npm run motion:cost` and the
   A/B script; lab TBT noise is about +-85 ms, so a single run is never trusted.

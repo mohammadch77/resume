@@ -9,7 +9,11 @@ export default defineConfig({
   fullyParallel: false,
   reporter: [["list"]],
   use: { baseURL: `http://localhost:${PORT}`, locale: "fa-IR" },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    // Firefox runs only the hero effect's spec: it reports 4 cores and no deviceMemory, which once switched the effect off for real visitors
+    { name: "firefox", use: { ...devices["Desktop Firefox"] }, testMatch: /hero-trail\.spec\.ts/ },
+  ],
   webServer: {
     command: `npm run build && npx next start -p ${PORT}`,
     url: `http://localhost:${PORT}/admin/login`,
