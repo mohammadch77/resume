@@ -74,7 +74,9 @@ test.describe("admin modules (UI)", () => {
   test("settings: saving, a bad phone is explained, and the value persists", async ({ page }) => {
     const t = tag();
     await signInAndWait(page, "editor@e2e.test");
-    await page.goto("/admin/settings");
+    // fill only after the form has hydrated: a value typed before React takes the form over is merged with the server-rendered one (the intermittent
+    // «old title + new title» failure), and that is a property of the test's timing, not of the form
+    await page.goto("/admin/settings", { waitUntil: "networkidle" });
     await page.locator("#st-hero-title").fill(`تیتر ${t}`);
     await page.locator("#st-phone").fill("123");
     await page.getByRole("button", { name: "ذخیره‌ی تنظیمات" }).click();

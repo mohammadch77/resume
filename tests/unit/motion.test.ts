@@ -21,14 +21,14 @@ function run({ reduced = false, mouse = true, saveData = false, cores = 8, memor
 }
 
 describe("which motion a visitor gets (lib/motion/caps-script.ts)", () => {
-  it("a capable desktop gets the hero entrance, wheel smoothing, the pinned strip and the hero's pointer trail", () => {
-    expect(run()).toBe("enter lenis pin trail");
+  it("a capable desktop gets the hero entrance, wheel smoothing and the hero's pointer trail", () => {
+    expect(run()).toBe("enter lenis trail");
   });
   it("the pointer trail needs a viewport of 1024 px or more", () => {
-    expect(run({ width: 1023 })).toBe("enter lenis pin");
-    expect(run({ width: 1024 })).toBe("enter lenis pin trail");
+    expect(run({ width: 1023 })).toBe("enter lenis");
+    expect(run({ width: 1024 })).toBe("enter lenis trail");
   });
-  it("a touch device gets only the CSS entrance (no smoothing, no pin)", () => {
+  it("a touch device gets only the CSS entrance (no smoothing, no pointer trail)", () => {
     expect(run({ mouse: false })).toBe("enter");
   });
   it.each([
@@ -41,23 +41,23 @@ describe("which motion a visitor gets (lib/motion/caps-script.ts)", () => {
     expect(run(env)).toBeNull();
   });
   it("a missing deviceMemory (Firefox, Safari) does not count as low memory", () => {
-    expect(run({ memory: undefined })).toBe("enter lenis pin trail");
+    expect(run({ memory: undefined })).toBe("enter lenis trail");
   });
   it("?motion= limits the set, and none turns everything off", () => {
-    expect(run({ search: "?motion=enter,pin" })).toBe("enter pin");
+    expect(run({ search: "?motion=enter,lenis" })).toBe("enter lenis");
     expect(run({ search: "?motion=trail" })).toBe("trail");
     expect(run({ search: "?x=1&motion=lenis" })).toBe("lenis");
     expect(run({ search: "?motion=none" })).toBeNull();
   });
   it("readMotion ignores unknown tokens", () => {
-    expect([...readMotion({ getAttribute: () => "enter bogus pin" })]).toEqual(["enter", "pin"]);
+    expect([...readMotion({ getAttribute: () => "enter bogus lenis" })]).toEqual(["enter", "lenis"]);
     expect(readMotion({ getAttribute: () => null }).size).toBe(0);
   });
 });
 
 describe("the landing's CSS never relies on the motion script for visible content", () => {
   it("entrance rules are scoped to html[data-motion~=enter], so without the attribute everything is visible", () => {
-    for (const file of ["components/site/landing.css", "components/site/hero.css"]) {
+    for (const file of ["components/site/hero.css"]) {
       const css = readFileSync(path.join(process.cwd(), file), "utf8");
       const rules = css.split("}").filter((r) => /data-enter/.test(r));
       expect(rules.length, file).toBeGreaterThan(0);

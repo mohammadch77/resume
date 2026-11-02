@@ -2,16 +2,16 @@ import { expect, test } from "@playwright/test";
 
 const CTA = "درخواست مشاوره رایگان";
 const FIRST = { slug: "home-appliances-store", title: "فروشگاه آنلاین لوازم خانگی" };
-const card = (page: import("@playwright/test").Page, title: string) => page.locator(".gw-project").filter({ hasText: title });
+const card = (page: import("@playwright/test").Page, title: string) => page.locator(".lm-card").filter({ hasText: title });
 
 test.describe("landing content", () => {
   test("sections come in the order of the brief; the primary CTA label is a button three times", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("h1")).toHaveText("سایت و نرم‌افزاری که کسب‌وکارتان را جلو می‌برد");
     const order = await page.locator("main > section").evaluateAll((els) => els.map((e) => e.id || e.getAttribute("aria-label")));
-    expect(order).toEqual(["home", "work", "services", "results", "نظر مشتری", "clients"]);
+    expect(order).toEqual(["home", "work", "services", "stats", "نظر مشتری", "clients"]);
     // navbar, hero and the services band are buttons with this label; the footer one is a plain link (tests/e2e/landing-sections.spec.ts)
-    const primary = page.locator(".gw-btn, .lm-pill").filter({ hasText: new RegExp(`^${CTA}$`) }).filter({ visible: true });
+    const primary = page.locator(".lm-pill").filter({ hasText: new RegExp(`^${CTA}$`) }).filter({ visible: true });
     await expect(primary).toHaveCount(3);
   });
 
@@ -26,14 +26,14 @@ test.describe("landing content", () => {
     expect(html).toContain("همکاری با این تیم روشن و حرفه‌ای بود");
   });
 
-  test("covers are real images through ResponsivePicture; the design system's CoverArt is not drawn", async ({ page }) => {
+  test("covers are real images through ResponsivePicture (the brand mark is only the fallback for a card without one)", async ({ page }) => {
     await page.goto("/");
-    const cards = page.locator(".gw-project");
+    const cards = page.locator(".lm-card");
     await expect(cards).toHaveCount(4);
-    await expect(page.locator(".gw-project picture source[type='image/avif']")).toHaveCount(4);
-    await expect(page.locator(".gw-project picture source[type='image/webp']")).toHaveCount(4);
-    await expect(page.locator(".gw-project .gw-cover__art")).toHaveCount(0);
-    const img = page.locator(".gw-project img").first();
+    await expect(page.locator(".lm-card picture source[type='image/avif']")).toHaveCount(4);
+    await expect(page.locator(".lm-card picture source[type='image/webp']")).toHaveCount(4);
+    await expect(page.locator(".lm-card__mark")).toHaveCount(0); // a card without a picture would show the brand mark instead
+    const img = page.locator(".lm-card img").first();
     expect(Number(await img.getAttribute("width"))).toBeGreaterThan(0);
     expect(Number(await img.getAttribute("height"))).toBeGreaterThan(0);
     expect(await img.getAttribute("loading")).toBe("lazy");
@@ -60,12 +60,13 @@ test.describe("landing content", () => {
   test("the hero and the cards never render a <video>; a video exists only inside the case-study gallery, behind a poster", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("video")).toHaveCount(0);
-    await expect(page.locator("#home video, .lk-art video, .gw-project video")).toHaveCount(0);
+    await expect(page.locator("#home video, .lm-card video")).toHaveCount(0);
 
-    await card(page, FIRST.title).getByRole("link", { name: /جزئیات/ }).click();
+    await card(page, FIRST.title).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     const video = dialog.locator("video");
+    await expect(video).toHaveCount(1);
     await expect(video).toHaveCount(1);
     expect(await video.getAttribute("preload")).toBe("none");
     expect(await video.getAttribute("poster")).toContain("/uploads/");
@@ -73,10 +74,11 @@ test.describe("landing content", () => {
     await expect(page.locator("video")).toHaveCount(1);
   });
 
-  test("results, testimonial and clients are shown because real data exists", async ({ page }) => {
+  test("stats, testimonial and clients are shown because real data exists", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("#results .gw-metric")).toHaveCount(3);
-    await expect(page.locator("#results")).toContainText("۴۰٪");
+    await expect(page.locator("#stats .lm-stats__item")).toHaveCount(4);
+    await expect(page.locator("#stats")).toContainText("۱۵۰");
+    await expect(page.locator("#stats")).toContainText("سال تجربه‌ی آزمایشی");
     await expect(page.locator("blockquote")).toContainText("تحویل سر موعد");
     await expect(page.locator("#clients picture")).toHaveCount(2);
   });
@@ -107,32 +109,19 @@ test.describe("landing content", () => {
   });
 });
 
-test.describe("Selected Work: filter, progress, modal", () => {
-  test("filter chips narrow the strip and the «۱ از N» line follows", async ({ page }) => {
+test.describe("Selected Work: the case-study dialog", () => {
+  test("the cards are a two-column grid of real links to /work/<slug>", async ({ page }) => {
     await page.goto("/");
-    const progress = page.locator(".lk-progress");
-    await expect(progress).toContainText("۱ از ۴");
-    await page.getByRole("button", { name: "نرم‌افزار", exact: true }).click();
-    await expect(page.locator(".gw-project")).toHaveCount(2);
-    await expect(progress).toContainText("۱ از ۲");
-    await page.getByRole("button", { name: "همه", exact: true }).click();
-    await expect(page.locator(".gw-project")).toHaveCount(4);
-  });
-
-  test("scrolling the strip moves the progress line (it counts from the start edge, which is the right in RTL)", async ({ page }) => {
-    await page.goto("/");
-    const strip = page.locator("#work-strip");
-    await expect(strip).toBeVisible();
-    await strip.evaluate((el) => {
-      el.scrollLeft = -el.scrollWidth; // RTL: the end of the strip is negative
-    });
-    await expect(page.locator(".lk-progress")).toContainText(/[۲۳۴] از ۴/);
-    expect(await page.locator(".lk-progress__bar").evaluate((el) => el.getBoundingClientRect().width)).toBeGreaterThan(0);
+    const cards = page.locator(".lm-card");
+    await expect(cards).toHaveCount(4);
+    for (const href of await cards.evaluateAll((els) => els.map((e) => e.getAttribute("href")))) expect(href).toMatch(/^\/work\/[a-z0-9-]+$/);
+    const columns = await page.locator(".lm-work__grid").evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(" ").length);
+    expect(columns).toBe(2);
   });
 
   test("a card opens the case study with a deep link; Tab stays inside; Escape closes and returns focus; Back closes", async ({ page }) => {
-    await page.goto("/");
-    const opener = card(page, FIRST.title).getByRole("link", { name: /جزئیات/ });
+    await page.goto("/", { waitUntil: "networkidle" });
+    const opener = card(page, FIRST.title);
     await opener.click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
@@ -155,13 +144,28 @@ test.describe("Selected Work: filter, progress, modal", () => {
     await expect(dialog).toBeHidden();
   });
 
+  test("a modified click (new tab) is left to the browser: no dialog", async ({ page }) => {
+    await page.goto("/", { waitUntil: "networkidle" });
+    const prevented = await card(page, FIRST.title).evaluate((el) => {
+      const e = new MouseEvent("click", { bubbles: true, cancelable: true, ctrlKey: true, button: 0 });
+      el.dispatchEvent(e);
+      return e.defaultPrevented;
+    });
+    expect(prevented).toBe(false);
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+  });
+
   test("opening #work/<slug> directly shows that case study, and its CTA closes it and opens the contact dialog", async ({ page }) => {
     await page.goto("/#work/clinic-booking");
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByRole("heading", { level: 2, name: "سامانه‌ی نوبت‌دهی کلینیک" })).toBeVisible();
     await dialog.getByRole("link", { name: CTA }).click();
-    await expect(dialog).toBeHidden();
     await expect(page.getByRole("dialog", { name: "درباره‌ی پروژه‌تان بگویید" })).toBeVisible();
     await expect(page).not.toHaveURL(/\/contact/);
+  });
+
+  test("without a published page the dialog falls back to the page itself (an unknown slug is a 404, not a stuck dialog)", async ({ page }) => {
+    await page.goto("/#work/does-not-exist");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
   });
 });

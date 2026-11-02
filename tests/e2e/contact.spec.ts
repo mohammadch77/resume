@@ -56,7 +56,7 @@ test.describe("one form, one result: dialog, page and no-JS page", () => {
       await root.getByLabel("نام و نام خانوادگی").fill(name);
       await root.getByLabel("شماره تماس").fill("123");
       await root.getByRole("button", { name: CTA }).click();
-      await expect(root.locator(".gw-field__error")).toHaveText([PHONE_ERROR, MESSAGE_ERROR]);
+      await expect(root.locator(".lm-field__error")).toHaveText([PHONE_ERROR, MESSAGE_ERROR]);
       await expect(root.getByLabel("شماره تماس")).toHaveAttribute("aria-invalid", "true");
       await expect(root.getByLabel("نام و نام خانوادگی")).toHaveValue(name);
       expect(await leadsNamed(name)).toHaveLength(0);
@@ -127,10 +127,10 @@ test.describe("one form, one result: dialog, page and no-JS page", () => {
 
 test.describe("the dialog", () => {
   const triggers: Array<[string, (page: Page) => Locator]> = [
-    ["Navbar", (page) => page.locator("header .gw-nav__end .gw-btn").first()],
+    ["Navbar", (page) => page.locator("header .lm-header__cta")],
     ["hero", (page) => page.locator(".lm-hero__actions").getByRole("link", { name: CTA })],
-    ["services band", (page) => page.locator("#services .gw-band").getByRole("link", { name: CTA })],
-    ["footer link", (page) => page.locator(".lk-foot__link")],
+    ["services band", (page) => page.locator("#services .lm-band").getByRole("link", { name: CTA })],
+    ["footer link", (page) => page.locator(".lm-foot__link")],
   ];
 
   for (const [name, trigger] of triggers) {
@@ -141,11 +141,11 @@ test.describe("the dialog", () => {
       await expect(dialog(page)).toBeVisible();
       await expect(page).toHaveURL(/\/$/);
       await expect(dialog(page).getByLabel("نام و نام خانوادگی")).toBeFocused();
-      expect(await page.evaluate(() => document.body.style.overflow)).toBe("hidden");
+      expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe("hidden");
       await page.keyboard.press("Escape");
       await expect(dialog(page)).toBeHidden();
       await expect(trigger(page)).toBeFocused();
-      expect(await page.evaluate(() => document.body.style.overflow)).toBe("");
+      expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe("");
     });
   }
 
@@ -173,7 +173,7 @@ test.describe("the dialog", () => {
     await dialog(page).getByRole("button", { name: "بستن" }).focus();
     await page.keyboard.press("Shift+Tab");
     await expect(dialog(page).getByRole("button", { name: CTA })).toBeFocused(); // wrapped to the last control
-    await page.locator(".gw-scrim").click({ position: { x: 4, y: 400 } });
+    await page.locator(".lm-scrim").click({ position: { x: 4, y: 400 } });
     await expect(dialog(page)).toBeHidden();
   });
 
@@ -181,10 +181,10 @@ test.describe("the dialog", () => {
     await page.goto("/");
     await page.locator(".lm-hero__actions").getByRole("link", { name: CTA }).click();
     const props = await dialog(page).evaluate((el) => {
-      const a = el.getAnimations().find((x) => (x as CSSAnimation).animationName === "gw-drop");
+      const a = el.getAnimations().find((x) => (x as CSSAnimation).animationName === "lm-drop");
       return a ? [...new Set((a.effect as KeyframeEffect).getKeyframes().flatMap((k) => Object.keys(k)))].filter((k) => !["offset", "easing", "composite", "computedOffset"].includes(k)).sort() : null;
     });
-    expect(props, "the dialog runs the gw-drop animation").toEqual(["opacity", "transform"]);
+    expect(props, "the dialog runs the lm-drop animation").toEqual(["opacity", "transform"]);
   });
 
   test("with reduced motion it has no perceptible animation", async ({ browser }) => {
@@ -203,10 +203,10 @@ test.describe("the dialog", () => {
     await page.getByRole("dialog").getByRole("link", { name: CTA }).click();
     await expect(dialog(page)).toBeVisible();
     await expect(page.getByRole("dialog")).toHaveCount(1);
-    expect(await page.evaluate(() => document.body.style.overflow)).toBe("hidden");
+    expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe("hidden");
     await page.keyboard.press("Escape");
     await expect(page.getByRole("dialog")).toHaveCount(0);
-    expect(await page.evaluate(() => document.body.style.overflow)).toBe("");
+    expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe("");
   });
 
   test("the work page opens it too", async ({ page }) => {
@@ -238,9 +238,8 @@ test.describe("/dev/landing-preview", () => {
     const sampleRows = () => withDb(async (db) => (await db.query<{ n: number }>(`SELECT count(*)::int AS n FROM projects WHERE title LIKE 'نمونه · %' OR slug LIKE 'preview-%'`)).rows[0].n);
     const before = await sampleRows();
     await page.goto("/dev/landing-preview");
-    await expect(page.locator(".gw-project")).toHaveCount(5);
-    await expect(page.locator(".gw-project .gw-sample")).toHaveCount(5);
-    for (const title of await page.locator(".gw-project h3").allInnerTexts()) expect(title).toMatch(/^نمونه/);
+    await expect(page.locator(".lm-card")).toHaveCount(5);
+    for (const title of await page.locator(".lm-card h3").allInnerTexts()) expect(title).toMatch(/^نمونه/);
     await expect(page.getByRole("note")).toContainText("نمونه");
     expect(await sampleRows()).toBe(before);
     // the contact dialog is not mounted here, so a CTA is a plain link to the real page

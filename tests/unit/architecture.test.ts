@@ -105,15 +105,10 @@ describe("public landing rules", () => {
     expect(offenders).toEqual([]);
   });
 
-  it("the «۱ از ۴» strip progress is site composition (components/site), not a design-system component", () => {
-    expect(siteFiles.map(rel)).toContain("components/site/strip-progress.tsx");
-    expect(files.filter((f) => rel(f).startsWith("components/ds/") && /StripProgress|lk-progress/.test(read(f)))).toEqual([]);
-  });
-
   it("covers go through ResponsivePicture; CoverArt appears in the site only as the design system's own fallback", () => {
     const usesCoverArt = siteFiles.filter((f) => /<CoverArt/.test(read(f))).map(rel);
-    // the /work page falls back to CoverArt when a project has no image; nothing else may (the v2 hero does not use it)
-    expect(usesCoverArt.sort()).toEqual(["app/(site)/work/[slug]/page.tsx"]);
+    // v2: nothing in the site draws the old design system's CoverArt any more
+    expect(usesCoverArt).toEqual([]);
     expect(siteFiles.filter((f) => /<img[\s>]/.test(read(f))).map(rel)).toEqual(["components/site/responsive-picture.tsx"]);
   });
 });
@@ -125,7 +120,7 @@ describe("the landing's browser bundle stays small", () => {
   const FORBIDDEN = /from "(zod|drizzle-orm[^"]*|pg|@\/lib\/db\/[^"]*|@\/lib\/validation\/[^"]*|@\/lib\/leads\/submit|@\/lib\/leads\/notify|@\/lib\/content\/[^"]*|@\/lib\/env|@\/lib\/auth\/[^"]*|@\/lib\/admin\/[^"]*)"/;
 
   it("finds the client components of the public site", () => {
-    expect(clientFiles.map(rel)).toEqual(expect.arrayContaining(["components/site/work-explorer.tsx", "components/site/contact-form.tsx", "components/site/contact-launcher.tsx", "components/ds/modal.tsx", "components/ds/dialog.tsx"]));
+    expect(clientFiles.map(rel)).toEqual(expect.arrayContaining(["components/site/contact-form.tsx", "components/site/site-launcher.tsx", "components/site/case-dialog.tsx", "components/site/motion-root.tsx", "components/site/ui/dialog.tsx"]));
   });
 
   it("no client component imports zod, the database layer, validation schemas or server content code", () => {
@@ -151,7 +146,7 @@ describe("motion libraries stay out of the first bundle", () => {
   });
 
   it("nothing imports the engine statically: it is reached only by a dynamic import() in motion-root.tsx", () => {
-    const staticImports = files.filter((f) => /^\s*import[^;]*from "@\/lib\/motion\/(engine|strip-pin|hero-trail)"/m.test(read(f))).map(rel);
+    const staticImports = files.filter((f) => /^\s*import[^;]*from "@\/lib\/motion\/(engine|hero-trail|clock|count-up|hero-carousel)"|from "@\/lib\/site\/menu"/m.test(read(f))).map(rel);
     expect(staticImports).toEqual([]);
     expect(read(path.join(ROOT, "components/site/motion-root.tsx"))).toMatch(/import\("@\/lib\/motion\/engine"\)/);
     expect(read(path.join(ROOT, "components/site/motion-root.tsx"))).toMatch(/import\("@\/lib\/motion\/hero-trail"\)/);

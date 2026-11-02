@@ -27,7 +27,7 @@ for (const theme of ["light", "dark"] as const) {
     test("landing page with the case-study modal open", async ({ page }) => {
       await page.goto("/");
       await setTheme(page, theme);
-      await page.locator(".gw-project").first().getByRole("link", { name: /جزئیات/ }).click();
+      await page.locator(".lm-card").first().click();
       await expect(page.getByRole("dialog")).toBeVisible();
       await scan(page, `modal ${theme}`);
     });
@@ -51,3 +51,22 @@ test("the page has one h1, a skip link, landmarks, and the document language and
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "رفتن به محتوای اصلی" })).toBeFocused();
 });
+
+// Below 640px the Menu button shows only its icon (the word is hidden), and the header has no CTA: Lighthouse's mobile run found the button without a name.
+for (const [name, width, height] of [["phone", 390, 844], ["desktop", 1440, 900]] as const) {
+  test(`axe at ${name} width: landing with the menu open, and the contact dialog`, async ({ browser }) => {
+    const ctx = await browser.newContext({ viewport: { width, height }, locale: "fa-IR" });
+    const page = await ctx.newPage();
+    await page.goto("/", { waitUntil: "networkidle" });
+    await scan(page, `landing ${name}`);
+    await page.locator(".lm-menu-button").click();
+    await expect(page.locator("#lm-menu")).toHaveAttribute("data-open", "true");
+    await page.waitForTimeout(700);
+    await scan(page, `menu ${name}`);
+    await page.keyboard.press("Escape");
+    await page.locator(".lm-hero__actions a").first().click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await scan(page, `contact dialog ${name}`);
+    await ctx.close();
+  });
+}
