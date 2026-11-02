@@ -97,7 +97,6 @@ describe("public landing rules", () => {
     const importers = siteFiles.filter((f) => /gallery-video/.test(read(f)) && !rel(f).endsWith("gallery-video.tsx")).map(rel);
     expect(importers).toEqual(["components/site/case-study.tsx"]);
     // and nothing in the design system renders one either
-    expect(files.filter((f) => rel(f).startsWith("components/ds/") && /^\s*<video[\s>]/m.test(read(f)))).toEqual([]);
   });
 
   it("public code never imports admin code", () => {
@@ -115,7 +114,7 @@ describe("public landing rules", () => {
 
 describe("the landing's browser bundle stays small", () => {
   const rel = (f: string) => path.relative(ROOT, f).replaceAll("\\", "/");
-  const clientFiles = files.filter((f) => /^(components\/site\/|components\/ds\/)/.test(rel(f)) && /^\s*["']use client["']/m.test(readFileSync(f, "utf8").slice(0, 200)));
+  const clientFiles = files.filter((f) => /^components\/site\//.test(rel(f)) && /^\s*["']use client["']/m.test(readFileSync(f, "utf8").slice(0, 200)));
   // These pull a validation library, the ORM or server-only content code into the browser (zod alone was ~30 KB gzip, measured).
   const FORBIDDEN = /from "(zod|drizzle-orm[^"]*|pg|@\/lib\/db\/[^"]*|@\/lib\/validation\/[^"]*|@\/lib\/leads\/submit|@\/lib\/leads\/notify|@\/lib\/content\/[^"]*|@\/lib\/env|@\/lib\/auth\/[^"]*|@\/lib\/admin\/[^"]*)"/;
 

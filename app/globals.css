@@ -3,7 +3,6 @@
 @import "shadcn/tailwind.css";
 @import "./tokens.css";
 @import "./theme.css";
-@import "../design/components/bundle.css" layer(components);
 @import "../components/site/ui/ui.css" layer(components);
 
 /* The design system switches themes with [data-theme="dark"] (on <html> or any wrapper); Tailwind's dark: follows it. */

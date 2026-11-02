@@ -93,7 +93,6 @@ test.describe("services (from the database) and the CTA band", () => {
 
   test("no demo («نمونه») content on the landing: no sample badge, no service or card starting with it", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator(".gw-sample")).toHaveCount(0);
     for (const text of await page.locator(".lm-service, .lm-card, .lm-stats__item, .lm-hcard__item").allInnerTexts()) expect(text.trim()).not.toMatch(/^نمونه/);
   });
 });

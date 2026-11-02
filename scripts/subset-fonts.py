@@ -1,11 +1,11 @@
 """
-Subsets Estedad (official OFL release, design/fonts-src) for the web (CLAUDE.md section 3: self-hosted WOFF2, subset to Persian + Latin + digits).
+Subsets Estedad (official OFL release, fonts-src) for the web (CLAUDE.md section 3: self-hosted WOFF2, subset to Persian + Latin + digits).
 
-  python scripts/subset-fonts.py            writes public/fonts/*.woff2 from design/fonts-src/*.woff2
+  python scripts/subset-fonts.py            writes public/fonts/*.woff2 from fonts-src/*.woff2
   python scripts/subset-fonts.py --check    also scans our source for characters the subset does not cover
 
 Needs fonttools and brotli (`pip install fonttools brotli`). design/ stays the untouched source; public/fonts is what the
-site serves and is committed, so a normal build does not need Python. Re-run it only when design/fonts-src changes.
+site serves and is committed, so a normal build does not need Python. Re-run it only when fonts-src changes.
 Layout features (Arabic joining, mark positioning, kerning) are kept; hinting is dropped (WOFF2 for screens).
 """
 import re
@@ -16,7 +16,7 @@ from pathlib import Path
 from fontTools.ttLib import TTFont
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "design" / "fonts-src"
+SRC = ROOT / "fonts-src"
 OUT = ROOT / "public" / "fonts"
 
 # What the site can print. Anything else falls back to the next family in the font stack (Tahoma, system-ui).

@@ -2,7 +2,6 @@ import { execFile } from "node:child_process";
 import path from "node:path";
 import { promisify } from "node:util";
 import { afterAll, describe, expect, it, inject } from "vitest";
-import { ICON_NAMES } from "@/components/ds";
 import { SERVICE_ICONS } from "@/lib/validation/common";
 import { SERVICE_SEED } from "../../scripts/seed-services";
 import { E, connect, rejected } from "./helpers";
@@ -137,6 +136,6 @@ describe("seed:services", () => {
   });
 
   it("every icon it uses is one the design system can draw", () => {
-    for (const s of SERVICE_SEED) expect(ICON_NAMES).toContain(s.iconKey);
+    for (const s of SERVICE_SEED) expect(SERVICE_ICONS).toContain(s.iconKey);
   });
 });

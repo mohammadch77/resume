@@ -5,8 +5,7 @@ import { fileURLToPath } from "node:url";
 /**
  * Generates the two stylesheets the app builds on from design/tokens.json (the one source of the look, v2):
  *   app/tokens.css  the CSS custom properties, the @font-face rules (Estedad, self-hosted from /fonts = public/fonts), the base
- *                   element rules (in `@layer base` so Tailwind utilities, the admin's, still win) and, last, a LEGACY block
- *                   with the names the old design system and the admin still use, mapped onto the v2 tokens (phase 5 deletes it).
+ *                   element rules (in `@layer base` so Tailwind utilities, the admin's, still win).
  *   app/theme.css   the Tailwind v4 `@theme inline` mapping, so `bg-paper text-ink text-body rounded-md` resolve to the variables.
  * `--check` writes nothing and fails when the committed files differ (CI / unit test).
  */
@@ -25,7 +24,7 @@ export type Tokens = {
   duration: Record<string, string>;
   z: Record<string, number>;
   layout: Record<string, string>;
-  legacy: { color: Record<string, string>; raw: string[] };
+  space: Record<string, string>;
 };
 
 export const loadTokens = (): Tokens => JSON.parse(read("design/tokens.json")) as Tokens;
@@ -43,7 +42,6 @@ body{margin:0;font-size:var(--text-body)}
 a{color:var(--color-accent-ink);text-underline-offset:0.3em;text-decoration-thickness:1px}
 ::selection{background:var(--color-accent);color:var(--color-on-accent)}
 :focus-visible{outline:var(--focus-width) solid var(--color-focus-ring);outline-offset:var(--focus-offset)}
-.gw-sample{display:inline-flex;align-items:center;padding-inline:0.5rem;border:1px dashed var(--color-line-strong);background:var(--color-paper);color:var(--color-ink-muted);font:600 var(--text-caption)/1.8 var(--font-sans);white-space:nowrap}
 .gw-visually-hidden{position:absolute!important;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;animation-iteration-count:1!important;transition-duration:1ms!important;scroll-behavior:auto!important}}`;
 
@@ -59,9 +57,7 @@ export function buildTokensCss(): string {
   for (const [n, v] of Object.entries(t.duration)) vars.push(`--duration-${n}:${v};`);
   for (const [n, v] of Object.entries(t.z)) vars.push(`--z-${n}:${v};`);
   for (const [n, v] of Object.entries(t.layout)) vars.push(`--${n}:${v};`);
-  const legacyColors = Object.entries(t.legacy.color).map(([old, now]) => `--color-${old}:var(--color-${now});`);
-  const heavy = new Set(["display-xl", "display-lg", "display-md", "heading-1", "heading-2", "heading-3", "stat", "label", "button"]);
-  const legacyType = Object.keys(t.type).map((n) => `.gw-t-${n}{font:${heavy.has(n) ? 600 : 400} var(--text-${n})/var(--text-${n}--line-height) var(--font-sans)}`);
+  for (const [n, v] of Object.entries(t.space)) vars.push(`--space-${n}:${v};`);
   return [
     HEADER,
     "/* --- fonts (self-hosted, OFL: Estedad by the Estedad Project Authors; /fonts is public/fonts) --- */",
@@ -70,13 +66,6 @@ export function buildTokensCss(): string {
     `:root{\n${vars.join("\n")}\n}`,
     "/* --- base element rules (in a layer so utilities win in the admin) --- */",
     `@layer base {\n${BASE}\n}`,
-    "/* --- LEGACY: old design-system names mapped onto v2 tokens. Removed in phase 5 with components/ds. --- */",
-    `:root{\n${legacyColors.join("\n")}\n${t.legacy.raw.join("\n")}\n}`,
-    ...legacyType,
-    '.gw-icon{display:inline-flex;flex:none;inline-size:var(--gw-icon-size,20px);block-size:var(--gw-icon-size,20px)}',
-    '.gw-icon svg{inline-size:100%;block-size:100%;display:block}',
-    '[dir="rtl"] .gw-icon--mirror{transform:scaleX(-1)}',
-    ".gw-prose{max-inline-size:var(--measure-prose);text-wrap:pretty}",
     "",
   ].join("\n");
 }
@@ -85,8 +74,8 @@ export function buildThemeCss(): string {
   const t = loadTokens();
   const ref = (name: string) => `  ${name}: var(${name});`;
   const lines: string[] = [];
-  lines.push("  /* colors (the legacy names too, until phase 5) */", ...[...Object.keys(t.color), ...Object.keys(t.legacy.color)].map((n) => ref(`--color-${n}`)));
-  lines.push("  /* fonts */", ...Object.keys(t.font).map((n) => ref(`--font-${n}`)), "  --font-display: var(--font-sans);");
+  lines.push("  /* colors */", ...Object.keys(t.color).map((n) => ref(`--color-${n}`)));
+  lines.push("  /* fonts */", ...Object.keys(t.font).map((n) => ref(`--font-${n}`)));
   lines.push("  /* type scale: --text-<name> + --text-<name>--line-height, so text-display-xl, text-body ... resolve */");
   for (const n of Object.keys(t.type)) lines.push(ref(`--text-${n}`), ref(`--text-${n}--line-height`));
   lines.push("  /* radius */", ...Object.keys(t.radius).map((n) => ref(`--radius-${n}`)));

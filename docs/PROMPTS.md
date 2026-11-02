@@ -1,3 +1,5 @@
+> HISTORICAL: the prompts below drove the first (v1) build. The design-system phases in them (components/ds, design export, /dev/design-system) were replaced by the v2 redesign and deleted in its phase 5; CLAUDE.md is the source of truth.
+
 # Claude Code prompts — run in order
 
 Setup once: put `CLAUDE.md` in the repo root (Claude Code reads it automatically). Use one Claude Code session per phase, `/clear` between phases, commit after each phase.

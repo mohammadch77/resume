@@ -8,7 +8,7 @@ import { PREVIEW_DATA } from "@/components/dev/landing-preview-data";
 export default function LandingPreviewPage() {
   return (
     <>
-      <p className="gw-t-label bg-sunken px-4 py-2 text-ink-muted" role="note">
+      <p className="bg-surface px-4 py-2 text-label text-ink-muted" role="note">
         پیش‌نمایش توسعه با داده‌ی ساختگی «نمونه»؛ هیچ‌چیز از این صفحه ذخیره یا منتشر نمی‌شود.
       </p>
       <Landing data={PREVIEW_DATA} preview />

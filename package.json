@@ -8,8 +8,6 @@
     "start": "next start",
     "lint": "eslint .",
     "fonts:subset": "python scripts/subset-fonts.py --check",
-    "landing:compare": "tsx scripts/landing-compare.ts",
-    "ds:screenshots": "tsx scripts/ds-screenshots.ts",
     "tokens:gen": "tsx scripts/gen-tokens.ts",
     "design:contrast": "tsx scripts/design-contrast.ts",
     "tokens:check": "tsx scripts/gen-tokens.ts --check && tsx scripts/tokens-check.ts",

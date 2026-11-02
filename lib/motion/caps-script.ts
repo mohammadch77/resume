@@ -1,7 +1,7 @@
 /**
  * The one place that decides which motion a visitor gets. It is a tiny inline script (the first thing in <body>) that
  * sets `data-motion="enter lenis trail"` on <html> before anything paints; CSS and the lazy engine both read that
- * attribute, so there is a single source of truth and the rules of design/guidelines/motion.md live here only.
+ * attribute, so there is a single source of truth and the rules of CLAUDE.md section 3 and design/decisions.md live here only.
  *
  * - nothing for reduced motion, `saveData === true` (undefined is not a reason), a reported deviceMemory of 2 GB or less (undefined, as in
  *   Firefox and Safari, is not a reason), or no IntersectionObserver. The core count is NOT used: Firefox reports 4 on ordinary laptops, and the

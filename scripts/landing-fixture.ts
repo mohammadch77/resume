@@ -11,23 +11,23 @@ import { seedHome } from "./seed-home";
 
 /**
  * Content for the e2e database (and therefore for Lighthouse and the screenshot comparison): the copy of
- * design/ui_kits/landing/data.js turned into real, published rows with real covers, so the landing can be measured
+ * the sample content of the first landing, turned into real, published rows with real covers, so the landing can be measured
  * against the reference composition. It is TEST data, only ever written to gw_e2e; production content comes from the
  * admin panel. It also plants rows labelled «نمونه», published by direct SQL (which the app's own guard would refuse),
  * so the tests can prove the landing never shows them.
  */
 
-// Token colours (design/tokens/colors.css, light theme), used only to paint the cover images.
-const C = { lapis: "#2338d6", lapisDeep: "#16258f", lapisTint: "#e2e6fb", saffron: "#f2b01e", ink: "#151922", paper: "#f2f3f5", firouzeh: "#12a594", raised: "#ffffff", sunken: "#e4e7ec", lineStrong: "#7c8494" };
+// Colours used only to paint the generated cover pictures (they are test content, not the site's palette).
+const C = { blue: "#2338d6", blueDeep: "#16258f", blueTint: "#e2e6fb", amber: "#f2b01e", ink: "#151922", paper: "#f2f3f5", teal: "#12a594", sand: "#ffffff", sunken: "#e4e7ec", lineStrong: "#7c8494" };
 const W = 1200;
 const H = 900;
 
 type Block = { s?: number; e?: number; t?: number; bt?: number; w: number; h: number; c: string; round?: boolean };
 const ART: Record<1 | 2 | 3 | 4, { bg: string; blocks: Block[] }> = {
-  1: { bg: C.lapisTint, blocks: [{ s: 8, t: 14, w: 54, h: 72, c: C.lapis }, { e: 10, bt: 14, w: 22, h: 30, c: C.saffron }] },
-  2: { bg: C.ink, blocks: [{ s: 0, t: 0, w: 38, h: 100, c: C.lapis }, { s: 48, t: 20, w: 30, h: 40, c: C.firouzeh, round: true }] },
-  3: { bg: C.raised, blocks: [{ s: 10, t: 16, w: 80, h: 10, c: C.ink }, { s: 10, t: 33, w: 52, h: 5, c: C.lineStrong }, { s: 10, t: 48, w: 38, h: 36, c: C.lapis }, { s: 52, t: 48, w: 38, h: 36, c: C.sunken }] },
-  4: { bg: C.lapis, blocks: [{ s: 14, t: 16, w: 34, h: 68, c: C.lapisDeep }, { s: 52, t: 16, w: 34, h: 34, c: C.lapisTint }, { s: 52, bt: 16, w: 14, h: 26, c: C.firouzeh }] },
+  1: { bg: C.blueTint, blocks: [{ s: 8, t: 14, w: 54, h: 72, c: C.blue }, { e: 10, bt: 14, w: 22, h: 30, c: C.amber }] },
+  2: { bg: C.ink, blocks: [{ s: 0, t: 0, w: 38, h: 100, c: C.blue }, { s: 48, t: 20, w: 30, h: 40, c: C.teal, round: true }] },
+  3: { bg: C.sand, blocks: [{ s: 10, t: 16, w: 80, h: 10, c: C.ink }, { s: 10, t: 33, w: 52, h: 5, c: C.lineStrong }, { s: 10, t: 48, w: 38, h: 36, c: C.blue }, { s: 52, t: 48, w: 38, h: 36, c: C.sunken }] },
+  4: { bg: C.blue, blocks: [{ s: 14, t: 16, w: 34, h: 68, c: C.blueDeep }, { s: 52, t: 16, w: 34, h: 34, c: C.blueTint }, { s: 52, bt: 16, w: 14, h: 26, c: C.teal }] },
 };
 
 /** The design's placeholder compositions as a real image (inline-start = right edge, because the site is RTL). */
@@ -47,7 +47,7 @@ async function coverPng(art: 1 | 2 | 3 | 4, tweak = 0): Promise<Buffer> {
   return sharp(Buffer.from(svg)).png().toBuffer();
 }
 
-const logoPng = (n: number) => sharp({ create: { width: 320, height: 160, channels: 3, background: n === 1 ? C.lapis : C.ink } }).png().toBuffer();
+const logoPng = (n: number) => sharp({ create: { width: 320, height: 160, channels: 3, background: n === 1 ? C.blue : C.ink } }).png().toBuffer();
 
 const SERVICES = [
   { slug: "web-design", title: "طراحی و توسعه‌ی وب‌سایت", summary: "سایت شرکتی سریع و قابل‌مدیریت، از ساختار محتوا تا انتشار.", icon: "globe" },
