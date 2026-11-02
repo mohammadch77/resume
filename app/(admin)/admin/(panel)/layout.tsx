@@ -4,6 +4,7 @@ import { requireRole } from "@/lib/auth/require-role";
 
 const COMMON: NavItem[] = [
   { href: "/admin", label: "داشبورد" },
+  { href: "/admin/home", label: "محتوای صفحه‌ی اصلی" },
   { href: "/admin/projects", label: "پروژه‌ها" },
   { href: "/admin/clients", label: "مشتریان" },
   { href: "/admin/services", label: "خدمات" },

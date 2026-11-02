@@ -66,6 +66,8 @@ for (const [name, width, height] of [["phone", 390, 844], ["desktop", 1440, 900]
     await page.keyboard.press("Escape");
     await page.locator(".lm-hero__actions a").first().click();
     await expect(page.getByRole("dialog")).toBeVisible();
+    // the dialog fades in: axe must not measure the contrast of a half-transparent panel
+    await page.evaluate(() => Promise.allSettled(document.getAnimations().filter((a) => Number.isFinite(a.effect?.getComputedTiming().endTime)).map((a) => a.finished)));
     await scan(page, `contact dialog ${name}`);
     await ctx.close();
   });

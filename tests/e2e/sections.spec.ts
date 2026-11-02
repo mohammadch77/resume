@@ -95,7 +95,17 @@ test.describe("the full-screen menu (with JavaScript)", () => {
     await expect(menu).toHaveAttribute("data-open", "false");
     await expect(page).toHaveURL(/#services$/);
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(300);
-    // the header scrolls away with the page (as in the reference), so the Menu button is clicked near the top: opening and closing must not move the page
+    // wait for the smooth scroll (Lenis) to arrive and stop: a scrollTo during its easing would be fought by it
+    let last = -1;
+    await expect
+      .poll(async () => {
+        const y = await page.evaluate(() => window.scrollY);
+        const still = y === last;
+        last = y;
+        return still;
+      }, { intervals: [150] })
+      .toBe(true);
+    // the menu must not move the page when it opens and closes, wherever the page is scrolled
     // (clicks are dispatched from the page, not by Playwright, which would itself scroll an element into view and hide what this test is about)
     await page.evaluate(() => window.scrollTo(0, 40));
     expect(await page.evaluate(() => window.scrollY)).toBe(40);

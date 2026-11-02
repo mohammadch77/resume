@@ -37,13 +37,17 @@ test.describe("the hero's pointer trail on an ordinary desktop (Chromium and Fir
     await page.mouse.move(box.x + box.width * 0.2, box.y + box.height * 0.4);
     await expect(monitor(page)).toHaveAttribute("data-trail-ready", "");
     await expect(page.locator(".lm-monitor__trail")).toHaveCount(1);
-    await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.45, { steps: 6 });
-    await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.45, { steps: 14 });
-
-    await expect.poll(async () => (await alpha(page))?.opaque ?? 0, { timeout: 5000 }).toBeGreaterThan(300);
+    // the paint fades by itself once the pointer rests, so sample while it moves and keep the best frame
+    let most = 0;
+    let during: Buffer | null = null;
+    for (let i = 0; i <= 14; i += 1) {
+      await page.mouse.move(box.x + box.width * (0.3 + 0.03 * i), box.y + box.height * 0.45, { steps: 2 });
+      most = Math.max(most, (await alpha(page))?.opaque ?? 0);
+      if (i === 8) during = await page.screenshot({ clip: box });
+    }
+    expect(most, "opaque (alpha 255) pixels on the trail canvas at the best moment").toBeGreaterThan(300);
     // the painted pixels are in the picture the visitor sees, not only in a canvas: the monitor looks different from before
-    const during = await page.screenshot({ clip: box });
-    expect(during.equals(before), "the monitor looks the same with the trail painted").toBe(false);
+    expect(during!.equals(before), "the monitor looks the same with the trail painted").toBe(false);
     await expect(page.locator(".lm-monitor__trail")).toHaveCSS("opacity", "1");
   });
 

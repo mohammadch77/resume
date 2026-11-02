@@ -35,7 +35,7 @@ export function Landing({ data, preview = false }: { data: LandingData; preview?
 
   const links = [
     ...(hasWork ? [{ label: home.texts.workEyebrow, href: "#work" }] : []),
-    ...(data.services.length > 0 ? [{ label: "خدمات", href: "#services" }] : []),
+    ...(data.services.length > 0 ? [{ label: home.texts.servicesEyebrow, href: "#services" }] : []),
     ...(data.clientLogos.length > 0 ? [{ label: "مشتریان", href: "#clients" }] : []),
   ];
 
