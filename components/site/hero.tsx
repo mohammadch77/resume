@@ -3,7 +3,7 @@ import type { HomeData } from "@/lib/content/landing";
 import { CONTACT_HREF } from "@/lib/site/links";
 import { IMAGE_SIZES } from "@/lib/media/sizes";
 import { ResponsivePicture } from "./responsive-picture";
-import { BrandMark, Eyebrow, PillButton, StarIcon } from "./ui";
+import { Arrow, BrandMark, Eyebrow, PillButton, StarIcon } from "./ui";
 import "./hero.css";
 
 const faDigit = new Intl.NumberFormat("fa-IR", { useGrouping: false });
@@ -72,6 +72,21 @@ export function Hero({ home, ctaLabel, hasWork }: { home: HomeData; ctaLabel: st
             </span>
           )}
         </div>
+        {home.cards.length > 0 || home.partners.length > 0 ? (
+          <div className="lm-shell lm-hero__aside">
+            {home.cards.length > 0 ? <HeroCard cards={home.cards} /> : <span />}
+            {home.partners.length > 0 ? (
+              <div className="lm-partners">
+                <p className="lm-partners__label">مورد اعتماد</p>
+                <ul className="lm-partners__list">
+                  {home.partners.map((name) => (
+                    <li key={name}>{name}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
         {hasStatus ? (
           <div className="lm-shell">
             <p className="lm-hero__status">
@@ -83,5 +98,49 @@ export function Hero({ home, ctaLabel, hasWork }: { home: HomeData; ctaLabel: st
         ) : null}
       </section>
     </>
+  );
+}
+
+/**
+ * The small carousel card: every card is in the HTML (the first one is shown), so the page is complete without JavaScript. The previous/next
+ * buttons stay hidden until lib/motion/hero-carousel.ts (loaded at idle) takes over and sets data-ready.
+ */
+function HeroCard({ cards }: { cards: HomeData["cards"] }) {
+  const many = cards.length > 1;
+  return (
+    <div className="lm-hcard" data-carousel role="group" aria-roledescription="carousel" aria-label="پیشنهادهای ما">
+      <span className="lm-hcard__tile" aria-hidden="true">
+        <BrandMark />
+      </span>
+      <div className="lm-hcard__panel">
+        <div className="lm-hcard__slot" aria-live="polite">
+          {cards.map((c, i) => (
+            <div key={c.id} className="lm-hcard__item" data-active={i === 0 ? "true" : "false"} aria-hidden={i === 0 ? undefined : "true"}>
+              <span className="lm-hcard__caption">{c.caption}</span>
+              <p className="lm-hcard__title">{c.title}</p>
+            </div>
+          ))}
+        </div>
+        {many ? (
+          <div className="lm-hcard__bar">
+            <span className="lm-hcard__dots" aria-hidden="true">
+              {cards.map((c, i) => (
+                <span key={c.id} className="lm-hcard__dot" data-active={i === 0 ? "true" : "false"} />
+              ))}
+            </span>
+            <span className="lm-hcard__btns">
+              <button type="button" className="lm-hcard__btn" data-carousel-prev aria-label="کارت قبلی">
+                <span className="lm-mirror-back">
+                  <Arrow kind="forward" />
+                </span>
+              </button>
+              <button type="button" className="lm-hcard__btn" data-carousel-next aria-label="کارت بعدی">
+                <Arrow kind="forward" />
+              </button>
+            </span>
+          </div>
+        ) : null}
+      </div>
+    </div>
   );
 }

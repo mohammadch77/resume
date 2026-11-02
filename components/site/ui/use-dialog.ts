@@ -44,7 +44,7 @@ export function useDialog(open: boolean, onClose: () => void, panel: RefObject<H
     return () => {
       document.removeEventListener("keydown", onKey);
       unlock();
-      opener?.focus();
+      opener?.focus({ preventScroll: true });
     };
   }, [open, panel, initial]);
 }

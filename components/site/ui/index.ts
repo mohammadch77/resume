@@ -5,5 +5,7 @@ export { TagChip } from "./tag-chip";
 export { PortfolioCard, type PortfolioCardProps } from "./portfolio-card";
 export { ServiceRow } from "./service-row";
 export { StatsPanel, type Stat } from "./stats-panel";
-// The two client components (NavMenu, PageDialog) are exported from ./client, not from here: a server component importing this
-// barrel would otherwise pull them (and their hooks) into the page's first-load JavaScript.
+export { NavMenu, type NavItem } from "./nav-menu";
+export { FormField, type FormFieldProps } from "./field";
+// The one client component (PageDialog) is exported from ./client, not from here: a server component importing this barrel would
+// otherwise pull it (and its hook) into the page's first-load JavaScript.

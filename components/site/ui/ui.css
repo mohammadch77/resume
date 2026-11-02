@@ -68,7 +68,7 @@
 /* the scrim keeps the text AA over any cover */
 .lm-card:has(.lm-card__cover)::after {
   content: ""; position: absolute; inset: 0; z-index: -1;
-  background: linear-gradient(to top, color-mix(in srgb, var(--color-ink) 92%, transparent) 20%, color-mix(in srgb, var(--color-ink) 45%, transparent) 70%, color-mix(in srgb, var(--color-ink) 30%, transparent));
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--color-ink) 62%, transparent), color-mix(in srgb, var(--color-ink) 18%, transparent) 28%, color-mix(in srgb, var(--color-ink) 40%, transparent) 55%, color-mix(in srgb, var(--color-ink) 92%, transparent) 85%);
 }
 .lm-card__mark { position: absolute; inset: 0; z-index: -1; display: grid; place-items: center; font-size: 4.5rem; color: var(--color-ink-faint); }
 .lm-card__meta { position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; font: 400 var(--text-caption)/var(--text-caption--line-height) var(--font-sans); color: var(--color-on-ink-muted); }
@@ -130,6 +130,7 @@
   visibility: hidden; opacity: 0; transition: opacity var(--duration-base) var(--ease-out), visibility 0s linear var(--duration-base);
 }
 .lm-menu:target, .lm-menu[data-open="true"] { visibility: visible; opacity: 1; transition-delay: 0s; }
+.lm-menu > .lm-shell { inline-size: 100%; }
 .lm-menu__top { display: flex; align-items: center; justify-content: space-between; padding-block: 1.25rem; }
 .lm-menu__close {
   display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: var(--hairline) solid var(--color-on-ink-faint); border-radius: var(--radius-control);
@@ -155,12 +156,12 @@
 
 /* ---- Dialog ---- */
 .lm-scrim {
-  position: fixed; inset: 0; z-index: var(--z-modal); display: flex; align-items: flex-start; justify-content: center; padding: 1rem; overflow-y: auto;
+  position: fixed; inset: 0; z-index: var(--z-modal); display: flex; align-items: flex-start; justify-content: center; padding: 1rem;
   background: var(--color-scrim);
 }
 @media (min-width: 640px) { .lm-scrim { align-items: center; } }
 .lm-dialog {
-  position: relative; inline-size: 100%; max-inline-size: 32rem; padding: 1.5rem; border-radius: var(--radius-card); background: var(--color-paper); color: var(--color-ink);
+  position: relative; inline-size: 100%; max-inline-size: 32rem; max-block-size: calc(100dvh - 2rem); overflow-y: auto; overscroll-behavior: contain; padding: 1.5rem; border-radius: var(--radius-card); background: var(--color-paper); color: var(--color-ink);
   border: var(--hairline) solid var(--color-line); animation: lm-drop var(--duration-base) var(--ease-out) both;
 }
 @media (min-width: 640px) { .lm-dialog { padding: 2rem; } }
@@ -183,3 +184,6 @@
 .lm-kit__swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 0.75rem; }
 .lm-kit__swatch { padding: 0.75rem; border: var(--hairline) solid var(--color-line); border-radius: var(--radius-control); font: 400 var(--text-caption)/var(--text-caption--line-height) var(--font-sans); }
 .lm-kit__chip { display: block; block-size: 3rem; margin-block-end: 0.5rem; border-radius: var(--radius-md); border: var(--hairline) solid var(--color-line); }
+
+/* "previous" points against the line direction: the forward arrow (mirrored in RTL by .lm-mirror) is flipped once more */
+.lm-mirror-back { display: grid; transform: scaleX(-1); }

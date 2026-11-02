@@ -1,6 +1,8 @@
 import { KitDemo } from "@/components/dev/kit-demo";
+import { SiteLauncher } from "@/components/site/site-launcher";
 import { Eyebrow, PillButton, PortfolioCard, ServiceRow, StatsPanel, TagChip } from "@/components/site/ui";
 import tokens from "@/design/tokens.json";
+import "@/components/site/page.css";
 
 export const metadata = { title: "Dev · v2 kit" };
 
@@ -18,7 +20,7 @@ const TYPE_SAMPLES: Array<[string, string]> = [
 /** Developer page: every v2 kit piece, the tokens and the type scale on one screen (404 in production, like all /dev pages). */
 export default function KitPage() {
   return (
-    <div className="lm-root">
+    <div className="lm-root lm-page">
       <main className="lm-shell lm-kit" id="main">
         <section aria-labelledby="k-colors" className="lm-kit__section">
           <h1 id="k-colors" style={{ font: "600 var(--text-heading-1)/var(--text-heading-1--line-height) var(--font-sans)", marginBlockEnd: "1.5rem" }}>رنگ‌ها (design/tokens.json)</h1>
@@ -88,6 +90,7 @@ export default function KitPage() {
           ]}
         />
       </main>
+      <SiteLauncher ctaLabel="درخواست مشاوره رایگان" />
     </div>
   );
 }

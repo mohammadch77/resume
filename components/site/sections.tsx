@@ -1,58 +1,82 @@
-import { CtaBand, ICON_NAMES, Metric, ServiceCard, ServiceGrid, Testimonial, type IconName } from "@/components/ds";
-import type { LandingData, LandingProject } from "@/lib/content/landing";
+import type { HomeData, LandingData, LandingProject } from "@/lib/content/landing";
 import { formatNumber } from "@/lib/format";
 import { IMAGE_SIZES } from "@/lib/media/sizes";
 import { CONTACT_HREF } from "@/lib/site/links";
 import { ResponsivePicture } from "./responsive-picture";
+import { Eyebrow, PillButton, PortfolioCard, ServiceRow, StatsPanel } from "./ui";
 
-const isIcon = (name: string): name is IconName => (ICON_NAMES as string[]).includes(name);
+const faYear = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { year: "numeric", timeZone: "Asia/Tehran" });
 
-/** The closing band under the services (copy lives here until it moves to the database; see docs/BACKLOG.md). */
-const BAND = {
-  title: "پروژه‌تان را با یک گفت‌وگوی کوتاه شروع کنید",
-  text: "شرح کوتاهی از نیازتان کافی است؛ مسیر پیشنهادی را با هم بررسی می‌کنیم.",
-} as const;
-
-const serviceIndex = (n: number) => (n < 9 ? `۰${formatNumber(n + 1)}` : formatNumber(n + 1));
-
-/** The published services (from the database) and, closing the section, the CTA band with the section's one primary action. */
-export function ServicesSection({ services, ctaLabel }: { services: LandingData["services"]; ctaLabel: string }) {
+/** Selected Work: the published projects as a two-column grid of ink cards. Each card is a real link to /work/<slug>; with JavaScript a click opens the case study in a dialog (site-launcher.tsx). */
+export function WorkSection({ projects, texts }: { projects: LandingProject[]; texts: HomeData["texts"] }) {
+  if (projects.length === 0) return null;
   return (
-    <section className="lk-sec" id="services" aria-labelledby="services-title">
-      <div className="lk-wrap">
-        <h2 className="lk-h2" id="services-title">
-          خدمات
-        </h2>
-        <ServiceGrid>
-          {services.map((s, n) => (
-            <ServiceCard key={s.id} icon={isIcon(s.iconKey) ? s.iconKey : "layout-grid"} index={serviceIndex(n)} title={s.title}>
-              {s.summary}
-            </ServiceCard>
+    <section className="lm-sec lm-sec--tight" id="work" aria-labelledby="work-title">
+      <div className="lm-shell">
+        <div className="lm-sec__head--center">
+          <Eyebrow bordered>{texts.workEyebrow}</Eyebrow>
+          <h2 className="lm-sec__title" id="work-title">
+            {texts.workTitle}
+          </h2>
+        </div>
+        <ul className="lm-work__grid">
+          {projects.map((p, i) => (
+            <li key={p.slug}>
+              <PortfolioCard
+                href={`/work/${p.slug}`}
+                title={p.title}
+                description={p.summary}
+                category={p.industry ?? p.serviceTitles[0] ?? "پروژه"}
+                year={p.completedOn ? faYear.format(new Date(p.completedOn)) : undefined}
+                tags={p.tags.slice(0, 3)}
+                cover={p.cover ? <ResponsivePicture asset={p.cover} sizes={IMAGE_SIZES.card} alt="" priority={false} placeholder={false} className="lm-card__img" /> : undefined}
+                linkProps={{ "data-case": p.slug, "data-case-title": p.title, "data-index": String(i) }}
+              />
+            </li>
           ))}
-        </ServiceGrid>
-        <CtaBand className="lk-services__band" title={BAND.title} text={BAND.text} ctaLabel={ctaLabel} ctaHref={CONTACT_HREF} />
+        </ul>
       </div>
     </section>
   );
 }
 
-/** Up to three real figures from published projects. Omitted entirely when there are none (never placeholders). */
-export function ResultsSection({ projects }: { projects: LandingProject[] }) {
-  const metrics = projects
-    .flatMap((p) => p.metrics.map((m) => ({ ...m, source: `پروژه‌ی ${p.title}${p.clientName ? `، ${p.clientName}` : ""}` })))
-    .slice(0, 3);
-  if (metrics.length === 0) return null;
+/** The published services (from the database) as a list of rows, and the band that closes the section: the section's one primary action. */
+export function ServicesSection({ services, texts, ctaLabel }: { services: LandingData["services"]; texts: HomeData["texts"]; ctaLabel: string }) {
   return (
-    <section className="lk-sec lk-sec--sunken" id="results" aria-labelledby="results-title">
-      <div className="lk-wrap">
-        <h2 className="lk-h2" id="results-title">
-          نتیجه‌ها
+    <section className="lm-sec" id="services" aria-labelledby="services-title">
+      <div className="lm-shell">
+        <Eyebrow>{texts.servicesEyebrow}</Eyebrow>
+        <h2 className="lm-sec__title" id="services-title">
+          {texts.servicesTitle}
         </h2>
-        <div className="lk-metrics">
-          {metrics.map((m) => (
-            <Metric key={`${m.source}-${m.label}`} value={m.value} label={m.label} source={m.source} />
-          ))}
+        {services.length > 0 ? (
+          <ul>
+            {services.map((s, n) => (
+              <ServiceRow key={s.id} index={n + 1} title={s.title} summary={s.summary} />
+            ))}
+          </ul>
+        ) : null}
+        <div className="lm-band">
+          <div>
+            <h3 className="lm-band__title">{texts.bandTitle}</h3>
+            <p className="lm-band__text">{texts.bandText}</p>
+          </div>
+          <PillButton href={CONTACT_HREF} variant="accent" arrow="forward">
+            {ctaLabel}
+          </PillButton>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/** The figures the owner entered in the admin and published (never a «نمونه» one). Absent when there are none: no empty panel. */
+export function StatsSection({ stats, texts }: { stats: HomeData["stats"]; texts: HomeData["texts"] }) {
+  if (stats.length === 0) return null;
+  return (
+    <section className="lm-statsec" id="stats">
+      <div className="lm-shell">
+        <StatsPanel eyebrow={texts.statsEyebrow} title={texts.statsTitle} stats={stats.map((s) => ({ value: s.value, suffix: s.suffix, label: s.label }))} />
       </div>
     </section>
   );
@@ -62,27 +86,34 @@ export function ResultsSection({ projects }: { projects: LandingProject[] }) {
 export function TestimonialSection({ testimonial }: { testimonial: LandingData["testimonial"] }) {
   if (!testimonial) return null;
   return (
-    <section className="lk-sec" aria-label="نظر مشتری">
-      <div className="lk-wrap">
-        <Testimonial quote={`«${testimonial.quote}»`} name={testimonial.authorName} role={testimonial.authorRole ?? undefined} />
+    <section className="lm-sec lm-sec--tight" aria-label="نظر مشتری">
+      <div className="lm-shell">
+        <figure className="lm-quote">
+          <blockquote className="lm-quote__text">«{testimonial.quote}»</blockquote>
+          <figcaption className="lm-quote__who">
+            {testimonial.authorName}
+            {testimonial.authorRole ? <span className="lm-quote__role">{testimonial.authorRole}</span> : null}
+          </figcaption>
+        </figure>
       </div>
     </section>
   );
 }
 
-/** Real logos only. Omitted when no client agreed to be shown (no dashed «[لوگو]» frames in production). */
+/** Real logos only. Omitted when no client agreed to be shown (no placeholder frames in production). */
 export function ClientsSection({ logos }: { logos: LandingData["clientLogos"] }) {
   if (logos.length === 0) return null;
   return (
-    <section className="lk-sec lk-sec--flush" id="clients" aria-labelledby="clients-title">
-      <div className="lk-wrap">
-        <h2 className="lk-h2 lk-h2--small" id="clients-title">
-          مشتریان
+    <section className="lm-sec lm-sec--tight" id="clients" aria-labelledby="clients-title">
+      <div className="lm-shell">
+        <Eyebrow>مشتریان</Eyebrow>
+        <h2 className="lm-sec__title" id="clients-title">
+          برندهایی که با ما کار کرده‌اند
         </h2>
-        <ul className="lk-logos lk-list">
+        <ul className="lm-logos">
           {logos.map((c) => (
-            <li className="lk-logo" key={c.id}>
-              <ResponsivePicture asset={c.logo} sizes={IMAGE_SIZES.logo} alt={c.name} className="lk-logo__img" />
+            <li key={c.id}>
+              <ResponsivePicture asset={c.logo} sizes={IMAGE_SIZES.logo} alt={c.name} placeholder={false} className="lm-logo__img" />
             </li>
           ))}
         </ul>

@@ -1,23 +1,18 @@
-import type { NavLink } from "@/components/ds";
 import { env } from "@/lib/env";
 import type { LandingData } from "@/lib/content/landing";
 import { mediaUrl } from "@/lib/media/paths";
-import { IMAGE_SIZES } from "@/lib/media/sizes";
 import { CAPS_SCRIPT } from "@/lib/motion/caps-script";
 import { parseVariants } from "@/lib/media/variants";
 import { resolveConsultHref } from "@/lib/site/links";
-import { CaseStudyExtra } from "./case-study";
-import { ContactLauncher } from "./contact-launcher";
-import { coverNode } from "./cover";
 import { Hero } from "./hero";
 import { JsonLd } from "./json-ld";
 import { MotionRoot } from "./motion-root";
 import { FALLBACK_SETTINGS } from "./settings-fallback";
-import { ClientsSection, ResultsSection, ServicesSection, TestimonialSection } from "./sections";
+import { ClientsSection, ServicesSection, StatsSection, TestimonialSection, WorkSection } from "./sections";
 import { SiteFooter } from "./site-footer";
-import { SiteNavbar } from "./site-navbar";
-import { WorkExplorer, type WorkCard } from "./work-explorer";
-import "./landing.css";
+import { SiteHeader } from "./site-header";
+import { SiteLauncher } from "./site-launcher";
+import "./page.css";
 
 /** Absolute URL of the largest fallback image of a cover (for Open Graph and JSON-LD), or undefined. */
 export function absoluteCoverUrl(cover: { variants: unknown } | null): string | undefined {
@@ -27,37 +22,22 @@ export function absoluteCoverUrl(cover: { variants: unknown } | null): string | 
 }
 
 /**
- * The landing page, in the order of CLAUDE.md section 6: navbar, hero, selected work, services, how we work, results,
- * testimonial, clients, contact, footer. Sections without real data (work, results, testimonial, clients) are omitted,
- * never filled with placeholders. The primary CTA label is one value from the site settings, used in the navbar, the hero
- * and the contact form.
+ * The landing page, in the order of CLAUDE.md section 6: header, hero, selected work, services + band, stats, testimonial, clients, footer.
+ * Sections without real data (work, stats, testimonial, clients) are omitted, never filled with placeholders. Everything here is server
+ * markup: the little script there is (the launcher, the clock, the counters, the carousel, the pointer trail) is loaded separately.
+ * The primary CTA label is one value from the site settings, used in the header, the hero, the band and the contact form.
  */
 export function Landing({ data, preview = false }: { data: LandingData; preview?: boolean }) {
   const brand = data.settings?.brandName ?? FALLBACK_SETTINGS.brandName;
   const cta = data.settings?.primaryCtaLabel ?? FALLBACK_SETTINGS.primaryCtaLabel;
-  const { projects } = data;
+  const { projects, home } = data;
   const hasWork = projects.length > 0;
 
-  const links: NavLink[] = [
-    ...(hasWork ? [{ label: "نمونه‌کارها", href: "#work" }] : []),
+  const links = [
+    ...(hasWork ? [{ label: home.texts.workEyebrow, href: "#work" }] : []),
     ...(data.services.length > 0 ? [{ label: "خدمات", href: "#services" }] : []),
     ...(data.clientLogos.length > 0 ? [{ label: "مشتریان", href: "#clients" }] : []),
   ];
-
-  const cards: WorkCard[] = projects.map((p) => ({
-    slug: p.slug,
-    title: p.title,
-    summary: p.summary,
-    tags: p.tags.slice(0, 4),
-    industry: p.industry,
-    cover: coverNode(p.cover, IMAGE_SIZES.card),
-    modalCover: coverNode(p.cover, IMAGE_SIZES.modal),
-    challenge: p.challenge,
-    solution: p.solution,
-    outcome: p.outcome,
-    extra: <CaseStudyExtra project={p} />,
-  }));
-  const filters = [...new Set(projects.map((p) => p.industry).filter((n): n is string => Boolean(n)))];
 
   const sameAs = Object.values(data.settings?.socials ?? {});
   const organization = {
@@ -72,31 +52,33 @@ export function Landing({ data, preview = false }: { data: LandingData; preview?
   };
 
   return (
-    <>
+    <div className="lm-page">
       {/* First thing in <body>: decides the motion set before anything paints (lib/motion/caps-script.ts). */}
       <script dangerouslySetInnerHTML={{ __html: CAPS_SCRIPT }} />
-      <a className="lk-skip" href="#main">
+      <a className="lm-skip" href="#main">
         رفتن به محتوای اصلی
       </a>
-      <header className="lk-navwrap">
-        <SiteNavbar brand={brand} links={links} ctaLabel={cta} />
-      </header>
+      <SiteHeader brand={brand} links={links} ctaLabel={cta} overlay />
       <main id="main">
-        <Hero home={data.home} ctaLabel={cta} hasWork={hasWork} />
-        {hasWork && (
-          <section className="lk-sec lk-sec--sunken" id="work" aria-label="نمونه‌کارهای منتخب">
-            <WorkExplorer cards={cards} filters={filters} ctaLabel={cta} sample={preview} />
-          </section>
-        )}
-        {data.services.length > 0 && <ServicesSection services={data.services} ctaLabel={cta} />}
-        <ResultsSection projects={projects} />
+        <Hero home={home} ctaLabel={cta} hasWork={hasWork} />
+        <WorkSection projects={projects} texts={home.texts} />
+        <ServicesSection services={data.services} texts={home.texts} ctaLabel={cta} />
+        <StatsSection stats={home.stats} texts={home.texts} />
         <TestimonialSection testimonial={data.testimonial} />
         <ClientsSection logos={data.clientLogos} />
       </main>
-      <SiteFooter brand={brand} ctaLabel={cta} consultHref={resolveConsultHref(data.settings?.consultCtaHref)} />
+      <SiteFooter
+        brand={brand}
+        ctaLabel={cta}
+        consultHref={resolveConsultHref(data.settings?.consultCtaHref)}
+        texts={home.texts}
+        links={links}
+        services={data.services}
+        socials={data.settings?.socials ?? {}}
+      />
       <JsonLd data={organization} />
       <MotionRoot />
-      {!preview && <ContactLauncher ctaLabel={cta} />}
-    </>
+      {!preview && <SiteLauncher ctaLabel={cta} />}
+    </div>
   );
 }

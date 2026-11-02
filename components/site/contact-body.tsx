@@ -1,4 +1,3 @@
-import { Icon } from "@/components/ds";
 import type { LandingSettings } from "@/lib/content/landing";
 import { SOCIAL_NETWORKS, type SocialKey } from "@/lib/validation/settings";
 import { ContactForm } from "./contact-form";
@@ -11,49 +10,40 @@ export function ContactBody({ settings, ctaLabel }: Props) {
   const socialLinks = Object.entries(socials).filter(([key]) => key in SOCIAL_NETWORKS) as Array<[SocialKey, string]>;
   const hasDetails = Boolean(contactPhone || contactEmail || contactAddress || socialLinks.length);
   return (
-    <div className="lk-wrap lk-contact">
+    <div className="lm-shell lm-contact">
       <div>
-        <h1 className="lk-h2" id="contact-title">
+        <h1 className="lm-contact__title" id="contact-title">
           درباره‌ی پروژه‌تان بگویید
         </h1>
-        <p className="lk-lead">نیازتان را بنویسید؛ مسیر پیشنهادی را با هم بررسی می‌کنیم.</p>
-        {hasDetails && (
-          <dl>
-            {contactPhone && (
+        <p className="lm-contact__lead">نیازتان را بنویسید؛ مسیر پیشنهادی را با هم بررسی می‌کنیم.</p>
+        {hasDetails ? (
+          <dl className="lm-contact__details">
+            {contactPhone ? (
               <>
-                <dt>
-                  <Icon name="phone" size={18} />
-                  تلفن
-                </dt>
+                <dt>تلفن</dt>
                 <dd dir="ltr">
                   <a href={`tel:${contactPhone}`}>{contactPhone}</a>
                 </dd>
               </>
-            )}
-            {contactEmail && (
+            ) : null}
+            {contactEmail ? (
               <>
-                <dt>
-                  <Icon name="mail" size={18} />
-                  ایمیل
-                </dt>
+                <dt>ایمیل</dt>
                 <dd dir="ltr">
                   <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
                 </dd>
               </>
-            )}
-            {contactAddress && (
+            ) : null}
+            {contactAddress ? (
               <>
-                <dt>
-                  <Icon name="map-pin" size={18} />
-                  نشانی
-                </dt>
+                <dt>نشانی</dt>
                 <dd>{contactAddress}</dd>
               </>
-            )}
-            {socialLinks.length > 0 && (
+            ) : null}
+            {socialLinks.length > 0 ? (
               <>
                 <dt>شبکه‌ها</dt>
-                <dd className="lk-socials">
+                <dd className="lm-contact__socials">
                   {socialLinks.map(([key, url]) => (
                     <a key={key} href={url} rel="noopener noreferrer">
                       {SOCIAL_NETWORKS[key]}
@@ -61,9 +51,9 @@ export function ContactBody({ settings, ctaLabel }: Props) {
                   ))}
                 </dd>
               </>
-            )}
+            ) : null}
           </dl>
-        )}
+        ) : null}
       </div>
       <ContactForm ctaLabel={ctaLabel} />
     </div>

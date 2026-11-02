@@ -160,6 +160,15 @@ export async function seedLandingFixture(migratorUrl: string, uploadsDir: string
 
     // The v2 landing's texts and the two hero pictures (the same pictures the reference uses: development and tests only).
     await seedHome(pool, { uploadsDir, images: true });
+    // the hero's carousel and the figures panel, as the owner would publish them (these are TEST rows: real-looking, not «نمونه»)
+    for (const [i, [caption, title]] of [["طراحی", "برای تبدیل بازدیدکننده به مشتری."], ["توسعه", "برای رشد بدون دردسر."], ["برند", "برای ماندن در ذهن‌ها."]].entries()) {
+      const [{ id }] = await q<{ id: string }>(`INSERT INTO hero_cards (caption, title, position) VALUES ($1, $2, $3) RETURNING id`, [caption, title, i + 1]);
+      await q(`UPDATE hero_cards SET status = 'published', version = version + 1 WHERE id = $1`, [id]);
+    }
+    for (const [i, [value, suffix, label]] of [[150, "+", "پروژه‌ی آزمایشی تحویل‌شده"], [98, "٪", "رضایت آزمایشی"], [12, "", "سال تجربه‌ی آزمایشی"], [40, "+", "عضو آزمایشی تیم"]].entries()) {
+      const [{ id }] = await q<{ id: string }>(`INSERT INTO home_stats (value, suffix, label, position) VALUES ($1, $2, $3, $4) RETURNING id`, [value, suffix, label, i + 1]);
+      await q(`UPDATE home_stats SET status = 'published', version = version + 1 WHERE id = $1`, [id]);
+    }
   } finally {
     await pool.end();
   }

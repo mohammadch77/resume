@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/ds";
 import { ContactBody } from "@/components/site/contact-body";
 import { FALLBACK_SETTINGS } from "@/components/site/settings-fallback";
 import { SiteFooter } from "@/components/site/site-footer";
+import { SiteHeader } from "@/components/site/site-header";
 import { getLandingData } from "@/lib/content/landing";
 import { env } from "@/lib/env";
-import { CONTACT_HREF, resolveConsultHref } from "@/lib/site/links";
-import "@/components/site/landing.css";
+import { resolveConsultHref } from "@/lib/site/links";
+import "@/components/site/page.css";
 
 /**
  * The contact form as a page of its own: where the CTA links lead without JavaScript (with it, they open the same form in a
@@ -30,21 +30,28 @@ const HOME_LINKS = [
 ];
 
 export default async function ContactPage() {
-  const { settings } = await getLandingData();
+  const data = await getLandingData();
+  const { settings, home } = data;
   const brand = settings?.brandName ?? FALLBACK_SETTINGS.brandName;
   const cta = settings?.primaryCtaLabel ?? FALLBACK_SETTINGS.primaryCtaLabel;
   return (
-    <>
-      <header className="lk-navwrap">
-        <Navbar brand={brand} brandHref="/" links={HOME_LINKS} ctaLabel={cta} ctaHref={CONTACT_HREF} />
-      </header>
-      <main id="main" className="lk-sec">
+    <div className="lm-root lm-page">
+      <SiteHeader brand={brand} brandHref="/" links={HOME_LINKS} ctaLabel={cta} />
+      <main id="main">
         <ContactBody
           settings={{ contactPhone: settings?.contactPhone ?? null, contactEmail: settings?.contactEmail ?? null, contactAddress: settings?.contactAddress ?? null, socials: settings?.socials ?? {} }}
           ctaLabel={cta}
         />
       </main>
-      <SiteFooter brand={brand} ctaLabel={cta} consultHref={resolveConsultHref(settings?.consultCtaHref)} />
-    </>
+      <SiteFooter
+        brand={brand}
+        ctaLabel={cta}
+        consultHref={resolveConsultHref(settings?.consultCtaHref)}
+        texts={home.texts}
+        links={HOME_LINKS}
+        services={data.services}
+        socials={settings?.socials ?? {}}
+      />
+    </div>
   );
 }

@@ -62,6 +62,8 @@ export type HeroImages = { base: PictureData; trailSrc: string; maskSrc: string 
 
 /** Everything on the page that is text, a figure or a picture the owner edits (home_content, hero_cards, home_stats). */
 export type HomeData = {
+  /** Names of the clients that agreed to be shown (the hero's «trusted by» line); never a sample name. */
+  partners: string[];
   texts: HomeTexts;
   /** null = no rating row (it is a claim: never shown until entered). */
   rating: { score: number; label: string } | null;
@@ -73,6 +75,7 @@ export type HomeData = {
 };
 
 export const EMPTY_HOME: HomeData = {
+  partners: [],
   texts: HOME_TEXT_DEFAULTS,
   rating: null,
   status: { left: null, center: null, right: null },
@@ -112,7 +115,9 @@ async function loadHome(db: Db): Promise<HomeData> {
   ]);
   const cards = cardRows.filter((c) => !isSample(c.caption, c.title)).map((c) => ({ id: c.id, caption: c.caption, title: c.title }));
   const stats = statRows.filter((x) => !isSample(x.label)).map((x) => ({ id: x.id, value: x.value, suffix: x.suffix, label: x.label }));
-  if (!row) return { ...EMPTY_HOME, cards, stats };
+  const partnerRows = await db.select({ name: clients.name }).from(clients).where(and(eq(clients.showNamePublicly, true), isNull(clients.deletedAt))).orderBy(asc(clients.name)).limit(8);
+  const partners = partnerRows.map((c) => c.name).filter((n) => !isSampleText(n));
+  if (!row) return { ...EMPTY_HOME, cards, stats, partners };
 
   let heroImages: HeroImages | null = null;
   if (row.heroImageBaseId && row.heroImageHoverId) {
@@ -145,6 +150,7 @@ async function loadHome(db: Db): Promise<HomeData> {
     footerLegal: row.footerLegal,
   };
   return {
+    partners,
     texts,
     rating: row.heroRatingScore !== null && row.heroRatingLabel !== null ? { score: row.heroRatingScore, label: row.heroRatingLabel } : null,
     status: { left: row.statusLeft, center: row.statusCenter, right: row.statusRight },

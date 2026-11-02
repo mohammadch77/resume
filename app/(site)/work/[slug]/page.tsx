@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Button, Chip, CoverArt, CropFrame, Navbar } from "@/components/ds";
-import { CaseStudyExtra } from "@/components/site/case-study";
-import { ContactLauncher } from "@/components/site/contact-launcher";
-import { coverNode } from "@/components/site/cover";
+import { CaseStudyBody } from "@/components/site/case-study";
 import { JsonLd } from "@/components/site/json-ld";
 import { absoluteCoverUrl } from "@/components/site/landing";
+import { MotionRoot } from "@/components/site/motion-root";
+import { ResponsivePicture } from "@/components/site/responsive-picture";
 import { FALLBACK_SETTINGS } from "@/components/site/settings-fallback";
 import { SiteFooter } from "@/components/site/site-footer";
+import { SiteHeader } from "@/components/site/site-header";
+import { SiteLauncher } from "@/components/site/site-launcher";
+import { PillButton, TagChip } from "@/components/site/ui";
 import { getPublishedProject } from "@/lib/content/public";
 import { getLandingData } from "@/lib/content/landing";
 import { env } from "@/lib/env";
 import { IMAGE_SIZES } from "@/lib/media/sizes";
 import { CONTACT_HREF, resolveConsultHref } from "@/lib/site/links";
-import "@/components/site/landing.css";
+import "@/components/site/page.css";
 
 /**
  * ISR: rendered by the first request, cached, and refreshed when an admin action expires a content tag. Nothing is
@@ -52,10 +54,10 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
   const { slug } = await params;
   const project = await getPublishedProject(slug);
   if (!project) notFound();
-  const { settings } = await getLandingData();
+  const data = await getLandingData();
+  const { settings, home } = data;
   const brand = settings?.brandName ?? FALLBACK_SETTINGS.brandName;
   const cta = settings?.primaryCtaLabel ?? FALLBACK_SETTINGS.primaryCtaLabel;
-  const cover = coverNode(project.cover, IMAGE_SIZES.work, { priority: true });
   const image = absoluteCoverUrl(project.cover);
 
   const creativeWork = {
@@ -74,50 +76,53 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
   };
 
   return (
-    <>
-      <header className="lk-navwrap">
-        <Navbar brand={brand} brandHref="/" links={HOME_LINKS} ctaLabel={cta} ctaHref={CONTACT_HREF} />
-      </header>
-      <main id="main" className="lk-wrap lk-work">
-        <Link className="lk-back" href="/#work">
+    <div className="lm-root lm-page">
+      <SiteHeader brand={brand} brandHref="/" links={HOME_LINKS} ctaLabel={cta} />
+      <main id="main" className="lm-shell lm-work">
+        <Link className="lm-back" href="/#work">
           همه‌ی نمونه‌کارها
         </Link>
-        <article className="lk-work" aria-labelledby="case-title">
+        <article aria-labelledby="case-title" className="lm-work">
           <header>
-            {project.tags.length > 0 && (
-              <div className="gw-chip-row">
+            {project.tags.length > 0 ? (
+              <div className="lm-work__tags">
                 {project.tags.map((t) => (
-                  <Chip key={t}>{t}</Chip>
+                  <TagChip key={t} tone="dark">
+                    {t}
+                  </TagChip>
                 ))}
               </div>
-            )}
-            <h1 id="case-title">{project.title}</h1>
-            <p className="lk-lead">{project.summary}</p>
+            ) : null}
+            <h1 id="case-title" className="lm-work__title">
+              {project.title}
+            </h1>
+            <p className="lm-work__lead">{project.summary}</p>
           </header>
-          <CropFrame>{cover ? <div className="gw-cover">{cover}</div> : <CoverArt art={1} />}</CropFrame>
-          <div className="lk-work__cols">
-            <section className="gw-modal__col">
-              <h2 className="lk-case__h">چالش</h2>
-              <p>{project.challenge || "—"}</p>
-            </section>
-            <section className="gw-modal__col">
-              <h2 className="lk-case__h">راه‌حل</h2>
-              <p>{project.solution || "—"}</p>
-            </section>
-            <section className="gw-modal__col">
-              <h2 className="lk-case__h">نتیجه</h2>
-              <p>{project.outcome || "—"}</p>
-            </section>
-          </div>
-          <CaseStudyExtra project={project} />
+          {project.cover ? (
+            <div className="lm-work__cover">
+              <ResponsivePicture asset={project.cover} sizes={IMAGE_SIZES.work} priority placeholder={false} />
+            </div>
+          ) : null}
+          <CaseStudyBody project={project} />
           <div>
-            <Button href={CONTACT_HREF}>{cta}</Button>
+            <PillButton href={CONTACT_HREF} variant="accent" arrow="forward">
+              {cta}
+            </PillButton>
           </div>
         </article>
       </main>
-      <SiteFooter brand={brand} ctaLabel={cta} consultHref={resolveConsultHref(settings?.consultCtaHref)} />
-      <ContactLauncher ctaLabel={cta} />
+      <SiteFooter
+        brand={brand}
+        ctaLabel={cta}
+        consultHref={resolveConsultHref(settings?.consultCtaHref)}
+        texts={home.texts}
+        links={HOME_LINKS}
+        services={data.services}
+        socials={settings?.socials ?? {}}
+      />
+      <SiteLauncher ctaLabel={cta} />
+      <MotionRoot />
       <JsonLd data={creativeWork} />
-    </>
+    </div>
   );
 }

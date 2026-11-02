@@ -15,7 +15,7 @@ export function PageDialog({ title, eyebrow, onClose, initialFocus, wide = false
   useDialog(true, onClose, panel, initialFocus);
   return (
     <div className="lm-scrim" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div ref={panel} className={`lm-dialog${wide ? " lm-dialog--wide" : ""}`} role="dialog" aria-modal="true" aria-labelledby={titleId}>
+      <div ref={panel} className={`lm-dialog${wide ? " lm-dialog--wide" : ""}`} role="dialog" aria-modal="true" aria-labelledby={titleId} data-lenis-prevent="true">
         <button type="button" className="lm-dialog__close" onClick={onClose} aria-label="بستن">
           <CloseIcon size="1em" strokeWidth={2} aria-hidden="true" />
         </button>

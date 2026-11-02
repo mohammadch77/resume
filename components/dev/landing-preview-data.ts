@@ -32,7 +32,23 @@ const project = (n: number, title: string, industry: string, tags: string[]): La
 
 export const PREVIEW_DATA: LandingData = {
   // no pictures: the preview shows the typography-only hero (the other layout is covered by the e2e fixture database)
-  home: { texts: HOME_TEXT_DEFAULTS, rating: null, status: { left: null, center: null, right: null }, heroImages: null, cards: [], stats: [] },
+  home: {
+    partners: ["نمونه · برند الف", "نمونه · برند ب", "نمونه · برند ج", "نمونه · برند د"],
+    texts: HOME_TEXT_DEFAULTS,
+    rating: { score: 4, label: "نمونه · برند راضی" },
+    status: { left: "نمونه · دورکاری", center: "نمونه · از ۱۴۰۰", right: "نمونه · پایین بروید" },
+    heroImages: null,
+    cards: [
+      { id: "c1", caption: "نمونه · طراحی", title: "نمونه · برای تبدیل بازدیدکننده به مشتری." },
+      { id: "c2", caption: "نمونه · توسعه", title: "نمونه · برای رشد بدون دردسر." },
+    ],
+    stats: [
+      { id: "s1", value: 150, suffix: "+", label: "نمونه · پروژه‌ی تحویل‌شده" },
+      { id: "s2", value: 98, suffix: "٪", label: "نمونه · رضایت مشتری" },
+      { id: "s3", value: 12, suffix: "", label: "نمونه · سال تجربه" },
+      { id: "s4", value: 40, suffix: "+", label: "نمونه · عضو تیم" },
+    ],
+  },
   settings: {
     brandName: "Grin Web",
     heroTitle: "سایت و نرم‌افزاری که کسب‌وکارتان را جلو می‌برد",

@@ -1,8 +1,8 @@
 /* The v2 hero (Lumora-derived). rem sizes; the landing root size scales with the viewport (tokens.css). Persian: no letter-spacing, line-height 1.3+. */
 .lm-hero { position: relative; background: var(--color-paper); }
-.lm-hero__grid { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 2.5rem; padding-block: 3rem 2.5rem; }
+.lm-hero__grid { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 2.5rem; padding-block: 6.5rem 2.5rem; }
 @media (min-width: 1024px) {
-  .lm-hero__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2.5rem; padding-block: 5rem 4rem; min-block-size: min(46rem, 90svh); }
+  .lm-hero__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2.5rem; padding-block: 8rem 4rem; min-block-size: min(48rem, 92svh); }
   .lm-hero__text { grid-column: span 6; }
   .lm-monitor { grid-column: span 6; }
 }
@@ -46,3 +46,31 @@ html[data-motion~="enter"] .lm-hero [data-enter] { animation: lm-rise var(--dura
 html[data-motion~="enter"] .lm-hero [data-enter="1"] { animation-delay: 60ms; }
 html[data-motion~="enter"] .lm-hero [data-enter="2"] { animation-delay: 120ms; }
 html[data-motion~="enter"] .lm-hero [data-enter="3"] { animation-delay: 180ms; }
+
+/* the carousel card and the "trusted by" names, under the text and the monitor */
+.lm-hero__aside { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; padding-block-end: 3rem; }
+@media (min-width: 1024px) { .lm-hero__aside { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; } .lm-partners { justify-self: end; } }
+.lm-hcard { display: flex; gap: 0.5rem; inline-size: 100%; max-inline-size: 24rem; padding: 0.5rem; border: var(--hairline) solid var(--color-line); border-radius: var(--radius-card-sm); background: var(--color-surface); }
+.lm-hcard__tile { display: grid; place-items: center; flex: none; inline-size: 6rem; aspect-ratio: 1; border-radius: var(--radius-control); background: var(--color-ink); color: var(--color-accent); font-size: 1.875rem; }
+.lm-hcard__panel { display: flex; flex: 1; flex-direction: column; justify-content: space-between; gap: 0.5rem; min-inline-size: 0; padding: 0.75rem; border-radius: var(--radius-control); background: var(--color-paper); }
+.lm-hcard__slot { display: grid; min-block-size: 3.5rem; }
+.lm-hcard__item { grid-area: 1 / 1; visibility: hidden; opacity: 0; transform: translateY(0.5rem); }
+.lm-hcard__item[data-active="true"] { visibility: visible; opacity: 1; transform: none; }
+html[data-motion~="enter"] .lm-hcard__item { transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out), visibility 0s linear var(--duration-base); }
+html[data-motion~="enter"] .lm-hcard__item[data-active="true"] { transition-delay: 0s; }
+.lm-hcard__caption { display: block; font: 600 var(--text-caption)/var(--text-caption--line-height) var(--font-sans); color: var(--color-ink-subtle); }
+.lm-hcard__title { font: 600 var(--text-body)/1.6 var(--font-sans); }
+.lm-hcard__bar { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.lm-hcard__dots { display: flex; gap: 0.25rem; }
+.lm-hcard__dot { block-size: 0.25rem; inline-size: 0.375rem; border-radius: var(--radius-pill); background: var(--color-line-strong); opacity: 0.4; }
+.lm-hcard__dot[data-active="true"] { inline-size: 1rem; opacity: 1; background: var(--color-ink); }
+.lm-hcard__btns { display: flex; gap: 0.25rem; }
+.lm-hcard__btn { display: grid; place-items: center; inline-size: var(--space-7); block-size: var(--space-7); border: var(--hairline) solid var(--color-line); border-radius: var(--radius-pill); background: var(--color-paper); color: var(--color-ink-muted); cursor: pointer; font-size: 1rem; }
+@media (hover: hover) { .lm-hcard__btn:hover { color: var(--color-ink); border-color: var(--color-line-strong); } }
+.lm-hcard:not([data-ready]) .lm-hcard__btns { display: none; }
+.lm-partners { inline-size: 100%; max-inline-size: 24rem; }
+.lm-partners__label { margin-block-end: 0.75rem; font: 600 var(--text-caption)/var(--text-caption--line-height) var(--font-sans); color: var(--color-ink-subtle); }
+.lm-partners__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem 1rem; font: 400 var(--text-body-sm)/var(--text-label--line-height) var(--font-sans); color: var(--color-ink-muted); }
+@media (min-width: 640px) { .lm-partners__list { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.lm-partners__list li { display: flex; align-items: center; gap: 0.375rem; min-inline-size: 0; }
+.lm-partners__list li::before { content: ""; flex: none; inline-size: 0.5rem; block-size: 0.5rem; border-radius: var(--radius-pill); background: var(--color-line-strong); }
