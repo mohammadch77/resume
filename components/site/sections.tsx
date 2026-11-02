@@ -40,6 +40,25 @@ export function WorkSection({ projects, texts }: { projects: LandingProject[]; t
   );
 }
 
+/** The about statement from the home content: a bold lead and a quieter rest. With both empty the section is absent. */
+export function AboutSection({ texts }: { texts: HomeData["texts"] }) {
+  const lead = texts.aboutLead.trim();
+  const rest = texts.aboutRest.trim();
+  if (!lead && !rest) return null;
+  return (
+    <section className="lm-sec lm-sec--tight" id="about" aria-labelledby="about-title">
+      <div className="lm-shell">
+        {texts.aboutEyebrow.trim() ? <Eyebrow bordered>{texts.aboutEyebrow}</Eyebrow> : null}
+        <p className="lm-about" id="about-title">
+          {lead}
+          {lead && rest ? " " : ""}
+          <span className="lm-about__rest">{rest}</span>
+        </p>
+      </div>
+    </section>
+  );
+}
+
 /** The published services (from the database) as a list of rows, and the band that closes the section: the section's one primary action. */
 export function ServicesSection({ services, texts, ctaLabel }: { services: LandingData["services"]; texts: HomeData["texts"]; ctaLabel: string }) {
   return (

@@ -13,8 +13,17 @@
 .lm-skip:focus { inset-block-start: 1rem; outline-color: var(--color-on-ink); }
 
 /* ---- header (over the hero on the landing, in the flow on inner pages) ---- */
-.lm-header { position: absolute; inset-inline: 0; inset-block-start: 0; z-index: var(--z-nav); }
-.lm-header--static { position: relative; border-block-end: var(--hairline) solid var(--color-line); }
+/* Always reachable (menu button and CTA): fixed over the hero (it takes no space, so nothing moves), sticky on inner pages. The paper behind it
+   is a pseudo-element: solid by default, and where scroll-driven animations exist it fades in (opacity only) over the first screen of scroll. */
+.lm-header { position: fixed; inset-inline: 0; inset-block-start: 0; z-index: var(--z-nav); }
+.lm-header::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--color-paper); border-block-end: var(--hairline) solid var(--color-line); pointer-events: none; }
+@supports (animation-timeline: scroll()) {
+  .lm-header::before { opacity: 0; animation: lm-header-paper linear both; animation-timeline: scroll(root block); animation-range: 0 8rem; }
+}
+@keyframes lm-header-paper { to { opacity: 1; } }
+.lm-header--static { position: sticky; }
+.lm-header--static::before { opacity: 1; animation: none; }
+:where(.lm-page) :target { scroll-margin-block-start: 5rem; }
 .lm-header__row { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding-block: 1.25rem; }
 @media (min-width: 640px) { .lm-header__row { padding-block: 1.5rem; } }
 .lm-header__brand { transition: transform var(--duration-hover) var(--ease-spring); }
@@ -38,6 +47,8 @@
 /* ---- sections ---- */
 .lm-sec { padding-block: 5rem; }
 @media (min-width: 1024px) { .lm-sec { padding-block: 7rem; } }
+.lm-about { max-inline-size: 60rem; margin-block-start: 1.25rem; font: 600 var(--text-display-md)/1.5 var(--font-sans); }
+.lm-about__rest { color: var(--color-ink-muted); font-weight: 400; }
 .lm-sec--tight { padding-block-start: 2.5rem; }
 .lm-sec__title { margin-block: 1.25rem 3rem; max-inline-size: 22ch; font: 600 var(--text-heading-1)/1.35 var(--font-sans); }
 @media (min-width: 640px) { .lm-sec__title { font-size: var(--text-display-md); line-height: 1.3; } }

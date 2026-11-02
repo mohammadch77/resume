@@ -9,7 +9,7 @@ test.describe("landing content", () => {
     await page.goto("/");
     await expect(page.locator("h1")).toHaveText("سایت و نرم‌افزاری که کسب‌وکارتان را جلو می‌برد");
     const order = await page.locator("main > section").evaluateAll((els) => els.map((e) => e.id || e.getAttribute("aria-label")));
-    expect(order).toEqual(["home", "work", "services", "stats", "نظر مشتری", "clients"]);
+    expect(order).toEqual(["home", "about", "work", "services", "stats", "نظر مشتری", "clients"]);
     // navbar, hero and the services band are buttons with this label; the footer one is a plain link (tests/e2e/landing-sections.spec.ts)
     const primary = page.locator(".lm-pill").filter({ hasText: new RegExp(`^${CTA}$`) }).filter({ visible: true });
     await expect(primary).toHaveCount(3);

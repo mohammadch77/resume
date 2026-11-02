@@ -11,7 +11,7 @@ test.describe("section order and the navbar", () => {
   test("header, hero, work, services + band, stats, testimonial, clients, footer; no «روش کار», no contact section, no old results section", async ({ page }) => {
     await page.goto("/");
     const order = await page.locator("main > section").evaluateAll((els) => els.map((e) => e.id || e.getAttribute("aria-label")));
-    expect(order).toEqual(["home", "work", "services", "stats", "نظر مشتری", "clients"]);
+    expect(order).toEqual(["home", "about", "work", "services", "stats", "نظر مشتری", "clients"]);
     const html = await page.content();
     expect(html).not.toContain("روش کار");
     expect(html).not.toContain("#process");

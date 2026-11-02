@@ -63,3 +63,5 @@
 - v2 phase 2: the old pinned strip tests (keyboard focus on a card, first interaction) are skipped; the strip is deleted in phase 3.
 - v2 phase 2: no separate `motion:ab -- trail` run yet; the trail was measured through the whole-page Lighthouse before/after only.
 - Phase 8: both Estedad faces are preloaded to keep CLS at 0 (owner-approved). Measure replacing the second preload with a fallback face using `size-adjust` and `ascent-override` (so the swap does not move text), on the real server.
+
+- **TBT on the landing and /work (phase 8):** one Lighthouse trace of HEAD (mobile, this lab, one run): `/` TBT 241, `/work/…` TBT 216. Main long tasks: the framework/hydration chunk (~290 ms at ~2.9 s, scripting 270–440 ms), the HTML document itself (133–191 ms at ~0.7–0.9 s: parse/style, scripting ≈ 20 ms), unattributable ≈ 70 ms. DOM is small (337 / 171 nodes) and the case dialog is not mounted on /work. First-load JS shrank in phase 3, so no component of ours was isolated as the cause; earlier same-lab runs spread 198–497 ms. Not compared against f5cc04d / d886310 (cost rule, §11). Re-measure on the real server (Nginx, brotli, HTTP/2) with median of 3 in phase 8.

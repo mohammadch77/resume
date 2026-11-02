@@ -8,7 +8,7 @@ import { Hero } from "./hero";
 import { JsonLd } from "./json-ld";
 import { MotionRoot } from "./motion-root";
 import { FALLBACK_SETTINGS } from "./settings-fallback";
-import { ClientsSection, ServicesSection, StatsSection, TestimonialSection, WorkSection } from "./sections";
+import { AboutSection, ClientsSection, ServicesSection, StatsSection, TestimonialSection, WorkSection } from "./sections";
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
 import { SiteLauncher } from "./site-launcher";
@@ -22,7 +22,7 @@ export function absoluteCoverUrl(cover: { variants: unknown } | null): string | 
 }
 
 /**
- * The landing page, in the order of CLAUDE.md section 6: header, hero, selected work, services + band, stats, testimonial, clients, footer.
+ * The landing page, in the order of CLAUDE.md section 6: header, hero, about, selected work, services + band, stats, testimonial, clients, footer.
  * Sections without real data (work, stats, testimonial, clients) are omitted, never filled with placeholders. Everything here is server
  * markup: the little script there is (the launcher, the clock, the counters, the carousel, the pointer trail) is loaded separately.
  * The primary CTA label is one value from the site settings, used in the header, the hero, the band and the contact form.
@@ -61,6 +61,7 @@ export function Landing({ data, preview = false }: { data: LandingData; preview?
       <SiteHeader brand={brand} links={links} ctaLabel={cta} overlay />
       <main id="main">
         <Hero home={home} ctaLabel={cta} hasWork={hasWork} />
+        <AboutSection texts={home.texts} />
         <WorkSection projects={projects} texts={home.texts} />
         <ServicesSection services={data.services} texts={home.texts} ctaLabel={cta} />
         <StatsSection stats={home.stats} texts={home.texts} />

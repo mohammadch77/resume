@@ -141,3 +141,12 @@ The look comes from `design/reference/lumora-prompt.md` (structure, layout, moti
 - If a requirement is ambiguous and the answer changes the design, ask once, in one batch. Otherwise decide, state the assumption, continue.
 - Prefer boring, small, maintainable solutions. Say "this should not be built" when true.
 - When an API is unfamiliar, read the installed package's docs/types first; never guess.
+
+## 11. هزینه‌ی اجرا (صرفه‌جویی در توکن بدون افت کیفیت)
+1. **تست به‌اندازه‌ی تغییر.** همیشه (ارزان): `typecheck`، `lint`، `tokens:check` و تست واحد مربوط. e2e: فقط اسپک‌های مربوط به فایل‌های تغییرکرده؛ اجرای کامل e2e فقط یک بار، درست قبل از کامیت پایان هر فاز؛ بعد از رفع یک شکست فقط همان اسپک (برای فلیکی تا ۳ بار)، نه کل مجموعه. تست DB: فقط فایل‌های مربوط به جدول/قاعده‌ی تغییرکرده؛ اجرای کامل DB فقط با مهاجرت جدید.
+2. **اندازه‌گیری.** JS اولیه با اسکریپت اندازه‌ی باندل (ارزان)، نه lhci. `lhci` و `motion:cost` فقط وقتی تغییر روی هیرو/LCP، فونت، باندل یا حرکت اثر دارد، و یک بار در پایان فاز با میانه‌ی ۳ اجرا. بیلد production فقط برای lhci/e2e؛ برای بازبینی ظاهری dev.
+3. **اسکرین‌شات** فقط از بخش‌های تغییرکرده در ۱۴۴۰ و ۳۹۰، نه کل صفحه برای هر اصلاح.
+4. **شکست محیطی** (سرور تست مرد، رم کم): یک بار علتش را بگو و رفع کن؛ حلقه‌ی دوباره‌اجراکردن نساز.
+5. **متن‌های میانی کوتاه؛ گزارش نهایی فشرده.**
+چیزهایی که کم نمی‌شوند: قواعد DB و تست «عبارت نقض‌کننده رد می‌شود»، گیت‌های سخت (CLS ≤ ۰٫۰۲، a11y = ۱، سقف JS)، امنیت، بازبینی ظاهری قبل از گزارش.
+

@@ -42,6 +42,30 @@ test.describe("header and the Tehran clock", () => {
   });
 });
 
+test.describe("sticky header and the about section", () => {
+  test("the header stays at the top while scrolling, with the menu button and the CTA reachable and a paper behind it", async ({ page }) => {
+    await page.goto("/");
+    const header = page.locator("header.lm-header");
+    await page.evaluate(() => window.scrollTo(0, 1500));
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
+    const box = await header.boundingBox();
+    expect(box?.y).toBe(0);
+    await expect(page.locator(".lm-menu-button")).toBeInViewport();
+    await expect.poll(() => page.evaluate(() => Number(getComputedStyle(document.querySelector("header.lm-header")!, "::before").opacity))).toBe(1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+
+  test("about: the owner's lead and rest sit between the hero and the work, server markup", async ({ page }) => {
+    await page.goto("/");
+    const about = page.locator("#about");
+    await expect(about).toBeVisible();
+    await expect(about.locator(".lm-about")).toContainText("با تیم‌های جاه‌طلب");
+    const order = await page.evaluate(() => ["home", "about", "work"].map((id) => document.getElementById(id)!.getBoundingClientRect().top));
+    expect(order[0]).toBeLessThan(order[1]);
+    expect(order[1]).toBeLessThan(order[2]);
+  });
+});
+
 test.describe("the full-screen menu (with JavaScript)", () => {
   test("opens from the button, traps focus, locks the page, Escape closes it and focus returns", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
