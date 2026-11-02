@@ -1,7 +1,7 @@
 /**
  * Turns database errors into something an editor can act on. Constraint names and SQLSTATEs are documented in
  * drizzle/migrations (GW001 version conflict, GW002 illegal transition, GW003 publish gate, GW004 append-only,
- * GW005 retention, GW006 wrong media kind, GW007 last owner, GW008 soft delete in use, 23001 RESTRICT, 23505 unique).
+ * GW005 retention, GW006 wrong media kind, GW009 hero image rule (alt / same size), GW007 last owner, GW008 soft delete in use, 23001 RESTRICT, 23505 unique).
  */
 export type PgErr = { code?: string; constraint?: string; message: string };
 
@@ -67,6 +67,10 @@ export function describeDbError(err: unknown): DbProblem | null {
     }
     case "GW006":
       return { kind: "failed", message: "این نوع فایل برای این بخش مجاز نیست (کاور و لوگو فقط تصویر هستند)." };
+    case "GW009":
+      return e.message.includes("hero_image: size")
+        ? { kind: "failed", field: "heroImageHoverId", message: "دو تصویر هیرو باید دقیقاً هم‌اندازه باشند (همان عرض و ارتفاع)." }
+        : { kind: "failed", field: "heroImageBaseId", message: "هر دو تصویر هیرو باید متن جایگزین (alt) داشته باشند. آن را در بخش رسانه بنویسید." };
     case "GW004":
       return { kind: "failed", message: "گزارش تغییرات قابل ویرایش یا حذف نیست." };
     case "GW005":
@@ -87,6 +91,7 @@ export function describeDbError(err: unknown): DbProblem | null {
       if (e.constraint === "projects_publish_columns") {
         return { kind: "failed", message: "پروژه‌ی منتشرشده باید کاور و خلاصه‌ی دست‌کم ۲۰ حرفی داشته باشد. اگر می‌خواهید آن‌ها را عوض کنید، ابتدا انتشار را لغو کنید." };
       }
+      if (/_no_sample_published$/.test(e.constraint ?? "")) return { kind: "blocked", reasons: [PUBLISH_GATE_REASONS.demo_content] };
       return { kind: "failed", message: "یکی از مقدارها مجاز نیست. فیلدها را بررسی کنید." };
     default:
       return null;
