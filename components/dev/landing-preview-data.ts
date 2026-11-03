@@ -51,7 +51,7 @@ export const PREVIEW_DATA: LandingData = {
     ],
   },
   settings: {
-    brandName: "Grin Web",
+    brandName: "Scene Studio",
     heroTitle: "سایت و نرم‌افزاری که کسب‌وکارتان را جلو می‌برد",
     heroSubtitle: "نمونه: پیش‌نمایش توسعه با داده‌ی ساختگی.",
     primaryCtaLabel: "درخواست مشاوره رایگان",

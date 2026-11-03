@@ -31,7 +31,7 @@ async function main() {
         .insert(s.siteSettings)
         .values({
           id: 1,
-          brandName: "Grin Web",
+          brandName: "Scene Studio",
           heroTitle: "سایت و نرم‌افزاری که کسب‌وکارتان را جلو می‌برد",
           heroSubtitle: `${SAMPLE}: برای صاحبان کسب‌وکار که سایت یا نرم‌افزار سفارشی می‌خواهند. این متن را از پنل مدیریت جایگزین کنید.`,
           primaryCtaLabel: "درخواست مشاوره رایگان",

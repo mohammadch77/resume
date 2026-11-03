@@ -1,5 +1,5 @@
 {
-  "name": "grin-web",
+  "name": "scene-studio",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -24,7 +24,7 @@
     "seed:owner": "tsx --env-file-if-exists=.env scripts/seed-owner.ts",
     "seed:services": "tsx --env-file-if-exists=.env scripts/seed-services.ts",
     "seed:home": "tsx --env-file-if-exists=.env scripts/seed-home.ts",
-    "test:icu:docker": "docker build -t grin-web:icu . && docker run --rm -i grin-web:icu node --input-type=module - < scripts/icu-check.mjs"
+    "test:icu:docker": "docker build -t scene-studio:icu . && docker run --rm -i scene-studio:icu node --input-type=module - < scripts/icu-check.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

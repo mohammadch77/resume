@@ -110,7 +110,7 @@ describe("landing data: demo content never reaches a visitor", () => {
     expect(titles).not.toContain(`نمونه · خدمت ${RUN}`);
     expect(data.testimonial?.authorName.startsWith("نمونه")).toBe(false);
 
-    await pools.su.query(`INSERT INTO site_settings (id, brand_name, hero_title, hero_subtitle, primary_cta_label) VALUES (1, 'Grin Web', 'تیتر', 'x', 'درخواست مشاوره رایگان') ON CONFLICT (id) DO NOTHING`);
+    await pools.su.query(`INSERT INTO site_settings (id, brand_name, hero_title, hero_subtitle, primary_cta_label) VALUES (1, 'Scene Studio', 'تیتر', 'x', 'درخواست مشاوره رایگان') ON CONFLICT (id) DO NOTHING`);
     const before = (await pools.su.query<{ hero_subtitle: string }>(`SELECT hero_subtitle FROM site_settings WHERE id = 1`)).rows[0].hero_subtitle;
     await pools.su.query(`UPDATE site_settings SET hero_subtitle = 'نمونه: این متن را عوض کنید', version = version + 1 WHERE id = 1`);
     expect((await loadLandingData(db)).settings?.heroSubtitle).toBeNull();

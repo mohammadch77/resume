@@ -77,7 +77,7 @@ export async function seedLandingFixture(migratorUrl: string, uploadsDir: string
     };
 
     await q(
-      `UPDATE site_settings SET brand_name = 'Grin Web', hero_title = $1, hero_subtitle = $2, primary_cta_label = 'درخواست مشاوره رایگان',
+      `UPDATE site_settings SET brand_name = 'Scene Studio', hero_title = $1, hero_subtitle = $2, primary_cta_label = 'درخواست مشاوره رایگان',
          contact_phone = '02100000000', contact_email = 'hello@example.com', contact_address = 'تهران، خیابان آزمایش، پلاک ۱',
          socials = '{"telegram":"https://t.me/example","instagram":"https://instagram.com/example"}'::jsonb, version = version + 1 WHERE id = 1`,
       ["سایت و نرم‌افزاری که کسب‌وکارتان را جلو می‌برد", "برای شرکت‌ها و فروشگاه‌ها وب‌سایت و نرم‌افزار اختصاصی می‌سازیم؛ سریع، قابل‌مدیریت و با زمان‌بندی روشن."],

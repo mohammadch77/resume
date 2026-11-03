@@ -46,7 +46,7 @@ async function main() {
   }
   await db.query(
     `INSERT INTO site_settings (id, brand_name, hero_title, hero_subtitle, primary_cta_label)
-     VALUES (1, 'Grin Web', 'عنوان', 'زیرعنوان', 'درخواست مشاوره رایگان')`,
+     VALUES (1, 'Scene Studio', 'عنوان', 'زیرعنوان', 'درخواست مشاوره رایگان')`,
   );
   await db.end();
   await seedLandingFixture(migratorUrl, ".e2e-uploads");

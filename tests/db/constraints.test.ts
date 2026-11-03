@@ -23,7 +23,7 @@ beforeAll(async () => {
   userId = await mkUser(db.su);
   await db.su.query(
     `INSERT INTO site_settings (id, brand_name, hero_title, hero_subtitle, primary_cta_label)
-     VALUES (1, 'Grin Web', 'عنوان', 'زیرعنوان', 'درخواست مشاوره رایگان') ON CONFLICT DO NOTHING`,
+     VALUES (1, 'Scene Studio', 'عنوان', 'زیرعنوان', 'درخواست مشاوره رایگان') ON CONFLICT DO NOTHING`,
   );
 });
 afterAll(() => db.close());

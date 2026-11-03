@@ -53,7 +53,7 @@
 }
 
 :root {
-  /* shadcn semantic variables -> Grin Web design tokens (tokens.css). No raw colours here. */
+  /* shadcn semantic variables -> Scene Studio design tokens (tokens.css). No raw colours here. */
   --background: var(--color-paper);
   --foreground: var(--color-ink);
   --card: var(--color-paper);

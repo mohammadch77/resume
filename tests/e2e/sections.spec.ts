@@ -15,7 +15,7 @@ test.describe("header and the Tehran clock", () => {
     await machine(page);
     await page.goto("/");
     const header = page.locator("header.lm-header");
-    await expect(header.locator(".lm-header__brand")).toContainText("Grin Web");
+    await expect(header.locator(".lm-header__brand")).toContainText("Scene Studio");
     expect(await header.locator(".lm-header__nav a").evaluateAll((els) => els.map((e) => e.getAttribute("href")))).toEqual(["#work", "#services", "#clients"]);
     await expect(header.locator(".lm-header__cta")).toHaveText(CTA);
     await expect(header.locator(".lm-clock")).toBeVisible();
@@ -189,7 +189,7 @@ test.describe("footer", () => {
     await expect(foot.locator("nav a")).toHaveCount(3);
     expect(await foot.locator(".lm-foot__list").count()).toBeGreaterThanOrEqual(3);
     await expect(foot.locator("a[href='https://t.me/example']")).toBeVisible();
-    await expect(foot.locator(".lm-foot__legal")).toContainText(/© ۱[۳۴][۰-۹]{2} Grin Web\./);
+    await expect(foot.locator(".lm-foot__legal")).toContainText(/© ۱[۳۴][۰-۹]{2} Scene Studio\./);
     await expect(foot.locator("a.lm-foot__link")).toHaveText(CTA);
     await expect(foot.locator(".lm-pill")).toHaveCount(0);
     // the big faint name is decoration only

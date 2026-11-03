@@ -91,7 +91,7 @@ test.describe("landing content", () => {
     expect(rawOrg, "no raw <, > or & inside the JSON-LD block").not.toMatch(/[<>&]/);
     const org = JSON.parse(rawOrg);
     // the contact values are editable (the settings spec saves new ones), so check their shape, not the fixture's literals
-    expect(org).toMatchObject({ "@type": "Organization", name: "Grin Web" });
+    expect(org).toMatchObject({ "@type": "Organization", name: "Scene Studio" });
     expect(org.telephone).toMatch(/^[\d+]{6,}$/);
     expect(org.email).toMatch(/^[^@\s]+@[^@\s]+$/);
     expect(org.sameAs.length).toBeGreaterThan(0);

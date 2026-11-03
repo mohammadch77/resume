@@ -6,7 +6,7 @@ import { devPagesEnabled } from "@/lib/dev-pages";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Dev · Grin Web",
+  title: "Dev · Scene Studio",
   robots: { index: false, follow: false },
 };
 

@@ -88,7 +88,7 @@ test.describe("SEO", () => {
     const raw = (await page.locator("script[type='application/ld+json']").first().textContent()) ?? "";
     expect(raw).not.toMatch(/[<>&]/);
     const org = JSON.parse(raw);
-    expect(org).toMatchObject({ "@type": "Organization", name: "Grin Web" });
+    expect(org).toMatchObject({ "@type": "Organization", name: "Scene Studio" });
     expect(org.description.length).toBeGreaterThan(20);
     expect(org.image).toContain("/og-default.png");
   });

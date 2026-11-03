@@ -10,7 +10,7 @@ import { SOCIAL_KEYS } from "@/lib/validation/settings";
 export const metadata: Metadata = { title: "تنظیمات" };
 
 const BLANK: SettingsFormValues = {
-  brandName: "Grin Web",
+  brandName: "Scene Studio",
   heroTitle: "",
   heroSubtitle: "",
   primaryCtaLabel: "درخواست مشاوره رایگان",

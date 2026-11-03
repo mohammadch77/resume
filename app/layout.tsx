@@ -3,7 +3,7 @@ import { preload } from "react-dom";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Grin Web",
+  title: "Scene Studio",
   description: "سایت و نرم‌افزاری که کسب‌وکارتان را جلو می‌برد",
 };
 
