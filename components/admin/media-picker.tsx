@@ -44,6 +44,15 @@ export function MediaPicker({ name, label, options, value, onChange, noneLabel, 
           </label>
         ))}
       </div>
+      {options.length === 0 && noneLabel !== undefined ? (
+        <p className="text-sm text-muted-foreground">
+          هنوز فایلی در کتابخانه نیست. اول از{" "}
+          <a href="/admin/media" target="_blank" rel="noopener" className="underline">
+            کتابخانه‌ی رسانه
+          </a>{" "}
+          تصویر بارگذاری کنید، بعد این فرم را باز کنید.
+        </p>
+      ) : null}
       {error ? (
         <p id={`${name}-error`} role="alert" className="text-sm text-destructive">
           {error}

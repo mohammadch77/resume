@@ -93,3 +93,22 @@
     @apply font-sans;
   }
 }
+
+/*
+ * Base UI renders a hidden native <input> beside its checkbox/select and hides it with an inline style attribute.
+ * The admin CSP has no 'unsafe-inline' for styles, so the browser drops that attribute and a second, native box shows.
+ * The same hiding as a rule keeps the CSP strict.
+ */
+input[aria-hidden="true"][tabindex="-1"] {
+  position: absolute;
+  width: 0.0625rem;
+  height: 0.0625rem;
+  margin: -0.0625rem;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+  opacity: 0;
+  pointer-events: none;
+}
