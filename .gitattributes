@@ -1,0 +1,4 @@
+# server scripts and unit/nginx files run on Linux: never CRLF
+*.sh text eol=lf
+deploy/server/** text eol=lf
+deploy/tools/** text eol=lf
