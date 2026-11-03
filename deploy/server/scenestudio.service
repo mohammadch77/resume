@@ -1,0 +1,27 @@
+[Unit]
+Description=Scene Studio (Next.js)
+After=network.target postgresql@16-scenestudio.service
+Wants=postgresql@16-scenestudio.service
+
+[Service]
+Type=simple
+User=scenestudio
+Group=scenestudio
+WorkingDirectory=/opt/scenestudio/current
+EnvironmentFile=/opt/scenestudio/env/scenestudio.env
+ExecStart=/usr/local/bin/node server.js
+Restart=on-failure
+RestartSec=3
+# the server is shared with other projects: our own ceilings
+MemoryMax=600M
+CPUQuota=100%
+TasksMax=200
+# hardening that cannot break the app
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/opt/scenestudio
+
+[Install]
+WantedBy=multi-user.target

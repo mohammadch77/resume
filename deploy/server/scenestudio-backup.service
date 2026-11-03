@@ -1,0 +1,8 @@
+[Unit]
+Description=Scene Studio daily backup (database + uploads)
+
+[Service]
+Type=oneshot
+ExecStart=/opt/scenestudio/bin/backup.sh
+Nice=10
+IOSchedulingClass=idle

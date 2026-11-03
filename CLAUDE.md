@@ -8,7 +8,7 @@ If a prompt conflicts with this file, stop and ask. Never silently deviate.
 A Persian (fa, RTL) single-page corporate landing whose main job is to **showcase our portfolio** and convert visitors into leads.
 All content (projects, clients, services, testimonials, hero copy, contact info) is managed from an **admin panel** on the same server.
 
-- Brand name, copy and contact info live in DB (`site_settings`), never hard-coded. Default brand placeholder: "Grin Web" (assumption — configurable).
+- Brand name, copy and contact info live in DB (`site_settings`), never hard-coded. Brand: "Scene Studio" (سن استودیو), domain https://www.scenestudio.ir (owner decision, phase 8); configurable.
 - Primary conversion: contact/consultation request form -> `leads` table (+ optional Telegram/Bale notification).
 - Deployed by us on our own VPS (Iran-hosted assumption). **Nothing may depend on a foreign CDN, Google Fonts, Vercel-only features, or any external runtime service.** Everything self-hosted.
 
@@ -25,7 +25,7 @@ All content (projects, clients, services, testimonials, hero copy, contact info)
 | Validation | Zod at every boundary (forms, server actions, env) | DB constraints are the last line, not the first. |
 | Auth | Own DB-backed sessions: argon2id, httpOnly+Secure+SameSite=Lax cookie, rotating session id, no JWT | Simple, revocable, auditable. |
 | Images | `sharp` at upload -> AVIF + WebP + fallback at fixed widths; metadata in DB | No on-the-fly optimizer; Nginx serves static files directly. |
-| Runtime | Docker Compose: `app` (Node LTS), `postgres`, `nginx` | Reproducible deploy on our server. |
+| Runtime | **Owner decision, phase 8:** the shared production server has no Docker and runs its other projects as systemd + Node + host PostgreSQL + host Nginx, so Scene Studio does the same: `scenestudio.service` (Node 20, standalone build made in Docker on the laptop), its own PostgreSQL 16 cluster (port 5442), the host Nginx with one new vhost. Everything in `/opt/scenestudio`; see `deploy/RUNBOOK.md`. `deploy/docker-compose.yml` is the unused alternative. | Zero risk to the other projects (no Docker daemon, no firewall changes). |
 | Tests | Vitest (unit), real-Postgres constraint tests, Playwright (e2e), Lighthouse CI (budgets) | Strictness is proven, not claimed. |
 
 Always install the **latest stable** versions; verify with `npm view <pkg> version` and read the package README before using an API. Do not rely on memory of APIs for Next.js, Drizzle, GSAP, Lenis, React Bits.
