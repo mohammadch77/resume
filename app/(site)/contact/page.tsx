@@ -13,7 +13,9 @@ import "@/components/site/page.css";
  * The contact form as a page of its own: where the CTA links lead without JavaScript (with it, they open the same form in a
  * dialog over the page instead). Not indexed and not in the sitemap: it is a form, not content.
  */
-export const revalidate = 3600;
+// Rendered per request (its data comes from the tag-cached content loader): the production image is built without a database, so a build-time
+// prerender of this page would fail. The landing does the same by having no prerendered params.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getLandingData();
