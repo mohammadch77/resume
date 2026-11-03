@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IMAGE_MAX_BYTES, VIDEO_MAX_BYTES, megabytesFa } from "@/lib/media/config";
-import { MEDIA_ERRORS, type MediaErrorCode } from "@/lib/media/messages";
+import { MEDIA_ERRORS, codeFromHttpFailure, type MediaErrorCode } from "@/lib/media/messages";
 
 type Item = { name: string; progress: number; state: "uploading" | "done" | "duplicate" | "error"; message?: string };
 
@@ -20,11 +20,11 @@ function upload(form: FormData, onProgress: (pct: number) => void): Promise<{ st
       try {
         body = JSON.parse(xhr.responseText);
       } catch {
-        body = { ok: false, code: "server_error" };
+        body = { ok: false, code: codeFromHttpFailure(xhr.status) };
       }
       resolve({ status: xhr.status, body });
     };
-    xhr.onerror = () => resolve({ status: 0, body: { ok: false, code: "server_error" } });
+    xhr.onerror = () => resolve({ status: 0, body: { ok: false, code: codeFromHttpFailure(0) } });
     xhr.send(form);
   });
 }
