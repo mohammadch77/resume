@@ -1,0 +1,22 @@
+# Builds a release tarball for the server on Linux with the server's Node major (20), because the app has native packages (sharp,
+# @node-rs/argon2): a build made on Windows would carry the wrong binaries. Used by deploy/build-release.sh; never run on the server.
+FROM node:20-bookworm-slim AS build
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY . .
+RUN npm run build
+RUN node deploy/tools/build-tools.mjs
+RUN set -e; \
+    mkdir -p /release; \
+    cp -a .next/standalone/. /release/; \
+    mkdir -p /release/.next && cp -a .next/static /release/.next/static; \
+    cp -a public /release/public; \
+    cp -a drizzle/migrations /release/migrations_sql && mkdir -p /release/drizzle && mv /release/migrations_sql /release/drizzle/migrations; \
+    cp -a deploy-out/tools /release/tools; \
+    cp -a deploy/server /release/server; \
+    date -u +%Y%m%d-%H%M%S > /release/RELEASE; \
+    tar -C /release -czf /scenestudio-release.tar.gz .
+FROM scratch AS out
+COPY --from=build /scenestudio-release.tar.gz /scenestudio-release.tar.gz

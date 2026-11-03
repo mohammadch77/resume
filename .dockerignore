@@ -4,3 +4,10 @@ node_modules
 .env
 uploads
 *.zip
+.cache
+.e2e-uploads
+test-results
+.lighthouseci
+deploy-out
+tsconfig.tsbuildinfo
+docker-compose.dev.yml

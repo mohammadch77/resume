@@ -51,3 +51,5 @@ next-env.d.ts
 /.cache
 
 /.lighthouseci
+scenestudio-release.tar.gz
+deploy-out
